@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="CapDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/cap_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "uva"
+display_name = "Uva Fiesta"
+color = Color(0.73725, 0.62745, 1.0, 1)
+price = 150
+speed = 1
+acceleration = 1.02
+handling = 0.98
+weight = 1.02
+boost = 1.07

@@ -1,0 +1,68 @@
+class_name SelectionPage
+extends VBoxContainer
+
+var kind := "caps"
+var index := 0
+var rebuild_callback: Callable
+
+func _ready() -> void:
+	build()
+
+func build() -> void:
+	for child in get_children():
+		remove_child(child)
+		child.queue_free()
+	var entries: Array = RacingCatalog.caps() if kind == "caps" else RacingCatalog.circuits()
+	index = posmod(index, entries.size())
+	var item: Resource = entries[index]
+	var title := RacingUI.label(item.display_name, 32)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	add_child(title)
+	if kind == "caps":
+		var preview := preload("res://scripts/ui/cap_preview.gd").new()
+		preview.tint = item.color.lightened(0.25) if SaveManager.selected_skin == "perla" else item.color
+		add_child(preview)
+		var stats := RacingUI.label("Velocidad %d · Aceleración %d · Manejo %d\nPeso %d · Boost %d" % [item.speed * 100, item.acceleration * 100, item.handling * 100, item.weight * 100, item.boost * 100])
+		stats.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		add_child(stats)
+	else:
+		var description := RacingUI.label(item.description + "\n60–90 s aprox. · %d vuelta(s)" % item.laps)
+		description.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		add_child(description)
+		var key := "%s_%s_%d" % [item.id, SaveManager.settings.difficulty, item.laps]
+		var best := float(SaveManager.best_times.get(key, 0))
+		add_child(RacingUI.label("Mejor tiempo: %.2f s" % best if best > 0 else "Mejor tiempo: por descubrir"))
+	var navigation := HBoxContainer.new()
+	add_child(navigation)
+	var previous := RacingUI.button("◀ Anterior", func() -> void: index -= 1; build())
+	previous.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	navigation.add_child(previous)
+	var next := RacingUI.button("Siguiente ▶", func() -> void: index += 1; build())
+	next.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	navigation.add_child(next)
+	var unlocked: Array = SaveManager.unlocked_caps if kind == "caps" else SaveManager.unlocked_circuits
+	var selected: String = SaveManager.selected_cap if kind == "caps" else SaveManager.selected_circuit
+	var owned: bool = item.id in unlocked
+	var action_text: String = ("Seleccionada" if selected == item.id else "Seleccionar") if owned else "Desbloquear · %d monedas" % item.price
+	var action := RacingUI.button(action_text, func() -> void:
+		if owned or SaveManager.purchase(kind, item.id, item.price):
+			if kind == "caps": SaveManager.selected_cap = item.id
+			else: SaveManager.selected_circuit = item.id
+			SaveManager.save()
+		build()
+		rebuild_callback.call()
+	)
+	action.disabled = (owned and selected == item.id) or (not owned and SaveManager.coins < item.price)
+	add_child(action)
+	if kind == "caps":
+		var has_skin: bool = "perla" in SaveManager.unlocked_skins
+		var skin_text := ("Diseño: Perla ✓ · usar original" if SaveManager.selected_skin == "perla" else "Diseño: Original · usar Perla") if has_skin else "Desbloquear diseño Perla · 75 monedas"
+		var skin := RacingUI.button(skin_text, func() -> void:
+			if has_skin or SaveManager.purchase("skins", "perla", 75):
+				SaveManager.selected_skin = "original" if SaveManager.selected_skin == "perla" else "perla"
+				SaveManager.save()
+			build()
+			rebuild_callback.call()
+		)
+		skin.disabled = not has_skin and SaveManager.coins < 75
+		add_child(skin)

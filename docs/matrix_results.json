@@ -1,0 +1,499 @@
+{
+  "cases": [
+    {
+      "cap": "sol",
+      "circuit": "fuente",
+      "difficulty": "easy",
+      "finish_times": [
+        69.1999999999974,
+        72.8833333333305,
+        76.8666666666636,
+        70.166666666664
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "coral",
+      "circuit": "fuente",
+      "difficulty": "easy",
+      "finish_times": [
+        71.8333333333305,
+        72.6333333333305,
+        76.8666666666636,
+        71.1499999999972
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "menta",
+      "circuit": "fuente",
+      "difficulty": "easy",
+      "finish_times": [
+        71.4333333333306,
+        75.3333333333303,
+        75.9166666666636,
+        69.716666666664
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "oceano",
+      "circuit": "fuente",
+      "difficulty": "easy",
+      "finish_times": [
+        66.7833333333308,
+        72.6666666666638,
+        76.8666666666636,
+        70.7666666666639
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "uva",
+      "circuit": "fuente",
+      "difficulty": "easy",
+      "finish_times": [
+        69.266666666664,
+        74.3166666666637,
+        76.8666666666636,
+        70.1333333333306
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "coco",
+      "circuit": "fuente",
+      "difficulty": "easy",
+      "finish_times": [
+        68.1499999999974,
+        72.8666666666638,
+        76.8499999999969,
+        70.466666666664
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "sol",
+      "circuit": "fuente",
+      "difficulty": "normal",
+      "finish_times": [
+        68.6666666666641,
+        69.5499999999973,
+        69.3499999999974,
+        61.7499999999978
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "coral",
+      "circuit": "fuente",
+      "difficulty": "normal",
+      "finish_times": [
+        72.1333333333305,
+        70.7499999999973,
+        66.8666666666642,
+        61.7499999999978
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "menta",
+      "circuit": "fuente",
+      "difficulty": "normal",
+      "finish_times": [
+        70.0333333333306,
+        66.0833333333309,
+        68.8833333333307,
+        61.7499999999978
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "oceano",
+      "circuit": "fuente",
+      "difficulty": "normal",
+      "finish_times": [
+        63.9666666666643,
+        67.5666666666641,
+        66.5666666666642,
+        61.7499999999978
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "uva",
+      "circuit": "fuente",
+      "difficulty": "normal",
+      "finish_times": [
+        66.2166666666642,
+        67.7666666666641,
+        68.8999999999974,
+        61.7499999999978
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "coco",
+      "circuit": "fuente",
+      "difficulty": "normal",
+      "finish_times": [
+        65.8999999999975,
+        67.5833333333308,
+        70.1499999999973,
+        61.7499999999978
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "sol",
+      "circuit": "fuente",
+      "difficulty": "hard",
+      "finish_times": [
+        64.8999999999976,
+        66.5499999999975,
+        63.5666666666643,
+        58.9166666666646
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "coral",
+      "circuit": "fuente",
+      "difficulty": "hard",
+      "finish_times": [
+        66.2333333333309,
+        67.5666666666641,
+        65.5333333333309,
+        58.9166666666646
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "menta",
+      "circuit": "fuente",
+      "difficulty": "hard",
+      "finish_times": [
+        67.6833333333308,
+        65.0166666666643,
+        64.8666666666643,
+        58.9166666666646
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "oceano",
+      "circuit": "fuente",
+      "difficulty": "hard",
+      "finish_times": [
+        62.7666666666644,
+        64.4499999999976,
+        65.5333333333309,
+        58.9166666666646
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "uva",
+      "circuit": "fuente",
+      "difficulty": "hard",
+      "finish_times": [
+        67.6666666666641,
+        65.0499999999976,
+        65.8333333333309,
+        58.9166666666646
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "coco",
+      "circuit": "fuente",
+      "difficulty": "hard",
+      "finish_times": [
+        65.3999999999976,
+        64.6666666666643,
+        65.7333333333309,
+        58.9166666666646
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "sol",
+      "circuit": "cascada",
+      "difficulty": "easy",
+      "finish_times": [
+        70.416666666664,
+        74.5499999999971,
+        81.08333333333,
+        66.3499999999975
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "coral",
+      "circuit": "cascada",
+      "difficulty": "easy",
+      "finish_times": [
+        71.6333333333306,
+        78.2333333333302,
+        79.2166666666635,
+        66.2166666666642
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "menta",
+      "circuit": "cascada",
+      "difficulty": "easy",
+      "finish_times": [
+        72.0166666666639,
+        74.5499999999971,
+        78.2333333333302,
+        66.2166666666642
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "oceano",
+      "circuit": "cascada",
+      "difficulty": "easy",
+      "finish_times": [
+        69.066666666664,
+        76.4333333333303,
+        75.6166666666637,
+        66.1999999999975
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "uva",
+      "circuit": "cascada",
+      "difficulty": "easy",
+      "finish_times": [
+        71.4166666666639,
+        73.0999999999971,
+        81.0666666666634,
+        66.2166666666642
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "coco",
+      "circuit": "cascada",
+      "difficulty": "easy",
+      "finish_times": [
+        70.516666666664,
+        73.7999999999971,
+        78.3833333333302,
+        71.5166666666639
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "sol",
+      "circuit": "cascada",
+      "difficulty": "normal",
+      "finish_times": [
+        68.4166666666641,
+        68.6666666666641,
+        71.6333333333306,
+        66.7166666666642
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "coral",
+      "circuit": "cascada",
+      "difficulty": "normal",
+      "finish_times": [
+        69.1333333333307,
+        71.5333333333306,
+        68.5999999999974,
+        66.2166666666642
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "menta",
+      "circuit": "cascada",
+      "difficulty": "normal",
+      "finish_times": [
+        72.4666666666638,
+        67.9333333333308,
+        71.5666666666639,
+        68.3333333333307
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "oceano",
+      "circuit": "cascada",
+      "difficulty": "normal",
+      "finish_times": [
+        64.2666666666643,
+        71.2666666666639,
+        68.5499999999974,
+        62.6999999999977
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "uva",
+      "circuit": "cascada",
+      "difficulty": "normal",
+      "finish_times": [
+        66.6333333333308,
+        68.1666666666641,
+        70.1833333333306,
+        68.3166666666641
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "coco",
+      "circuit": "cascada",
+      "difficulty": "normal",
+      "finish_times": [
+        66.1833333333309,
+        68.0499999999974,
+        70.066666666664,
+        62.5666666666644
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "sol",
+      "circuit": "cascada",
+      "difficulty": "hard",
+      "finish_times": [
+        67.6499999999974,
+        67.4499999999975,
+        65.1499999999976,
+        61.3499999999978
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "coral",
+      "circuit": "cascada",
+      "difficulty": "hard",
+      "finish_times": [
+        71.3499999999972,
+        64.9666666666643,
+        66.2166666666642,
+        61.3333333333311
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "menta",
+      "circuit": "cascada",
+      "difficulty": "hard",
+      "finish_times": [
+        68.4166666666641,
+        66.0166666666642,
+        65.5666666666642,
+        61.3499999999978
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "oceano",
+      "circuit": "cascada",
+      "difficulty": "hard",
+      "finish_times": [
+        62.7666666666644,
+        65.9833333333309,
+        65.3499999999976,
+        61.3833333333311
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "uva",
+      "circuit": "cascada",
+      "difficulty": "hard",
+      "finish_times": [
+        67.6666666666641,
+        64.9999999999976,
+        65.8166666666642,
+        61.3666666666645
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "coco",
+      "circuit": "cascada",
+      "difficulty": "hard",
+      "finish_times": [
+        64.7833333333309,
+        64.6166666666643,
+        66.3999999999975,
+        61.3666666666645
+      ],
+      "finished": 4,
+      "laps": 1
+    },
+    {
+      "cap": "sol",
+      "circuit": "fuente",
+      "difficulty": "normal",
+      "finish_times": [
+        201.900000000053,
+        205.350000000056,
+        206.43333333339,
+        188.166666666709
+      ],
+      "finished": 4,
+      "laps": 3
+    },
+    {
+      "cap": "sol",
+      "circuit": "cascada",
+      "difficulty": "normal",
+      "finish_times": [
+        205.083333333389,
+        207.450000000057,
+        216.200000000064,
+        194.53333333338
+      ],
+      "finished": 4,
+      "laps": 3
+    }
+  ],
+  "failures": 0
+}

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="CapDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/cap_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "coco"
+display_name = "Coco Loco"
+color = Color(0.95686, 0.92549, 0.82745, 1)
+price = 150
+speed = 1.02
+acceleration = 1
+handling = 0.97
+weight = 1.06
+boost = 1

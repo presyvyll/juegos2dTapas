@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="CapDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/cap_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "coral"
+display_name = "Coral Pop"
+color = Color(1.0, 0.46667, 0.4549, 1)
+price = 0
+speed = 0.98
+acceleration = 1.05
+handling = 1.04
+weight = 0.96
+boost = 1
