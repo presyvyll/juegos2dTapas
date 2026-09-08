@@ -16,6 +16,13 @@ var boost_button: Button
 var pause_button: Button
 var result_rows: Label
 var tick := 0.0
+var pickup_notice := ""
+var pickup_notice_time := 0.0
+var position_label: Label
+var speed_label: Label
+var turbo_label: Label
+var countdown_tween: Tween
+var result_tween: Tween
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -33,12 +40,29 @@ func _ready() -> void:
 	var panel := PanelContainer.new()
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var compact_style := RacingUI.box(Color("153e47"), 10)
+	compact_style.content_margin_top = 6
+	compact_style.content_margin_bottom = 6
+	panel.add_theme_stylebox_override("panel", compact_style)
 	top.add_child(panel)
+	var status_row := HBoxContainer.new()
+	panel.add_child(status_row)
+	position_label = RacingUI.label("4º", 38)
+	position_label.custom_minimum_size.x = 74
+	position_label.add_theme_color_override("font_color", Color("ffdc6c"))
+	status_row.add_child(position_label)
 	var column := VBoxContainer.new()
+	column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	panel.add_child(column)
-	info = RacingUI.label("")
-	column.add_child(info)
+	column.add_theme_constant_override("separation", 6)
+	status_row.add_child(column)
+	var summary := HBoxContainer.new()
+	column.add_child(summary)
+	info = RacingUI.label("", 17)
+	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	summary.add_child(info)
+	speed_label = RacingUI.label("", 22)
+	summary.add_child(speed_label)
 	progress_bar = ProgressBar.new()
 	progress_bar.custom_minimum_size.y = 8
 	progress_bar.show_percentage = false
@@ -61,17 +85,20 @@ func _ready() -> void:
 		bottom.offset_left = safe.x
 		bottom.offset_right = -safe.z
 		bottom.offset_bottom = -safe.w
-		bottom.offset_top = -safe.w - 76
+		bottom.offset_top = -safe.w - 124
 	get_viewport().size_changed.connect(update_margins)
 	update_margins.call()
-	var hints := RacingUI.label("◀ Izquierda                 Derecha ▶\nToca cada mitad · Desliza para impulso · A/D o flechas")
+	var hints := RacingUI.label("◀ TOCA PARA GIRAR ▶\nDesliza para dar un impulso")
+	if OS.get_name() != "Android":
+		hints.text += " · A/D"
 	hints.add_theme_font_size_override("font_size", 17)
 	hints.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	bottom.add_child(hints)
 	var boost_column := VBoxContainer.new()
-	boost_column.custom_minimum_size.x = 230
+	boost_column.custom_minimum_size.x = 250
 	bottom.add_child(boost_column)
-	boost_button = RacingUI.button("BOOST · Espacio", func() -> void: player.controls.boost_requested = true)
+	boost_button = RacingUI.button("¡TURBO!", func() -> void: player.controls.boost_requested = true)
+	boost_button.custom_minimum_size.y = 64
 	boost_button.action_mode = BaseButton.ACTION_MODE_BUTTON_PRESS
 	boost_button.focus_mode = Control.FOCUS_NONE
 	pause_button.focus_mode = Control.FOCUS_NONE
@@ -80,17 +107,65 @@ func _ready() -> void:
 	boost_bar.custom_minimum_size.y = 14
 	boost_bar.show_percentage = false
 	boost_column.add_child(boost_bar)
-	countdown_label = RacingUI.label("3", 68)
+	turbo_label = RacingUI.label("TURBO LISTO", 14)
+	turbo_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	boost_column.add_child(turbo_label)
+	bottom.offset_top = -144
+	countdown_label = RacingUI.label("3", 96)
+	countdown_label.add_theme_color_override("font_color", Color("ffdd69"))
+	countdown_label.add_theme_color_override("font_outline_color", Color("10283b"))
+	countdown_label.add_theme_constant_override("outline_size", 12)
 	countdown_label.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
-	countdown_label.offset_left = -180
-	countdown_label.offset_right = 180
+	countdown_label.offset_left = -360
+	countdown_label.offset_right = 360
+	countdown_label.offset_top = -90
+	countdown_label.offset_bottom = 90
 	countdown_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	root.add_child(countdown_label)
-	session.countdown_changed.connect(func(value: int) -> void: countdown_label.text = str(value) if value > 0 else "¡YA!")
-	session.started.connect(func() -> void:
-		get_tree().create_timer(0.7).timeout.connect(func() -> void: countdown_label.hide())
+	session.countdown_changed.connect(animate_countdown)
+	player.powerup_received.connect(func(effect: PowerUpDefinition) -> void:
+		pickup_notice = effect.display_name
+		pickup_notice_time = 2.0
 	)
+	player.controls.boost_hit_test = func(point: Vector2) -> bool: return boost_button.get_global_rect().has_point(point)
+	player.controls.blocked_touch = func(point: Vector2) -> bool: return boost_button.get_global_rect().has_point(point) or pause_button.get_global_rect().has_point(point)
+	if OS.get_name() == "Android":
+		pause_button.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	get_viewport().size_changed.connect(update_touch_rects)
+	call_deferred("update_touch_rects")
 	set_mouse_passthrough(root)
+
+func _input(event: InputEvent) -> void:
+	if OS.get_name() == "Android" and handle_pause_touch(event):
+		get_viewport().set_input_as_handled()
+
+func handle_pause_touch(event: InputEvent) -> bool:
+	if event is InputEventScreenTouch and event.pressed:
+		if is_instance_valid(pause_button) and not pause_button.disabled and pause_button.get_global_rect().has_point(event.position):
+			pause_requested.emit()
+			return true
+	return false
+
+func update_touch_rects() -> void:
+	call_deferred("apply_touch_rects")
+
+func apply_touch_rects() -> void:
+	player.controls.excluded_rects = [boost_button.get_global_rect(), pause_button.get_global_rect()]
+
+func animate_countdown(value: int) -> void:
+	if countdown_tween:
+		countdown_tween.kill()
+	countdown_label.text = str(value) if value > 0 else "¡CORRE!"
+	countdown_label.show()
+	countdown_label.pivot_offset = countdown_label.size / 2
+	countdown_label.scale = Vector2.ONE * 1.35
+	countdown_label.modulate.a = 1
+	countdown_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_STOP)
+	countdown_tween.tween_property(countdown_label, "scale", Vector2.ONE, 0.22).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	if value == 0:
+		countdown_tween.tween_interval(0.45)
+		countdown_tween.tween_property(countdown_label, "modulate:a", 0.0, 0.2)
+		countdown_tween.tween_callback(countdown_label.hide)
 
 func set_mouse_passthrough(node: Node) -> void:
 	if node is Control and not node is BaseButton:
@@ -99,6 +174,8 @@ func set_mouse_passthrough(node: Node) -> void:
 		set_mouse_passthrough(child)
 
 func _process(delta: float) -> void:
+	if not get_tree().paused:
+		pickup_notice_time = maxf(0, pickup_notice_time - delta)
 	tick += delta
 	if tick < 0.1 or not is_instance_valid(player):
 		return
@@ -106,9 +183,16 @@ func _process(delta: float) -> void:
 	player.controls.excluded_rects = [boost_button.get_global_rect(), pause_button.get_global_rect()]
 	var place := session.standings().find(player) + 1
 	var shown_time := player.finish_time if player.finished else session.elapsed
-	info.text = "%d/%d   ·   Vuelta %d/%d   ·   %d u/s   ·   %.1f s" % [place, session.caps.size(), player.lap, session.circuit.laps, player.velocity.length(), shown_time]
+	position_label.text = "%dº" % place
+	info.text = "DE %d TAPAS  ·  VUELTA %d/%d  ·  %.1f s" % [session.caps.size(), player.lap, session.circuit.laps, shown_time]
+	speed_label.text = "%d u/s" % player.velocity.length()
 	boost_bar.value = player.boost_energy * 100
-	boost_button.disabled = player.boost_energy < 0.45 or not player.active or player.finished or get_tree().paused
+	boost_button.disabled = not player.can_boost()
+	turbo_label.text = "¡A TODA AGUA!" if player.boost_time > 0 else ("CARGANDO…" if player.boost_energy < player.turbo.energy_cost else "TURBO LISTO")
+	if player.shield_time > 0:
+		turbo_label.text = "BURBUJA · %.1f s" % player.shield_time
+	elif pickup_notice_time > 0:
+		turbo_label.text = pickup_notice
 	player.controls.boost_touch_rect = boost_button.get_global_rect()
 	player.controls.boost_touch_enabled = not boost_button.disabled
 	progress_bar.value = session.progress(player) / (session.circuit.length * session.circuit.laps) * 100
@@ -152,8 +236,25 @@ func show_results(place: int, time: float, reward: int) -> void:
 	countdown_label.hide()
 	pause_button.disabled = true
 	var content := modal("¡Victoria!" if place == 1 else "¡Meta! · Puesto %d/4" % place)
+	overlay.pivot_offset = Vector2(300, 220)
+	overlay.scale = Vector2.ONE * 0.92
+	result_tween = create_tween()
+	result_tween.tween_property(overlay, "scale", Vector2.ONE, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	content.add_child(RacingUI.label("Tiempo: %.2f s  ·  +%d monedas" % [time, reward]))
+	var podium := HBoxContainer.new()
+	content.add_child(podium)
+	var winner: RacingCap = session.standings()[0]
+	var portrait := preload("res://scripts/ui/cap_preview.gd").new()
+	portrait.appearance = winner.get_node("Visual").appearance
+	portrait.tint = winner.get_node("Visual").tint
+	podium.add_child(portrait)
+	portrait.custom_minimum_size = Vector2(150, 90)
+	portrait.art_scale = 1.25
+	var winner_text := RacingUI.label("¡GANADOR!\n" + winner.racer_name, 24)
+	winner_text.add_theme_color_override("font_color", Color("ffdc6c"))
+	podium.add_child(winner_text)
 	result_rows = RacingUI.label("")
+	result_rows.add_theme_font_size_override("font_size", 18)
 	content.add_child(result_rows)
 	update_results()
 	if not SaveManager.last_save_ok:

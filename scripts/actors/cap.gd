@@ -3,6 +3,11 @@ extends CharacterBody2D
 
 signal wall_hit(speed: float)
 signal boosted
+signal impacted(point: Vector2, normal: Vector2, strength: float)
+signal landed
+signal powerup_received(definition: PowerUpDefinition)
+var shield_time := 0.0
+@export var turbo: TurboConfig = preload("res://data/turbo/default.tres")
 
 var active := true
 var finished := false
@@ -23,20 +28,27 @@ var jump_duration: float = 0.65
 @onready var motion: CapMotion = $Motion
 @onready var controls: CapPlayerInput = $PlayerInput
 
+func _ready() -> void:
+	controls.boost_available = can_boost
+
+func can_boost() -> bool:
+	return active and not finished and not get_tree().paused and boost_time <= 0 and boost_energy >= turbo.energy_cost
+
 func _physics_process(delta: float) -> void:
 	if not active or finished:
 		return
+	shield_time = maxf(0, shield_time - delta)
+	var was_airborne := jump_time > 0
 	jump_time = maxf(0, jump_time - delta)
-	var height := sin(PI * jump_time / jump_duration)
-	$Visual.scale = Vector2.ONE * (1 + height * 0.22)
-	$Visual.position.y = -height * 14
+	if was_airborne and jump_time <= 0:
+		landed.emit()
 	var flow: Vector2 = track.flow_at(global_position.y) if is_instance_valid(track) else Vector2.UP
 	var steering: float = ai.steering_axis() if is_instance_valid(ai) else controls.steering_axis()
 	var wants_boost: bool = ai.consume_boost() if is_instance_valid(ai) else controls.consume_boost()
 	if wants_boost:
 		try_boost(flow)
 	boost_time = maxf(0, boost_time - delta)
-	boost_energy = minf(1, boost_energy + delta * 0.105)
+	boost_energy = minf(1, boost_energy + delta * turbo.recharge_per_second)
 	swipe_cooldown = maxf(0, swipe_cooldown - delta)
 	collision_cooldown = maxf(0, collision_cooldown - delta)
 	if not is_instance_valid(ai):
@@ -58,7 +70,7 @@ func _physics_process(delta: float) -> void:
 	else:
 		modifier = 1.0
 	if boost_time > 0:
-		modifier *= 1.6
+		modifier *= turbo.speed_multiplier
 	velocity = motion.integrate(velocity, steering, delta, flow, external, modifier)
 	var collision := move_and_collide(velocity * delta)
 	if collision:
@@ -66,17 +78,23 @@ func _physics_process(delta: float) -> void:
 		velocity = velocity.slide(collision.get_normal()) + collision.get_normal() * impact * motion.config.wall_bounce
 		var other := collision.get_collider()
 		if other is RacingCap:
-			other.velocity -= collision.get_normal() * impact * 0.35 / other.motion.config.weight
+			other.receive_push(-collision.get_normal() * impact * 0.35 / other.motion.config.weight)
 		if impact > 30.0 and collision_cooldown <= 0:
 			wall_hit.emit(impact)
+			impacted.emit(collision.get_position(), collision.get_normal(), impact)
+			if other is RacingCap:
+				other.impacted.emit(collision.get_position(), -collision.get_normal(), impact)
 			collision_cooldown = 0.25
-	$Visual.rotation += steering * delta * 0.6
+
+func receive_push(impulse: Vector2) -> void:
+	if shield_time <= 0:
+		velocity += impulse
 
 func try_boost(flow: Vector2) -> void:
-	if boost_energy < 0.45 or boost_time > 0:
+	if boost_energy < turbo.energy_cost or boost_time > 0:
 		return
-	boost_energy -= 0.45
-	boost_time = 0.9
+	boost_energy -= turbo.energy_cost
+	boost_time = turbo.duration
 	velocity += flow * motion.config.boost_impulse
 	boosted.emit()
 
@@ -87,5 +105,4 @@ func apply_definition(definition: CapDefinition, skin: bool = false) -> void:
 	motion.config.lateral_force *= definition.handling
 	motion.config.weight *= definition.weight
 	motion.config.boost_impulse *= definition.boost
-	$Visual.tint = definition.color.lightened(0.25) if skin else definition.color
-	$Visual.queue_redraw()
+	$Visual.configure(definition.appearance, definition.color.lightened(0.25) if skin else definition.color)

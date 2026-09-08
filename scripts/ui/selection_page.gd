@@ -21,7 +21,11 @@ func build() -> void:
 	if kind == "caps":
 		var preview := preload("res://scripts/ui/cap_preview.gd").new()
 		preview.tint = item.color.lightened(0.25) if SaveManager.selected_skin == "perla" else item.color
+		preview.appearance = item.appearance if item.appearance else CapAppearance.new()
 		add_child(preview)
+		var personality := RacingUI.label(preview.appearance.personality + " · Turbo de corriente", 17)
+		personality.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		add_child(personality)
 		var stats := RacingUI.label("Velocidad %d · Aceleración %d · Manejo %d\nPeso %d · Boost %d" % [item.speed * 100, item.acceleration * 100, item.handling * 100, item.weight * 100, item.boost * 100])
 		stats.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		add_child(stats)

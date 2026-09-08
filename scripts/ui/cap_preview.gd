@@ -1,17 +1,17 @@
 extends Control
 
 var tint: Color = Color("ffce58")
+var appearance := CapAppearance.new()
+var art_scale := 2.2
 
 func _ready() -> void:
-	custom_minimum_size = Vector2(180, 160)
+	custom_minimum_size = Vector2(180, 130)
 	resized.connect(queue_redraw)
 
 func _draw() -> void:
-	var center := size / 2
-	draw_circle(center + Vector2(3, 10), 64, Color(0, 0.1, 0.15, 0.3))
-	for index in range(20):
-		draw_circle(center + Vector2.from_angle(TAU * index / 20) * 58, 9, tint.darkened(0.2))
-	draw_circle(center, 60, tint)
-	draw_arc(center, 46, 0, TAU, 48, tint.lightened(0.45), 4, true)
-	draw_line(center + Vector2(-22, -18), center + Vector2(22, -18), Color("153e47"), 9, true)
-	draw_line(center + Vector2(0, -18), center + Vector2(0, 25), Color("153e47"), 9, true)
+	if appearance.portrait_texture:
+		var extent := Vector2.ONE * minf(160, minf(size.x, size.y))
+		draw_texture_rect(appearance.portrait_texture, Rect2((size - extent) / 2, extent), false)
+		return
+	draw_set_transform(size / 2 + Vector2(0, 8), 0, Vector2.ONE * art_scale)
+	CapArt.draw_cap(self, appearance, tint)

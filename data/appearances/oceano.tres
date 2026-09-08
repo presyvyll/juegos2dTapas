@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="CapAppearance" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/cap_appearance.gd" id="1"]
+[resource]
+script = ExtResource("1")
+personality = "Tecnológica"
+style = 3
+accent = Color(0.62353, 1.0, 0.95294, 1)
+trail_color = Color(0.62353, 1.0, 0.95294, 1)

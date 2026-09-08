@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="PowerUpDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/powerups/recharge_effect.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "recharge"
+display_name = "RECARGA DE TURBO"
+color = Color(1, 0.85, 0.3, 1)
+amount = 0.5

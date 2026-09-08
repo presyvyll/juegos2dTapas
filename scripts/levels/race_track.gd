@@ -91,9 +91,16 @@ func populate() -> void:
 			add_child(current)
 
 func _draw() -> void:
-	draw_colored_polygon(water_polygon, Color("14b4c2"))
-	draw_polyline(left_edge, Color("eee0ae"), 35, true)
-	draw_polyline(right_edge, Color("eee0ae"), 35, true)
+	# Static layers follow the existing banks; collision geometry is unchanged.
+	draw_colored_polygon(water_polygon, Color("18b6c4"))
+	for edge in [left_edge, right_edge]:
+		# Dark shallow-water band and a narrow outline give the rim depth.
+		draw_polyline(edge, Color("168594"), 65, true)
+		draw_polyline(edge, Color("315d60"), 41, true)
+		draw_polyline(edge, Color("d9c894"), 35, true)
+		draw_set_transform(Vector2(-5, -3))
+		draw_polyline(edge, Color("fff0bf"), 9, true)
+		draw_set_transform(Vector2.ZERO)
 	for index in range(int(definition.length / 180)):
 		var y := -index * 180.0
 		var center := center_at(y)

@@ -9,12 +9,12 @@ var unlocked_caps: Array = ["sol", "coral"]
 var unlocked_circuits: Array = ["fuente"]
 var unlocked_skins: Array = ["original"]
 var best_times: Dictionary = {}
-var settings: Dictionary = {"music": 0.35, "effects": 0.65, "vibration": true, "quality": "high", "fps": 60, "difficulty": "normal"}
+var settings: Dictionary = {"music": 0.35, "effects": 0.65, "vibration": true, "quality": "high", "fps": 60, "difficulty": "normal", "race_laps": 1}
 var selected_cap := "sol"
 var selected_circuit := "fuente"
 var selected_skin := "original"
 var last_save_ok := true
-const DEFAULT_SETTINGS := {"music": 0.35, "effects": 0.65, "vibration": true, "quality": "high", "fps": 60, "difficulty": "normal"}
+const DEFAULT_SETTINGS := {"music": 0.35, "effects": 0.65, "vibration": true, "quality": "high", "fps": 60, "difficulty": "normal", "race_laps": 1}
 
 func _ready() -> void:
 	get_tree().quit_on_go_back = false
@@ -47,8 +47,8 @@ func read_save(path: String) -> bool:
 	if parsed.is_empty():
 		return false
 	coins = clampi(int(parsed.get("coins", 0)), 0, 9999999)
-	unlocked_caps = valid_ids(parsed.get("caps", []), ["sol", "coral", "menta", "oceano", "uva", "coco"], ["sol", "coral"])
-	unlocked_circuits = valid_ids(parsed.get("circuits", []), ["fuente", "cascada"], ["fuente"])
+	unlocked_caps = valid_ids(parsed.get("caps", []), RacingCatalog.cap_ids(), ["sol", "coral"])
+	unlocked_circuits = valid_ids(parsed.get("circuits", []), RacingCatalog.circuit_ids(), ["fuente"])
 	unlocked_skins = valid_ids(parsed.get("skins", []), ["original", "perla"], ["original"])
 	best_times = {}
 	settings = DEFAULT_SETTINGS.duplicate()
@@ -65,6 +65,8 @@ func read_save(path: String) -> bool:
 		# JSON numbers deserialize as floats.
 		var saved_fps: Variant = saved_settings.get("fps", 60)
 		settings.fps = 30 if (saved_fps is float or saved_fps is int) and saved_fps == 30 else 60
+		var saved_laps: Variant = saved_settings.get("race_laps", 1)
+		settings.race_laps = int(saved_laps) if (saved_laps is float or saved_laps is int) and float(saved_laps) in [1.0, 2.0, 3.0] else 1
 	settings.music = clampf(float(settings.music), 0, 1)
 	settings.effects = clampf(float(settings.effects), 0, 1)
 	if settings.quality not in ["low", "high"]:

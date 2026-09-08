@@ -1,5 +1,5 @@
 extends Node2D
-## Replace this child with a Sprite2D without touching movement.
+## Legacy placeholder retained; the player scene now uses CapPresentation.
 
 @export var tint: Color = Color("ffce58")
 

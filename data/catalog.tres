@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="RacingCatalogData" load_steps=10 format=3]
+[ext_resource type="Script" path="res://scripts/resources/racing_catalog_data.gd" id="1"]
+[ext_resource type="Resource" path="res://data/caps/sol.tres" id="2"]
+[ext_resource type="Resource" path="res://data/caps/coral.tres" id="3"]
+[ext_resource type="Resource" path="res://data/caps/menta.tres" id="4"]
+[ext_resource type="Resource" path="res://data/caps/oceano.tres" id="5"]
+[ext_resource type="Resource" path="res://data/caps/uva.tres" id="6"]
+[ext_resource type="Resource" path="res://data/caps/coco.tres" id="7"]
+[ext_resource type="Resource" path="res://data/circuits/fuente.tres" id="8"]
+[ext_resource type="Resource" path="res://data/circuits/cascada.tres" id="9"]
+[resource]
+script = ExtResource("1")
+caps = Array[Resource]([ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6"), ExtResource("7")])
+circuits = Array[Resource]([ExtResource("8"), ExtResource("9")])

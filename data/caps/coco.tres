@@ -1,6 +1,8 @@
-[gd_resource type="Resource" script_class="CapDefinition" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="CapDefinition" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/cap_definition.gd" id="1"]
+
+[ext_resource type="Resource" path="res://data/appearances/coco.tres" id="2"]
 
 [resource]
 script = ExtResource("1")
@@ -13,3 +15,5 @@ acceleration = 1
 handling = 0.97
 weight = 1.06
 boost = 1
+
+appearance = ExtResource("2")

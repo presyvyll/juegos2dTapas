@@ -9,5 +9,8 @@ func _draw() -> void:
 	for index in range(14):
 		var origin := Vector2(size.x * 0.12 + sin(index * 1.7) * 140, index * 80.0)
 		draw_arc(origin, 150, 0.2, 2.8, 32, Color(0.3, 0.95, 0.9, 0.12), 12, true)
+	for index in range(9):
+		var x := size.x * 0.55 + index * 70
+		draw_line(Vector2(x, 0), Vector2(x - 300, size.y), Color(0.6, 1, 0.85, 0.1), 18, true)
 	draw_circle(Vector2(size.x + 50, -30), 300, Color("12535a"))
 	draw_circle(Vector2(size.x - 60, size.y + 60), 180, Color("37896f"))

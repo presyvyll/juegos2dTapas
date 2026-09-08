@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://scripts/physics/cap_motion.gd" id="2"]
 [ext_resource type="Resource" path="res://data/caps/prototype.tres" id="3"]
 [ext_resource type="Script" path="res://scripts/input/player_input.gd" id="4"]
-[ext_resource type="Script" path="res://scripts/visuals/cap_visual.gd" id="5"]
+[ext_resource type="Script" path="res://scripts/visuals/cap_presentation.gd" id="5"]
 [ext_resource type="Script" path="res://scripts/camera/race_camera.gd" id="6"]
 
 [sub_resource type="CircleShape2D" id="Shape"]

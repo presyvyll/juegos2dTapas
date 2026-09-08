@@ -1,5 +1,15 @@
 # Tapa Racing · prototipo jugable 0.1
 
+Nuevo: [preparación de carrera](docs/PREPARACION_CARRERA.md), con dificultad,
+una a tres vueltas, récord local y ayuda de controles antes de correr.
+
+El desarrollo actual se centra exclusivamente en **Android**. La versión arcade
+incluye seis tapas expresivas, VFX con pool, turbo configurable, burbuja protectora,
+recarga, agua animada, HUD táctil y presentación del ganador. Consulta la
+[entrega y validación Android](docs/ANDROID_ENTREGA.md) para el estado vigente,
+compilación APK/AAB y límites de las pruebas. Las referencias a compilaciones de
+otras plataformas que aparecen más abajo corresponden al prototipo anterior.
+
 Juego 2D con Godot 4.3, GDScript y Compatibility. Arte geométrico y audio
 sintetizado localmente; sin plugins ni dependencias de arte externo.
 
@@ -111,6 +121,8 @@ con autopiloto de prueba para el jugador, checkpoints, vueltas y recompensa úni
 Las capturas se escriben en `user://` sin modificar la partida.
 
 Consulta [validación](docs/VALIDATION.md) y [preparación móvil](docs/MOBILE.md).
+Las mejoras de presentación, sus pruebas y los límites pendientes se detallan en
+[fases visuales](docs/FASES_VISUALES.md).
 
 ## Guardado y ajuste
 

@@ -9,6 +9,9 @@ var boost_requested := false
 var excluded_rects: Array[Rect2] = []
 var boost_touch_rect := Rect2()
 var boost_touch_enabled := false
+var boost_available: Callable
+var boost_hit_test: Callable
+var blocked_touch: Callable
 
 func _ready() -> void:
 	get_window().focus_exited.connect(clear)
@@ -21,8 +24,11 @@ func clear() -> void:
 
 func _input(event: InputEvent) -> void:
 	# Raw touch works for a second finger even when mouse emulation tracks the first.
-	if event is InputEventScreenTouch and event.pressed and boost_touch_enabled and boost_touch_rect.has_point(event.position):
-		boost_requested = true
+	if event is InputEventScreenTouch and event.pressed:
+		var allowed := bool(boost_available.call()) if boost_available.is_valid() else boost_touch_enabled
+		var hit := bool(boost_hit_test.call(event.position)) if boost_hit_test.is_valid() else boost_touch_rect.has_point(event.position)
+		if allowed and hit:
+			boost_requested = true
 	# Releases must be handled even when the finger ends over a UI button.
 	if event is InputEventScreenTouch and not event.pressed:
 		touches.erase(event.index)
@@ -33,6 +39,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		boost_requested = true
 	if event is InputEventScreenTouch:
 		if event.pressed:
+			if blocked_touch.is_valid() and blocked_touch.call(event.position):
+				return
 			for rect in excluded_rects:
 				if rect.has_point(event.position):
 					return

@@ -1,6 +1,38 @@
+# Godot
 .godot/
-builds/
+.import/
+
+# Android / Gradle
+.gradle/
+build/
+**/build/
+local.properties
+
+# Android Studio
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs y temporales
+*.log
 *.tmp
-export_credentials.cfg
+*.temp
+
+# Herramientas locales, exportaciones y claves de firma
 .tools/
+builds/*
+!builds/.gdignore
 *.keystore
+*.jks
+.godot/export_credentials.cfg
+.env
+.env.*
+__pycache__/
+*.pyc

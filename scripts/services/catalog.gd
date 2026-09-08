@@ -2,13 +2,19 @@ class_name RacingCatalog
 extends RefCounted
 
 static func caps() -> Array[CapDefinition]:
-	var result: Array[CapDefinition] = []
-	for id in ["sol", "coral", "menta", "oceano", "uva", "coco"]:
-		result.append(load("res://data/caps/%s.tres" % id) as CapDefinition)
-	return result
+	return (load("res://data/catalog.tres") as RacingCatalogData).caps
 
 static func circuits() -> Array[CircuitDefinition]:
-	var result: Array[CircuitDefinition] = []
-	for id in ["fuente", "cascada"]:
-		result.append(load("res://data/circuits/%s.tres" % id) as CircuitDefinition)
+	return (load("res://data/catalog.tres") as RacingCatalogData).circuits
+
+static func cap_ids() -> Array:
+	var result: Array = []
+	for cap in caps():
+		result.append(cap.id)
+	return result
+
+static func circuit_ids() -> Array:
+	var result: Array = []
+	for circuit in circuits():
+		result.append(circuit.id)
 	return result

@@ -1,7 +1,13 @@
 class_name SettingsPage
 extends VBoxContainer
 
+var race_setup_only := false
+
 func _ready() -> void:
+	if race_setup_only:
+		add_options("Dificultad", "difficulty", ["easy", "normal", "hard"], ["Fácil", "Normal", "Difícil"])
+		add_options("Vueltas", "race_laps", [1, 2, 3], ["1 vuelta", "2 vueltas", "3 vueltas"])
+		return
 	for entry in [["music", "Volumen de música"], ["effects", "Volumen de efectos"]]:
 		var key: String = entry[0]
 		add_child(RacingUI.label(entry[1]))

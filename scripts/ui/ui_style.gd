@@ -5,6 +5,11 @@ static func box(color: Color, radius: int = 18) -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
 	style.bg_color = color
 	style.set_corner_radius_all(radius)
+	style.border_color = Color("10283b")
+	style.set_border_width_all(2)
+	style.shadow_color = Color(0.01, 0.08, 0.14, 0.35)
+	style.shadow_offset = Vector2(0, 4)
+	style.shadow_size = 3
 	style.content_margin_left = 20
 	style.content_margin_right = 20
 	style.content_margin_top = 12
@@ -15,7 +20,7 @@ static func theme() -> Theme:
 	var result := Theme.new()
 	result.default_font_size = 20
 	result.set_color("font_color", "Label", Color("eefaf1"))
-	result.set_stylebox("panel", "PanelContainer", box(Color("153e47")))
+	result.set_stylebox("panel", "PanelContainer", box(Color("153e47"), 10))
 	result.set_stylebox("normal", "Button", box(Color("ffce58"), 13))
 	result.set_stylebox("hover", "Button", box(Color("ffe49a"), 13))
 	result.set_stylebox("pressed", "Button", box(Color("d8af43"), 13))
@@ -26,6 +31,14 @@ static func theme() -> Theme:
 	result.set_color("font_disabled_color", "Button", Color("a3b9b4"))
 	result.set_constant("separation", "VBoxContainer", 12)
 	result.set_constant("separation", "HBoxContainer", 16)
+	for state in ["background", "fill"]:
+		var bar := box(Color("102b3c") if state == "background" else Color("69e7d4"), 6)
+		bar.content_margin_left = 0
+		bar.content_margin_right = 0
+		bar.content_margin_top = 0
+		bar.content_margin_bottom = 0
+		bar.shadow_size = 0
+		result.set_stylebox(state, "ProgressBar", bar)
 	return result
 
 static func label(text: String, size: int = 20) -> Label:
