@@ -3,6 +3,8 @@
 [resource]
 script = ExtResource("1")
 id = "bronce"
+champion_line = "El agua también enseña"
+champion_accent = Color(0.41, 0.91, 0.83, 1)
 display_name = "Copa Bronce"
 track_ids = Array[String](["fuente", "jardin", "plaza"])
 laps = 1

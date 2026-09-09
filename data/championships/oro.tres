@@ -3,6 +3,8 @@
 [resource]
 script = ExtResource("1")
 id = "oro"
+champion_line = "La recta empieza antes de verla"
+champion_accent = Color(1, 0.85, 0.3, 1)
 display_name = "Copa Oro"
 track_ids = Array[String](["templo", "tropical", "laberinto", "cascada", "neon"])
 laps = 2

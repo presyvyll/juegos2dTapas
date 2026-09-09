@@ -12,6 +12,8 @@ extends Resource
 @export var legacy_rival_cap_ids: Array[String] = []
 @export_enum("easy", "normal", "hard") var difficulty := "normal"
 @export var champion_id := ""
+@export var champion_line := ""
+@export var champion_accent := Color("69e7d4")
 @export var prerequisite_cup_id := ""
 @export var position_points: PackedInt32Array = [10, 7, 4, 2]
 @export var podium_cap_ids: PackedStringArray = []

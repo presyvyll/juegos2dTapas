@@ -41,6 +41,8 @@ func run() -> void:
 		save.cup_race_requested = true
 		var race: Node2D = load("res://levels/race.tscn").instantiate()
 		root.add_child(race)
+		if is_instance_valid(race.champion_intro):
+			await race.champion_intro.completed
 		await settle()
 		race.on_finish(1, 65)
 		await settle()

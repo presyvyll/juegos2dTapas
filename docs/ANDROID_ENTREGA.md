@@ -1,5 +1,8 @@
 # Entrega arcade Android
 
+Etapa F: [introducciones de los cinco campeones](ETAPA_F_CAMPEONES.md), con
+salto persistente, pausa y cuenta atrás protegida. APK ARM64/x86_64 actualizados.
+
 Etapa E: [cinco copas con progreso persistente](ETAPA_E_COPAS.md), resultados
 acumulados, reanudación y premios únicos. Las tapas originales siguen activas.
 

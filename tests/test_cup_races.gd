@@ -20,6 +20,8 @@ func run() -> void:
 			var race: Node2D = load("res://levels/race.tscn").instantiate()
 			root.add_child(race)
 			await process_frame
+			if is_instance_valid(race.champion_intro):
+				await race.champion_intro.completed
 			disable_presentation(race)
 			race.hud.set_process(false)
 			Engine.max_fps = 0

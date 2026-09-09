@@ -1,6 +1,17 @@
 # Contexto del proyecto
 
-## Etapa actual: E completada
+## Etapa actual: F completada
+
+- F: introducciones de cinco campeones solo en la final de cada copa. ChampionIntro
+  reutiliza retrato del corredor activo, frase y color de ChampionshipDefinition.
+  Dura 2,5 s; después de verla se puede saltar. seen_champion_intros en SaveManager
+  conserva IDs vistos, valida partidas antiguas y revierte escrituras fallidas.
+- Durante la intro, RaceSession queda detenido y todos los corredores inactivos.
+  Se enfoca al campeón; al finalizar se restauran cámara, HUD, controles y cuenta
+  atrás. La pausa detiene la intro y mantiene accesible su menú.
+- Pruebas F: diez presentaciones (baja/alta, cinco resoluciones), guardado/salto,
+  pausa, 22 carreras/88 llegadas y regresiones, cero fallos. También probadas con
+  assets del APK. Docs: docs/ETAPA_F_CAMPEONES.md; logs: builds/logs/stage-f-*.log.
 
 - Activos: seis tapas originales, quince pistas y cinco copas con progreso guardado.
   Diseño: CONTENT_DESIGN.md. Estado: CONTENT_IMPLEMENTATION_REPORT.md.
@@ -27,7 +38,7 @@
   88 llegadas, cero fallos), test_cup_layouts (cinco resoluciones), más regresiones.
   Evidencia: builds/logs/stage-e-*.log, docs/ETAPA_E_COPAS.md.
 - APK ARM64 y x86_64 regenerados y firmas verificadas. Falta Android físico.
-- Siguiente F: presentación de los cinco campeones. Después G–I: migración,
+- Siguiente G–I: migración,
   desbloqueos, interfaz y balance. XP, niveles, premios de tapas/cosméticos y
   habilidades siguen pendientes; no anunciarlos como activos.
 - data/arcade_content.tres sigue siendo preparación A–C: 18 tapas, 18 habilidades,
