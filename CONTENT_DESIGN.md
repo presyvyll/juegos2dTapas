@@ -1,6 +1,7 @@
 # CONTENT_DESIGN — Liga de la Fuente
-Estado: propuesta completa y primera entrega de datos A–C. No confundir datos
-cargables con sistemas de habilidades, copas o XP ya activados en el juego.
+Estado: diseño general; etapas D–E implementadas (quince pistas y cinco copas con
+guardado). Ver CONTENT_IMPLEMENTATION_REPORT.md. Habilidades, roster nuevo y XP
+siguen pendientes. La auditoría siguiente describe la base anterior a esas etapas.
 
 ## Auditoría de arquitectura
 | Concepto solicitado | Equivalente real | Decisión |

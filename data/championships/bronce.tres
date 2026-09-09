@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ChampionshipDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/championship_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "bronce"
+display_name = "Copa Bronce"
+track_ids = Array[String](["fuente", "jardin", "plaza"])
+laps = 1
+rival_ids = Array[String](["milo", "luna", "capitan_ola"])
+rival_names = Array[String](["Milo", "Luna", "Capitán Ola"])
+legacy_rival_cap_ids = Array[String](["sol", "menta", "coral"])
+champion_id = "capitan_ola"
+prerequisite_cup_id = ""
+difficulty = "easy"
+coin_reward = 150
+xp_reward = 150

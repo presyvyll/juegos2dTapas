@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ChampionshipDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/championship_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "maestra"
+display_name = "Copa Maestra"
+track_ids = Array[String](["remolino", "ojo", "titan", "tormenta", "neon"])
+laps = 2
+rival_ids = Array[String](["luna", "zen", "nyx"])
+rival_names = Array[String](["Luna", "Zen", "Nyx"])
+legacy_rival_cap_ids = Array[String](["menta", "coral", "uva"])
+champion_id = "nyx"
+prerequisite_cup_id = "oro"
+difficulty = "hard"
+coin_reward = 500
+xp_reward = 500

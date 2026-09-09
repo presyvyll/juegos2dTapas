@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ChampionshipDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/championship_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "leyenda"
+display_name = "Copa Leyenda"
+track_ids = Array[String](["laberinto", "cascada", "tormenta", "ojo", "eclipse"])
+laps = 3
+rival_ids = Array[String](["kira", "volt", "onyx"])
+rival_names = Array[String](["Kira", "Volt", "Onyx"])
+legacy_rival_cap_ids = Array[String](["menta", "oceano", "coco"])
+champion_id = "onyx"
+prerequisite_cup_id = "maestra"
+difficulty = "hard"
+coin_reward = 700
+xp_reward = 700

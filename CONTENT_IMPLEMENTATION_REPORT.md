@@ -1,4 +1,41 @@
-# Reporte de contenido — etapa D
+# Reporte de contenido — etapa E
+
+**Cinco copas jugables con progreso y guardado**, además de quince pistas y seis
+tapas originales. Ver [ETAPA_E_COPAS](docs/ETAPA_E_COPAS.md) para reglas y uso.
+
+- Bronce, Plata, Oro, Maestra y Leyenda: 22 carreras, participantes fijos y vueltas
+  configuradas. Puntos 10/7/4/2, DNF, desempates, clasificación y podio acumulado.
+- Podio abre la siguiente copa; premios de monedas únicos. Cerrar y reanudar
+  conserva rondas completadas. Fallos de escritura revierten puntos/progreso y
+  monedas; backup y guardados v1 anteriores conservan compatibilidad.
+- **22 carreras / 88 llegadas / cero fallos** con físicas e IA reales bajo
+  autopiloto de prueba. Progresión, repetición de premios, timeout, botones de
+  continuar/reanudar y recuperación del backup también pasan.
+- Pantallas de copas y resultados: cinco resoluciones, cero fallos. Se corrigieron
+  desbordamientos y el tamaño del mensaje de espera. Captura:
+  builds/stage-e/cup_results.png. Logs finales: stage-e-layouts-delivery.log.
+- Regresiones de juego, vueltas, ciclo móvil, transiciones, datos y carga: pasan.
+- Se detectaron listas PackedStringArray vacías en los recursos binarios del APK.
+  Las listas de ChampionshipDefinition usan ahora Array[String]. Se verificaron
+  las cinco listas exportadas y pasan las pruebas de lógica/navegación usando
+  directamente los assets extraídos del APK. No se confundió exportar con validar.
+- Logs APK válidos: stage-e-apk-final-test_championships.log,
+  stage-e-apk-final-test_cup_flow.log y stage-e-apk-validation-final.log.
+  stage-e-apk-flow.log conserva el fallo previo ya corregido.
+
+APK ARM64: 25 107 510 bytes, SHA-256
+26e5957ec90bc713676d52b0dfd9d3a5cb9eb5cf31e1c7a2c16c44f432bb2131.
+APK x86_64: 27 483 184 bytes, SHA-256
+c986b80dccad01699a4a28b7bdae32ac672e59f8ef0ab12bf3240152a54b40bd.
+Ambos están en builds/android y sus firmas de depuración están verificadas.
+El AAB y ejecutable Windows anteriores no se regeneraron.
+
+Pendiente: Android físico, presentación de campeones (F), migración del roster,
+XP/niveles, habilidades y premios de tapas/cosméticos. Los rivales de copa usan
+nombres del diseño, las seis tapas anteriores y la IA común. Las compras de pistas
+en carrera libre conservan la política temporal de D.
+
+## Histórico: etapa D
 
 La implementación incorpora **quince pistas jugables**, seis tapas activas y carga
 del trazado elegido bajo demanda. Los datos A–C de nuevas tapas/habilidades siguen

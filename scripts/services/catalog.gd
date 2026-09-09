@@ -7,6 +7,15 @@ static func caps() -> Array[CapDefinition]:
 static func circuits() -> Array[CircuitDefinition]:
 	return (load("res://data/catalog.tres") as RacingCatalogData).circuits
 
+static func championships() -> Array[ChampionshipDefinition]:
+	return (load("res://data/catalog.tres") as RacingCatalogData).championships
+
+static func championship(id: String) -> ChampionshipDefinition:
+	for cup in championships():
+		if cup.id == id:
+			return cup
+	return null
+
 static func load_circuit(entry: CircuitDefinition) -> CircuitDefinition:
 	if entry.layout_path.is_empty():
 		return entry.duplicate() as CircuitDefinition

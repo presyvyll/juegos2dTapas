@@ -1,35 +1,45 @@
 # Contexto del proyecto
 
-## Etapa de contenido actual
+## Etapa actual: E completada
 
-- Diseño: CONTENT_DESIGN.md, BALANCE_NOTES.md, ART_ASSET_REQUIREMENTS.md.
-- Etapas A–C: 18 tapas, 18 habilidades, 18 apariencias, diez perfiles y diez rivales
-  en data/arcade_content.tres. Sigue siendo un manifiesto en preparación.
-- Etapa D implementada: **quince pistas jugables y seis tapas activas**.
-  Detalles, acceso y pruebas: docs/ETAPA_D_CIRCUITOS.md.
-- data/catalog.tres referencia fichas ligeras en data/circuit_entries. Cada ficha
-  usa layout_path (cadena); RacingCatalog.load_circuit carga/copia solo el trazado
-  seleccionado en data/circuits. No añadir ExtResource del layout a las fichas.
-- Diez circuitos nuevos: jardin, plaza, canal_turbo, express, templo, neon,
-  laberinto, ojo, titan, eclipse. Los cinco IDs originales se conservan.
-- Acceso provisional por monedas mediante SaveManager existente. Jardín y Plaza
-  cuestan cero. No activar requisitos de copa antes de implementar campeonatos.
-- Ojo usa pulse_depth/pulse_period en WhirlpoolArea; cero mantiene fuerza anterior.
-  Eclipse tiene señalización configurable de secciones, pero no evento de Pixel.
-- RaceTrack recoloca recogibles bloqueados por islas o barridos de obstáculos.
-- No se reescribieron físicas/IA. Habilidades, perfiles, XP/niveles, campeones y
-  copas todavía no ejecutan lógica de juego. Siguiente etapa E: cinco copas con
-  sesión/persistencia, después F–I según diseño. No activar el roster nuevo sin
-  migración de compras y ejecución de habilidades.
-- test_content_data espera 6 tapas/15 pistas; test_circuit_loading protege carga
-  diferida, liberación, coherencia de fichas y pulsación. test_all_courses comprueba
-  geometría y ocho recogibles accesibles. test_matrix cubre 285 carreras/1140
-  llegadas, con filtro -- --circuit=ID; desactiva solo dibujo durante headless.
-- Estado de pruebas y builds: CONTENT_IMPLEMENTATION_REPORT.md. Validación física
-  Android y balance manual pendientes; no confundir mediciones Windows con móvil.
-- Etapa D validada: 285 carreras, 1 140 llegadas, cero fallos; resumen en
-  docs/stage_d_validation_summary.json y log stage-d-matrix-final.log. APK ARM64
-  y x86_64 regenerados y firmados; carga/geometría también pasan sobre assets del APK.
+- Activos: seis tapas originales, quince pistas y cinco copas con progreso guardado.
+  Diseño: CONTENT_DESIGN.md. Estado: CONTENT_IMPLEMENTATION_REPORT.md.
+- Pistas D: data/circuit_entries contiene fichas ligeras; layout_path es una cadena.
+  RacingCatalog.load_circuit carga y copia solo el trazado seleccionado.
+- Copas E: data/championships/bronce, plata, oro, maestra, leyenda; registradas en
+  data/catalog.tres. Menú COPAS, 22 carreras, vueltas 1/1/2/2/3, puntos 10/7/4/2.
+  Podio desbloquea siguiente copa y entrega premio único de 150/250/350/500/700.
+- CupProgress valida resultados y deriva clasificación/desempates. SaveManager
+  guarda championships.active y completed en el JSON v1, con transacciones que
+  revierten progreso/monedas si fallan. Admite guardados anteriores y backup.
+- Fases ready/racing/results/complete. Cerrar a mitad repite la carrera pendiente;
+  en resultados reanuda sin repetir. Una participación activa; carrera libre aislada
+  mediante intención transitoria cup_race_requested.
+- Race espera cuatro llegadas o 180 segundos por vuelta. DNF no concede puntos ni
+  se convierte en llegada. Se muestran última ronda y clasificación acumulada.
+  Las copas fijan sus vueltas/dificultad y no alteran ajustes de carrera libre.
+- Rivales fijos por copa, con nombres del diseño y tapas originales configuradas en
+  legacy_rival_cap_ids. NO ejecutan todavía habilidades ni perfiles nuevos.
+- Usar Array[String] en listas de pistas/rivales de ChampionshipDefinition:
+  las PackedStringArray se perdían en el export binario Android observado.
+  El flujo y la lógica pasan con los recursos extraídos del APK corregido.
+- Pruebas E: test_championships, test_cup_flow, test_cup_races (22 carreras,
+  88 llegadas, cero fallos), test_cup_layouts (cinco resoluciones), más regresiones.
+  Evidencia: builds/logs/stage-e-*.log, docs/ETAPA_E_COPAS.md.
+- APK ARM64 y x86_64 regenerados y firmas verificadas. Falta Android físico.
+- Siguiente F: presentación de los cinco campeones. Después G–I: migración,
+  desbloqueos, interfaz y balance. XP, niveles, premios de tapas/cosméticos y
+  habilidades siguen pendientes; no anunciarlos como activos.
+- data/arcade_content.tres sigue siendo preparación A–C: 18 tapas, 18 habilidades,
+  18 apariencias, diez perfiles y diez rivales. No reemplazar roster sin migración.
+- Las pistas de carrera libre conservan compras provisionales, incluidos Jardín
+  y Plaza por cero monedas. Dentro de una copa no se cobra cada pista.
+- No reescribir físicas/IA ni duplicar escenas. RaceTrack recoloca recogibles
+  bloqueados; Ojo usa remolinos pulsantes y Eclipse señaliza secciones, pero no
+  emite todavía el evento de habilidad de Pixel.
+- Validación D histórica: 285 carreras / 1140 llegadas / cero fallos en quince pistas.
+  docs/stage_d_validation_summary.json. La matriz desactiva solo presentación.
+- Commit D publicado en main: 174a25a. Mantener commits separados por etapa.
 
 ## Base jugable
 

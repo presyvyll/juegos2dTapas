@@ -1,5 +1,8 @@
 # Entrega arcade Android
 
+Etapa E: [cinco copas con progreso persistente](ETAPA_E_COPAS.md), resultados
+acumulados, reanudación y premios únicos. Las tapas originales siguen activas.
+
 Actualización de contenido, etapa D: [quince pistas jugables](ETAPA_D_CIRCUITOS.md)
 y carga de trazados bajo demanda. APK ARM64 y x86_64 regenerados; firma verificada.
 Las fichas y trazados extraídos del APK pasan pruebas de carga y geometría con

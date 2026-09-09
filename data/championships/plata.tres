@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ChampionshipDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/championship_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "plata"
+display_name = "Copa Plata"
+track_ids = Array[String](["tropical", "canal_turbo", "remolino", "express"])
+laps = 1
+rival_ids = Array[String](["nova", "zen", "toro"])
+rival_names = Array[String](["Nova", "Zen", "Toro"])
+legacy_rival_cap_ids = Array[String](["uva", "menta", "coco"])
+champion_id = "toro"
+prerequisite_cup_id = "bronce"
+difficulty = "normal"
+coin_reward = 250
+xp_reward = 250

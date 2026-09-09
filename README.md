@@ -3,11 +3,14 @@
 En preparación: [diseño de contenido arcade](CONTENT_DESIGN.md), con 18 tapas,
 diez rivales, quince circuitos y cinco copas. Consulta el
 [estado de implementación](CONTENT_IMPLEMENTATION_REPORT.md): los nuevos datos
-de tapas, habilidades y campeonatos todavía están pendientes de integración jugable.
+de tapas y habilidades todavía están pendientes de integración jugable.
 
 Disponibles [quince pistas](docs/ETAPA_D_CIRCUITOS.md), con diez trazados nuevos,
 selección desde CIRCUITOS y carga del recorrido bajo demanda. Las seis tapas
-originales siguen activas; las nuevas tapas, habilidades y copas se integrarán después.
+originales siguen activas; las nuevas tapas y habilidades se integrarán después.
+
+Disponibles [cinco copas](docs/ETAPA_E_COPAS.md) desde **COPAS**, con puntos
+acumulados, desbloqueo por podio, premio único y progreso guardado entre carreras.
 
 Nuevo: [preparación de carrera](docs/PREPARACION_CARRERA.md), con dificultad,
 una a tres vueltas, récord local y ayuda de controles antes de correr.

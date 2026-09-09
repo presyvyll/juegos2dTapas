@@ -6,6 +6,7 @@ var heading: Label
 var transition: Tween
 
 func _ready() -> void:
+	SaveManager.cup_race_requested = false
 	theme = RacingUI.theme()
 	var background := preload("res://scripts/ui/menu_backdrop.gd").new()
 	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -67,14 +68,22 @@ func show_home() -> void:
 	content.add_child(RacingUI.button("JUGAR", show_race_setup))
 	content.add_child(RacingUI.button("TAPAS", func() -> void: show_selection("caps")))
 	content.add_child(RacingUI.button("CIRCUITOS", func() -> void: show_selection("circuits")))
+	content.add_child(RacingUI.button("COPAS", show_championships))
 	content.add_child(RacingUI.button("CONFIGURACIÓN", show_settings))
 	if OS.get_name() != "iOS":
 		content.add_child(RacingUI.button("SALIR", func() -> void: get_tree().quit()))
 
 func show_race_setup() -> void:
+	SaveManager.cup_race_requested = false
 	clear()
 	heading.text = "CARRERA"
 	content.add_child(RaceSetup.new())
+	content.add_child(RacingUI.button("Volver al menú", show_home))
+
+func show_championships() -> void:
+	clear()
+	heading.text = "COPAS"
+	content.add_child(ChampionshipPage.new())
 	content.add_child(RacingUI.button("Volver al menú", show_home))
 
 func show_selection(kind: String) -> void:

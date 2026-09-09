@@ -14,6 +14,9 @@ var selected_cap := "sol"
 var selected_circuit := "fuente"
 var selected_skin := "original"
 var last_save_ok := true
+var championships: Dictionary = {"active": {}, "completed": {}}
+## Transient launch intent: free play never advances a saved cup.
+var cup_race_requested := false
 const DEFAULT_SETTINGS := {"music": 0.35, "effects": 0.65, "vibration": true, "quality": "high", "fps": 60, "difficulty": "normal", "race_laps": 1}
 
 func _ready() -> void:
@@ -22,7 +25,7 @@ func _ready() -> void:
 	apply_settings()
 
 func snapshot() -> Dictionary:
-	return {"version": 1, "coins": coins, "caps": unlocked_caps, "circuits": unlocked_circuits, "skins": unlocked_skins, "best_times": best_times, "settings": settings, "selected_cap": selected_cap, "selected_circuit": selected_circuit, "selected_skin": selected_skin}
+	return {"version": 1, "coins": coins, "caps": unlocked_caps, "circuits": unlocked_circuits, "skins": unlocked_skins, "best_times": best_times, "settings": settings, "selected_cap": selected_cap, "selected_circuit": selected_circuit, "selected_skin": selected_skin, "championships": championships}
 
 func load_save() -> void:
 	if not read_save(save_path):
@@ -82,7 +85,68 @@ func read_save(path: String) -> bool:
 		selected_circuit = "fuente"
 	if selected_skin not in unlocked_skins:
 		selected_skin = "original"
+	championships = CupProgress.sanitize(parsed.get("championships", {}))
+	if not championships.active.is_empty() and championships.active.cap_id not in unlocked_caps:
+		championships.active = {}
 	return true
+
+func cup_transaction(next: Dictionary, reward: int = 0) -> bool:
+	var previous := championships
+	var previous_coins := coins
+	championships = next
+	coins += reward
+	if save(): return true
+	championships = previous
+	coins = previous_coins
+	return false
+
+func start_cup(id: String) -> bool:
+	var cup := RacingCatalog.championship(id)
+	if cup == null or not championships.active.is_empty() or not CupProgress.unlocked(cup, championships.completed): return false
+	var next := championships.duplicate(true)
+	next.active = {"cup_id": id, "cap_id": selected_cap, "phase": "ready", "rounds": []}
+	return cup_transaction(next)
+
+func begin_cup_race() -> bool:
+	if championships.active.is_empty() or championships.active.phase not in ["ready", "racing"]: return false
+	var next := championships.duplicate(true)
+	next.active.phase = "racing"
+	if not cup_transaction(next): return false
+	cup_race_requested = true
+	return true
+
+func submit_cup_round(round_index: int, rows: Array) -> bool:
+	var active: Dictionary = championships.active
+	if active.is_empty() or active.phase != "racing" or active.rounds.size() != round_index: return false
+	var cup := RacingCatalog.championship(active.cup_id)
+	var normalized := CupProgress.normalize_round(rows, cup)
+	if normalized.is_empty(): return false
+	var next := championships.duplicate(true)
+	next.active.rounds.append(normalized)
+	next.active.phase = "results"
+	var reward := 0
+	if next.active.rounds.size() == cup.track_ids.size():
+		next.active.phase = "complete"
+		var table := CupProgress.standings(cup, next.active.rounds)
+		var place := 4
+		for index in range(table.size()):
+			if table[index].id == "player": place = index + 1
+		var previous_place := int(next.completed.get(cup.id, 4))
+		if place <= 3 and previous_place > 3: reward = cup.coin_reward
+		next.completed[cup.id] = mini(previous_place, place)
+	return cup_transaction(next, reward)
+
+func continue_cup() -> bool:
+	if championships.active.is_empty() or championships.active.phase not in ["results", "complete"]: return false
+	var next := championships.duplicate(true)
+	if next.active.phase == "complete": next.active = {}
+	else: next.active.phase = "ready"
+	return cup_transaction(next)
+
+func abandon_cup() -> bool:
+	var next := championships.duplicate(true)
+	next.active = {}
+	return cup_transaction(next)
 
 func valid_ids(value: Variant, allowed: Array, defaults: Array) -> Array:
 	var result := defaults.duplicate()
