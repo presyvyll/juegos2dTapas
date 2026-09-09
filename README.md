@@ -12,6 +12,9 @@ originales siguen activas; las nuevas tapas y habilidades se integrarán despué
 Disponibles [cinco copas](docs/ETAPA_E_COPAS.md) desde **COPAS**, con puntos
 acumulados, desbloqueo por podio, premio único y progreso guardado entre carreras.
 
+Las finales incluyen [presentaciones de los cinco campeones](docs/ETAPA_F_CAMPEONES.md),
+de 2,5 segundos y saltables después de verlas una vez.
+
 Nuevo: [preparación de carrera](docs/PREPARACION_CARRERA.md), con dificultad,
 una a tres vueltas, récord local y ayuda de controles antes de correr.
 

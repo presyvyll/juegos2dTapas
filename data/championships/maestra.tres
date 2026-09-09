@@ -3,6 +3,8 @@
 [resource]
 script = ExtResource("1")
 id = "maestra"
+champion_line = "Las rutas hablan en silencio"
+champion_accent = Color(0.69, 0.58, 1, 1)
 display_name = "Copa Maestra"
 track_ids = Array[String](["remolino", "ojo", "titan", "tormenta", "neon"])
 laps = 2

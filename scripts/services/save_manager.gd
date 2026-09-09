@@ -17,6 +17,7 @@ var last_save_ok := true
 var championships: Dictionary = {"active": {}, "completed": {}}
 ## Transient launch intent: free play never advances a saved cup.
 var cup_race_requested := false
+var seen_champion_intros: Array = []
 const DEFAULT_SETTINGS := {"music": 0.35, "effects": 0.65, "vibration": true, "quality": "high", "fps": 60, "difficulty": "normal", "race_laps": 1}
 
 func _ready() -> void:
@@ -25,7 +26,7 @@ func _ready() -> void:
 	apply_settings()
 
 func snapshot() -> Dictionary:
-	return {"version": 1, "coins": coins, "caps": unlocked_caps, "circuits": unlocked_circuits, "skins": unlocked_skins, "best_times": best_times, "settings": settings, "selected_cap": selected_cap, "selected_circuit": selected_circuit, "selected_skin": selected_skin, "championships": championships}
+	return {"version": 1, "coins": coins, "caps": unlocked_caps, "circuits": unlocked_circuits, "skins": unlocked_skins, "best_times": best_times, "settings": settings, "selected_cap": selected_cap, "selected_circuit": selected_circuit, "selected_skin": selected_skin, "championships": championships, "seen_champion_intros": seen_champion_intros}
 
 func load_save() -> void:
 	if not read_save(save_path):
@@ -86,6 +87,9 @@ func read_save(path: String) -> bool:
 	if selected_skin not in unlocked_skins:
 		selected_skin = "original"
 	championships = CupProgress.sanitize(parsed.get("championships", {}))
+	var champion_ids: Array = []
+	for cup in RacingCatalog.championships(): champion_ids.append(cup.champion_id)
+	seen_champion_intros = valid_ids(parsed.get("seen_champion_intros", []), champion_ids, [])
 	if not championships.active.is_empty() and championships.active.cap_id not in unlocked_caps:
 		championships.active = {}
 	return true
@@ -98,6 +102,17 @@ func cup_transaction(next: Dictionary, reward: int = 0) -> bool:
 	if save(): return true
 	championships = previous
 	coins = previous_coins
+	return false
+
+func mark_champion_intro_seen(id: String) -> bool:
+	if id in seen_champion_intros: return true
+	var known := false
+	for cup in RacingCatalog.championships():
+		if cup.champion_id == id: known = true
+	if not known: return false
+	seen_champion_intros.append(id)
+	if save(): return true
+	seen_champion_intros.erase(id)
 	return false
 
 func start_cup(id: String) -> bool:

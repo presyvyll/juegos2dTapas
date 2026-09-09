@@ -11,6 +11,7 @@ var cup: ChampionshipDefinition
 var cup_round := 0
 var cup_closed := false
 var cup_rows: Array = []
+var champion_intro: ChampionIntro
 
 func _ready() -> void:
 	var selected_id: String = SaveManager.selected_circuit
@@ -76,8 +77,37 @@ func _ready() -> void:
 	)
 	AudioManager.set_racing(true)
 	get_window().focus_exited.connect(pause_on_focus_loss)
+	if cup and cup_round == cup.track_ids.size() - 1:
+		show_champion_intro()
+
+func show_champion_intro() -> void:
+	var champion_index := cup.rival_ids.find(cup.champion_id) + 1
+	if champion_index <= 0: return
+	session.set_physics_process(false)
+	player.controls.clear()
+	player.controls.set_process_unhandled_input(false)
+	hud.root.hide()
+	var champion: RacingCap = session.caps[champion_index]
+	player.get_node("Camera2D").target = champion
+	champion_intro = ChampionIntro.new()
+	champion_intro.cup = cup
+	champion_intro.appearance = champion.get_node("Visual").appearance
+	champion_intro.tint = champion.get_node("Visual").tint
+	champion_intro.can_skip = cup.champion_id in SaveManager.seen_champion_intros
+	champion_intro.completed.connect(finish_champion_intro)
+	# Separate from the hidden HUD, but under the same CanvasLayer.
+	hud.add_child(champion_intro)
+
+func finish_champion_intro() -> void:
+	SaveManager.mark_champion_intro_seen(cup.champion_id)
+	player.get_node("Camera2D").target = player
+	player.controls.clear()
+	player.controls.set_process_unhandled_input(true)
+	hud.root.show()
+	session.set_physics_process(true)
 
 func _physics_process(_delta: float) -> void:
+	if is_instance_valid(champion_intro) and not champion_intro.finished: return
 	if cup == null or cup_closed or not is_instance_valid(session) or not session.running: return
 	if session.finish_order.size() < 4 and session.elapsed < 180.0 * cup.laps: return
 	cup_closed = true
@@ -171,9 +201,14 @@ func toggle_pause() -> void:
 	get_tree().paused = not get_tree().paused
 	player.controls.clear()
 	if get_tree().paused:
+		if is_instance_valid(champion_intro): champion_intro.hide()
+		hud.root.show()
 		hud.show_pause()
 	else:
 		hud.hide_pause()
+		if is_instance_valid(champion_intro) and not champion_intro.finished:
+			hud.root.hide()
+			champion_intro.show()
 
 func pause_on_focus_loss() -> void:
 	if not get_tree().paused and not rewarded:

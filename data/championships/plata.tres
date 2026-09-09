@@ -3,6 +3,8 @@
 [resource]
 script = ExtResource("1")
 id = "plata"
+champion_line = "Esta línea tiene dueño"
+champion_accent = Color(0.93, 0.69, 0.43, 1)
 display_name = "Copa Plata"
 track_ids = Array[String](["tropical", "canal_turbo", "remolino", "express"])
 laps = 1

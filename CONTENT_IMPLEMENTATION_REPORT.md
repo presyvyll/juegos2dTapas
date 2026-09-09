@@ -1,4 +1,21 @@
-# Reporte de contenido — etapa E
+# Reporte de contenido — etapa F
+
+Las finales de las cinco copas presentan a Capitán Ola, Toro, Volt, Nyx y Onyx.
+Introducción de 2,5 segundos con retrato, frase, marco, zoom y pulso de agua;
+salto habilitado tras verla una vez. Estado persistente compatible con partidas v1.
+La cuenta atrás y los corredores esperan; pausa, cámara y controles se restauran.
+Detalles: [ETAPA_F_CAMPEONES](docs/ETAPA_F_CAMPEONES.md).
+
+Validación: diez presentaciones en baja/alta y cinco resoluciones, pruebas sobre
+assets del APK, 22 carreras/88 llegadas y regresiones de juego/guardado, cero fallos.
+Logs finales: stage-f-render-final.log, stage-f-apk-tests.log,
+stage-f-cup-races.log, stage-f-cup-layouts.log y stage-f-test_*.log.
+APK ARM64 y x86_64 regenerados y firmados; hashes actuales en builds/artifacts.json.
+Capturas en builds/stage-f. Falta Android físico. Roster nuevo, habilidades y
+premios de campeón siguen pendientes para las siguientes etapas.
+La entrega F se integra mediante la rama facture; los commits D/E ya estaban publicados.
+
+## Histórico: etapa E
 
 **Cinco copas jugables con progreso y guardado**, además de quince pistas y seis
 tapas originales. Ver [ETAPA_E_COPAS](docs/ETAPA_E_COPAS.md) para reglas y uso.

@@ -3,6 +3,8 @@
 [resource]
 script = ExtResource("1")
 id = "leyenda"
+champion_line = "Cada vuelta cuenta"
+champion_accent = Color(0.86, 0.56, 0.89, 1)
 display_name = "Copa Leyenda"
 track_ids = Array[String](["laberinto", "cascada", "tormenta", "ojo", "eclipse"])
 laps = 3
