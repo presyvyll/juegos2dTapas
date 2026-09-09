@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="AIProfile" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/ai_profile.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "luna"
+skill_level = 6
+aggression = 0.2
+risk_tolerance = 0.35
+boost_usage = 0.45
+powerup_skill = 0.7
+overtake_skill = 0.65
+defensive_skill = 0.6
+mistake_probability = 0.08
+preferred_line = -0.2
+recovery_skill = 0.8
+strategy = "Línea limpia"

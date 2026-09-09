@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="CapAbilityDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/cap_ability_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "ancla_ability"
+display_name = "Peso Muerto"
+description = "Empuje recibido -30% durante 1 s tras un impacto fuerte; recarga de 10 s."
+trigger = "strong_impact"
+duration = 1
+cooldown = 10
+max_uses = 0
+modifiers = {"received_push":0.7}
+feedback_color = Color(0.196078, 0.290196, 0.474510, 1)
+art_requirement = "TODO_ART_ABILITY_ANCLA"
+threshold = 180.0

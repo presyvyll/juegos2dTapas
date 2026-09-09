@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="CircuitDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/circuit_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "neon"
+display_name = "Fuente Neón"
+description = "Paleta nocturna; rectas rápidas y salidas técnicas"
+price = 280
+length = 18000
+width = 700
+curve_amplitude = 255
+curve_period = 1350
+secondary_curve_period = 720
+width_variation = 65
+seed_value = 396
+water_color = Color(0.10, 0.18, 0.42, 1)
+difficulty_rating = 7
+recommended_level = 7
+theme_id = "neon"
+layout_path = "res://data/circuits/neon.tres"

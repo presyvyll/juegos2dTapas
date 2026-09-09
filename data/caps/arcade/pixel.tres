@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CapDefinition" load_steps=7 format=3]
+[ext_resource type="Script" path="res://scripts/resources/cap_definition.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/resources/cap_ratings.gd" id="ratings"]
+[ext_resource type="Resource" path="res://data/abilities/pixel.tres" id="ability"]
+[ext_resource type="Resource" path="res://data/appearances/arcade/pixel.tres" id="appearance"]
+[ext_resource type="Resource" path="res://data/ai_profiles/luna.tres" id="profile"]
+[sub_resource type="Resource" id="stats"]
+script = ExtResource("ratings")
+speed = 6
+acceleration = 6
+handling = 9
+weight = 4
+boost = 6
+impact = 5
+[resource]
+script = ExtResource("1")
+id = "pixel"
+display_name = "Pixel"
+color = Color(0.513725, 0.874510, 0.654902, 1)
+ratings = SubResource("stats")
+ability = ExtResource("ability")
+appearance = ExtResource("appearance")
+preferred_ai_profile = ExtResource("profile")
+archetype = "Técnica"
+description = "Premia precisión; no gana duelos de masa."
+rarity = "poco_comun"
+unlock_method = "cup_podium"
+unlock_requirement = "plata"
+legacy_ids = PackedStringArray()
+primary_visual_theme = "Geometría verde y cian"
+art_requirement = "TODO_ART_CAP_PIXEL"
+defeat_animation_reference = "TODO_ART_CAP_PIXEL_DEFEAT"
+speed = 1.00666667
+acceleration = 1.02222222
+handling = 1.15555556
+weight = 0.93333333
+boost = 1.02222222

@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="CapAppearance" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/cap_appearance.gd" id="1"]
+[resource]
+script = ExtResource("1")
+personality = "Explosiva"
+style = 1
+accent = Color(1.000000, 0.850980, 0.545098, 1)
+trail_color = Color(0.937255, 0.388235, 0.239216, 1)

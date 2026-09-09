@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="RacingCatalogData" load_steps=10 format=3]
+[gd_resource type="Resource" script_class="RacingCatalogData" load_steps=23 format=3]
 [ext_resource type="Script" path="res://scripts/resources/racing_catalog_data.gd" id="1"]
 [ext_resource type="Resource" path="res://data/caps/sol.tres" id="2"]
 [ext_resource type="Resource" path="res://data/caps/coral.tres" id="3"]
@@ -6,9 +6,22 @@
 [ext_resource type="Resource" path="res://data/caps/oceano.tres" id="5"]
 [ext_resource type="Resource" path="res://data/caps/uva.tres" id="6"]
 [ext_resource type="Resource" path="res://data/caps/coco.tres" id="7"]
-[ext_resource type="Resource" path="res://data/circuits/fuente.tres" id="8"]
-[ext_resource type="Resource" path="res://data/circuits/cascada.tres" id="9"]
+[ext_resource type="Resource" path="res://data/circuit_entries/fuente.tres" id="8"]
+[ext_resource type="Resource" path="res://data/circuit_entries/jardin.tres" id="9"]
+[ext_resource type="Resource" path="res://data/circuit_entries/plaza.tres" id="10"]
+[ext_resource type="Resource" path="res://data/circuit_entries/tropical.tres" id="11"]
+[ext_resource type="Resource" path="res://data/circuit_entries/canal_turbo.tres" id="12"]
+[ext_resource type="Resource" path="res://data/circuit_entries/remolino.tres" id="13"]
+[ext_resource type="Resource" path="res://data/circuit_entries/express.tres" id="14"]
+[ext_resource type="Resource" path="res://data/circuit_entries/templo.tres" id="15"]
+[ext_resource type="Resource" path="res://data/circuit_entries/neon.tres" id="16"]
+[ext_resource type="Resource" path="res://data/circuit_entries/laberinto.tres" id="17"]
+[ext_resource type="Resource" path="res://data/circuit_entries/cascada.tres" id="18"]
+[ext_resource type="Resource" path="res://data/circuit_entries/ojo.tres" id="19"]
+[ext_resource type="Resource" path="res://data/circuit_entries/titan.tres" id="20"]
+[ext_resource type="Resource" path="res://data/circuit_entries/tormenta.tres" id="21"]
+[ext_resource type="Resource" path="res://data/circuit_entries/eclipse.tres" id="22"]
 [resource]
 script = ExtResource("1")
 caps = Array[Resource]([ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6"), ExtResource("7")])
-circuits = Array[Resource]([ExtResource("8"), ExtResource("9")])
+circuits = Array[Resource]([ExtResource("8"), ExtResource("9"), ExtResource("10"), ExtResource("11"), ExtResource("12"), ExtResource("13"), ExtResource("14"), ExtResource("15"), ExtResource("16"), ExtResource("17"), ExtResource("18"), ExtResource("19"), ExtResource("20"), ExtResource("21"), ExtResource("22")])

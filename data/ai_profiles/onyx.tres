@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="AIProfile" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/ai_profile.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "onyx"
+skill_level = 10
+aggression = 0.6
+risk_tolerance = 0.6
+boost_usage = 0.8
+powerup_skill = 0.95
+overtake_skill = 0.9
+defensive_skill = 0.9
+mistake_probability = 0.01
+preferred_line = 0
+recovery_skill = 1
+strategy = "Dominio equilibrado"

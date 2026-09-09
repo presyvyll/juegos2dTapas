@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CapDefinition" load_steps=7 format=3]
+[ext_resource type="Script" path="res://scripts/resources/cap_definition.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/resources/cap_ratings.gd" id="ratings"]
+[ext_resource type="Resource" path="res://data/abilities/coral.tres" id="ability"]
+[ext_resource type="Resource" path="res://data/appearances/arcade/coral.tres" id="appearance"]
+[ext_resource type="Resource" path="res://data/ai_profiles/capitan_ola.tres" id="profile"]
+[sub_resource type="Resource" id="stats"]
+script = ExtResource("ratings")
+speed = 6
+acceleration = 7
+handling = 7
+weight = 5
+boost = 5
+impact = 6
+[resource]
+script = ExtResource("1")
+id = "coral"
+display_name = "Coral"
+color = Color(1.000000, 0.466667, 0.454902, 1)
+ratings = SubResource("stats")
+ability = ExtResource("ability")
+appearance = ExtResource("appearance")
+preferred_ai_profile = ExtResource("profile")
+archetype = "Equilibrada"
+description = "Recupera ritmo; turbo moderado."
+rarity = "comun"
+unlock_method = "start"
+unlock_requirement = ""
+legacy_ids = PackedStringArray("coral")
+primary_visual_theme = "Coral tropical"
+art_requirement = "TODO_ART_CAP_CORAL"
+defeat_animation_reference = "TODO_ART_CAP_CORAL_DEFEAT"
+speed = 1.00666667
+acceleration = 1.06666667
+handling = 1.06666667
+weight = 0.97777778
+boost = 0.97777778

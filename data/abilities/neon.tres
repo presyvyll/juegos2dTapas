@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="CapAbilityDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/cap_ability_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "neon_ability"
+display_name = "Ritmo Neón"
+description = "Tras 5 s sin impactos, velocidad +4% durante 2 s; se corta al chocar."
+trigger = "clean_driving"
+duration = 2
+cooldown = 10
+max_uses = 0
+modifiers = {"speed":1.04}
+feedback_color = Color(0.125490, 0.866667, 0.850980, 1)
+art_requirement = "TODO_ART_ABILITY_NEON"
+condition_seconds = 5.0

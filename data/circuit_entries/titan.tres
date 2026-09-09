@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="CircuitDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/circuit_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "titan"
+display_name = "Cascada del Titán"
+description = "Objetos móviles y caídas; evita encadenar impactos"
+price = 320
+length = 18000
+width = 700
+curve_amplitude = 265
+curve_period = 1120
+secondary_curve_period = 590
+width_variation = 65
+seed_value = 544
+water_color = Color(0.12, 0.43, 0.59, 1)
+difficulty_rating = 8
+recommended_level = 10
+theme_id = "titan"
+layout_path = "res://data/circuits/titan.tres"

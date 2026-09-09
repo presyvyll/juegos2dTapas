@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CapDefinition" load_steps=7 format=3]
+[ext_resource type="Script" path="res://scripts/resources/cap_definition.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/resources/cap_ratings.gd" id="ratings"]
+[ext_resource type="Resource" path="res://data/abilities/neon.tres" id="ability"]
+[ext_resource type="Resource" path="res://data/appearances/arcade/neon.tres" id="appearance"]
+[ext_resource type="Resource" path="res://data/ai_profiles/volt.tres" id="profile"]
+[sub_resource type="Resource" id="stats"]
+script = ExtResource("ratings")
+speed = 8
+acceleration = 6
+handling = 5
+weight = 4
+boost = 8
+impact = 5
+[resource]
+script = ExtResource("1")
+id = "neon"
+display_name = "Neón"
+color = Color(0.125490, 0.866667, 0.850980, 1)
+ratings = SubResource("stats")
+ability = ExtResource("ability")
+appearance = ExtResource("appearance")
+preferred_ai_profile = ExtResource("profile")
+archetype = "Velocista"
+description = "Premia constancia; pierde racha al chocar."
+rarity = "rara"
+unlock_method = "cup_podium"
+unlock_requirement = "oro"
+legacy_ids = PackedStringArray()
+primary_visual_theme = "Cian y magenta nocturnos"
+art_requirement = "TODO_ART_CAP_NEON"
+defeat_animation_reference = "TODO_ART_CAP_NEON_DEFEAT"
+speed = 1.03333333
+acceleration = 1.02222222
+handling = 0.97777778
+weight = 0.93333333
+boost = 1.11111111

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="CircuitDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/circuit_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "express"
+display_name = "Cascada Express"
+description = "Descensos separados por curvas de recuperación"
+price = 200
+length = 18000
+width = 730
+curve_amplitude = 220
+curve_period = 1400
+secondary_curve_period = 710
+width_variation = 65
+seed_value = 322
+water_color = Color(0.12, 0.64, 0.86, 1)
+difficulty_rating = 5
+recommended_level = 5
+theme_id = "express"
+layout_path = "res://data/circuits/express.tres"

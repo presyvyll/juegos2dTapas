@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="CircuitDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/circuit_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "tormenta"
+display_name = "Tormenta Caribeña"
+description = "Alta: lluvia, corrientes cambiantes y objetos flotantes."
+price = 250
+length = 18000
+width = 660
+curve_amplitude = 265
+seed_value = 307
+curve_period = 1000
+secondary_curve_period = 510
+width_variation = 90
+water_color = Color(0.10, 0.29, 0.40, 1)
+storm = true
+difficulty_rating = 9
+recommended_level = 11
+theme_id = "tormenta"
+layout_path = "res://data/circuits/tormenta.tres"

@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CapDefinition" load_steps=7 format=3]
+[ext_resource type="Script" path="res://scripts/resources/cap_definition.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/resources/cap_ratings.gd" id="ratings"]
+[ext_resource type="Resource" path="res://data/abilities/ancla.tres" id="ability"]
+[ext_resource type="Resource" path="res://data/appearances/arcade/ancla.tres" id="appearance"]
+[ext_resource type="Resource" path="res://data/ai_profiles/zen.tres" id="profile"]
+[sub_resource type="Resource" id="stats"]
+script = ExtResource("ratings")
+speed = 4
+acceleration = 4
+handling = 6
+weight = 10
+boost = 4
+impact = 8
+[resource]
+script = ExtResource("1")
+id = "ancla"
+display_name = "Ancla"
+color = Color(0.196078, 0.290196, 0.474510, 1)
+ratings = SubResource("stats")
+ability = ExtResource("ability")
+appearance = ExtResource("appearance")
+preferred_ai_profile = ExtResource("profile")
+archetype = "Pesada"
+description = "Resiste impactos; rectas lentas."
+rarity = "rara"
+unlock_method = "cup_podium"
+unlock_requirement = "oro"
+legacy_ids = PackedStringArray()
+primary_visual_theme = "Azul marino"
+art_requirement = "TODO_ART_CAP_ANCLA"
+defeat_animation_reference = "TODO_ART_CAP_ANCLA_DEFEAT"
+speed = 0.98000000
+acceleration = 0.93333333
+handling = 1.02222222
+weight = 1.20000000
+boost = 0.93333333

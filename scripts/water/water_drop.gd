@@ -4,10 +4,12 @@ extends WaterCurrentArea
 
 @export var airtime: float = 0.65
 
-func _ready() -> void:
+func _init() -> void:
 	size = Vector2(500, 90)
 	strength = 260
 	max_speed_modifier = 1.2
+
+func _ready() -> void:
 	super._ready()
 
 func _enter(body: Node2D) -> void:

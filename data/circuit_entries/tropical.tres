@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="CircuitDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/circuit_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "tropical"
+display_name = "Canal Tropical"
+description = "Dificultad media: hojas, ramas y pasos entre islas."
+price = 100
+length = 18000.0
+width = 660.0
+curve_amplitude = 235.0
+seed_value = 133
+curve_period = 1100.0
+secondary_curve_period = 520.0
+width_variation = 100.0
+water_color = Color(0.06, 0.65, 0.57, 1)
+difficulty_rating = 4
+recommended_level = 3
+theme_id = "tropical"
+layout_path = "res://data/circuits/tropical.tres"

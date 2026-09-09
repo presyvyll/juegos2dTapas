@@ -6,9 +6,11 @@ extends RockObstacle
 var origin := Vector2.ZERO
 var elapsed := 0.0
 
-func _ready() -> void:
+func _init() -> void:
 	radius = 32
 	tint = Color("ddbd78")
+
+func _ready() -> void:
 	super._ready()
 	origin = position
 

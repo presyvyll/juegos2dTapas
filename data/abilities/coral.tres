@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CapAbilityDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/cap_ability_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "coral_ability"
+display_name = "Segundo Aire"
+description = "Aceleración +12% durante 1.5 s tras un impacto; recarga de 7 s."
+trigger = "impact_received"
+duration = 1.5
+cooldown = 7
+max_uses = 0
+modifiers = {"acceleration":1.12}
+feedback_color = Color(1.000000, 0.466667, 0.454902, 1)
+art_requirement = "TODO_ART_ABILITY_CORAL"

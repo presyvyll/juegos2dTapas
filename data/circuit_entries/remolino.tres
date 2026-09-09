@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="CircuitDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/circuit_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "remolino"
+display_name = "Remolino Azul"
+description = "Media-alta: remolinos, agua lenta y corrientes rápidas."
+price = 150
+length = 18000
+width = 690
+curve_amplitude = 230
+seed_value = 211
+curve_period = 1250
+secondary_curve_period = 600
+width_variation = 100
+water_color = Color(0.08, 0.42, 0.72, 1)
+difficulty_rating = 5
+recommended_level = 4
+theme_id = "remolino"
+layout_path = "res://data/circuits/remolino.tres"

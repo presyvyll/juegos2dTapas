@@ -14,7 +14,7 @@ func _ready() -> void:
 	var record := RacingUI.label("", 18)
 	add_child(record)
 	var update_record := func() -> void:
-		var key := "%s_%s_%d" % [circuit.id, SaveManager.settings.difficulty, SaveManager.settings.race_laps]
+		var key := circuit.record_key(SaveManager.settings.difficulty, SaveManager.settings.race_laps)
 		var best := float(SaveManager.best_times.get(key, 0))
 		record.text = "Récord local: %.2f s" % best if best > 0 else "Récord local: todavía sin marca"
 	for row in options.get_children():

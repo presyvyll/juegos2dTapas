@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CapDefinition" load_steps=7 format=3]
+[ext_resource type="Script" path="res://scripts/resources/cap_definition.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/resources/cap_ratings.gd" id="ratings"]
+[ext_resource type="Resource" path="res://data/abilities/torbellino.tres" id="ability"]
+[ext_resource type="Resource" path="res://data/appearances/arcade/torbellino.tres" id="appearance"]
+[ext_resource type="Resource" path="res://data/ai_profiles/nova.tres" id="profile"]
+[sub_resource type="Resource" id="stats"]
+script = ExtResource("ratings")
+speed = 6
+acceleration = 5
+handling = 6
+weight = 6
+boost = 5
+impact = 8
+[resource]
+script = ExtResource("1")
+id = "torbellino"
+display_name = "Torbellino"
+color = Color(0.454902, 0.403922, 0.847059, 1)
+ratings = SubResource("stats")
+ability = ExtResource("ability")
+appearance = ExtResource("appearance")
+preferred_ai_profile = ExtResource("profile")
+archetype = "Agresiva"
+description = "Presiona cerca; turbo discreto."
+rarity = "epica"
+unlock_method = "cup_podium"
+unlock_requirement = "maestra"
+legacy_ids = PackedStringArray()
+primary_visual_theme = "Espiral azul y púrpura"
+art_requirement = "TODO_ART_CAP_TORBELLINO"
+defeat_animation_reference = "TODO_ART_CAP_TORBELLINO_DEFEAT"
+speed = 1.00666667
+acceleration = 0.97777778
+handling = 1.02222222
+weight = 1.02222222
+boost = 0.97777778

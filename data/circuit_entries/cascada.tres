@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="CircuitDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/circuit_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "cascada"
+display_name = "Cascada Extrema"
+description = "Alta: saltos de agua, chorros y curvas rápidas."
+price = 200
+length = 18000
+width = 610
+curve_amplitude = 270
+seed_value = 87
+curve_period = 950
+secondary_curve_period = 490
+width_variation = 85
+water_color = Color(0.11, 0.56, 0.75, 1)
+record_version = 2
+difficulty_rating = 8
+recommended_level = 8
+theme_id = "cascada"
+layout_path = "res://data/circuits/cascada.tres"

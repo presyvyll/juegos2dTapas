@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="CircuitDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/circuit_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "plaza"
+display_name = "Plaza del Sol"
+description = "Chorros espaciados; curvas abiertas"
+price = 0
+length = 18000
+width = 750
+curve_amplitude = 175
+curve_period = 1550
+secondary_curve_period = 800
+width_variation = 40
+seed_value = 174
+water_color = Color(0.10, 0.70, 0.81, 1)
+difficulty_rating = 3
+recommended_level = 2
+theme_id = "plaza"
+layout_path = "res://data/circuits/plaza.tres"

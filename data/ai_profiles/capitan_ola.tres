@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="AIProfile" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/ai_profile.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "capitan_ola"
+skill_level = 4
+aggression = 0.3
+risk_tolerance = 0.35
+boost_usage = 0.55
+powerup_skill = 0.35
+overtake_skill = 0.4
+defensive_skill = 0.35
+mistake_probability = 0.14
+preferred_line = 0
+recovery_skill = 0.55
+strategy = "Turbo de salida"

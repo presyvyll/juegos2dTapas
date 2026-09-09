@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CapDefinition" load_steps=7 format=3]
+[ext_resource type="Script" path="res://scripts/resources/cap_definition.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/resources/cap_ratings.gd" id="ratings"]
+[ext_resource type="Resource" path="res://data/abilities/chispa.tres" id="ability"]
+[ext_resource type="Resource" path="res://data/appearances/arcade/chispa.tres" id="appearance"]
+[ext_resource type="Resource" path="res://data/ai_profiles/milo.tres" id="profile"]
+[sub_resource type="Resource" id="stats"]
+script = ExtResource("ratings")
+speed = 6
+acceleration = 8
+handling = 7
+weight = 5
+boost = 6
+impact = 4
+[resource]
+script = ExtResource("1")
+id = "chispa"
+display_name = "Chispa"
+color = Color(1.000000, 0.580392, 0.219608, 1)
+ratings = SubResource("stats")
+ability = ExtResource("ability")
+appearance = ExtResource("appearance")
+preferred_ai_profile = ExtResource("profile")
+archetype = "Equilibrada"
+description = "Acelera al salir; poco empuje."
+rarity = "comun"
+unlock_method = "start"
+unlock_requirement = ""
+legacy_ids = PackedStringArray("sol")
+primary_visual_theme = "Naranja solar"
+art_requirement = "TODO_ART_CAP_CHISPA"
+defeat_animation_reference = "TODO_ART_CAP_CHISPA_DEFEAT"
+speed = 1.00666667
+acceleration = 1.11111111
+handling = 1.06666667
+weight = 0.97777778
+boost = 1.02222222

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RivalDefinition" load_steps=4 format=3]
+[ext_resource type="Script" path="res://scripts/resources/rival_definition.gd" id="1"]
+[ext_resource type="Resource" path="res://data/caps/arcade/titan.tres" id="cap"]
+[ext_resource type="Resource" path="res://data/ai_profiles/toro.tres" id="profile"]
+[resource]
+script = ExtResource("1")
+id = "toro"
+display_name = "Toro"
+favorite_cap = ExtResource("cap")
+profile = ExtResource("profile")
+personality = "Defiende su línea"
+favorite_powerups = PackedStringArray("shield")
+rivalry_level = 5
+intro_line = "Esta línea tiene dueño."
+victory_line = "Firme hasta la meta."
+champion_cup_id = "plata"

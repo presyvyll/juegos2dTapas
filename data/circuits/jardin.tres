@@ -1,0 +1,117 @@
+[gd_resource type="Resource" script_class="CircuitDefinition" load_steps=18 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/circuit_definition.gd" id="definition"]
+[ext_resource type="Script" path="res://scripts/resources/circuit_feature.gd" id="feature"]
+[ext_resource type="PackedScene" path="res://scenes/obstacles/leaf_obstacle.tscn" id="leaf"]
+[ext_resource type="PackedScene" path="res://scenes/water/water_current_area.tscn" id="current"]
+[ext_resource type="PackedScene" path="res://scenes/obstacles/rock_obstacle.tscn" id="rock"]
+
+[sub_resource type="Resource" id="F0"]
+script = ExtResource("feature")
+scene = ExtResource("leaf")
+distance = 1600.0
+lane = -0.3
+
+[sub_resource type="Resource" id="F1"]
+script = ExtResource("feature")
+scene = ExtResource("current")
+distance = 2500.0
+lane = 0
+speed_modifier = 1.04
+current_direction = Vector2(0.15, -1)
+current_strength = 75
+current_size = Vector2(420, 330)
+turbulence = 8
+
+[sub_resource type="Resource" id="F2"]
+script = ExtResource("feature")
+scene = ExtResource("leaf")
+distance = 3900.0
+lane = 0.35
+
+[sub_resource type="Resource" id="F3"]
+script = ExtResource("feature")
+scene = ExtResource("rock")
+distance = 5300.0
+lane = 0.3
+rock_radius = 45
+
+[sub_resource type="Resource" id="F4"]
+script = ExtResource("feature")
+scene = ExtResource("leaf")
+distance = 6800.0
+lane = -0.35
+
+[sub_resource type="Resource" id="F5"]
+script = ExtResource("feature")
+scene = ExtResource("current")
+distance = 7900.0
+lane = 0
+speed_modifier = 1.03
+current_direction = Vector2(-0.15, -1)
+current_strength = 70
+current_size = Vector2(420, 330)
+turbulence = 8
+
+[sub_resource type="Resource" id="F6"]
+script = ExtResource("feature")
+scene = ExtResource("leaf")
+distance = 9300.0
+lane = 0.3
+
+[sub_resource type="Resource" id="F7"]
+script = ExtResource("feature")
+scene = ExtResource("rock")
+distance = 10700.0
+lane = -0.3
+rock_radius = 45
+
+[sub_resource type="Resource" id="F8"]
+script = ExtResource("feature")
+scene = ExtResource("leaf")
+distance = 12300.0
+lane = -0.2
+
+[sub_resource type="Resource" id="F9"]
+script = ExtResource("feature")
+scene = ExtResource("current")
+distance = 13700.0
+lane = 0
+speed_modifier = 1.05
+current_direction = Vector2(0, -1)
+current_strength = 80
+current_size = Vector2(420, 330)
+turbulence = 8
+
+[sub_resource type="Resource" id="F10"]
+script = ExtResource("feature")
+scene = ExtResource("leaf")
+distance = 15400.0
+lane = 0.35
+
+[sub_resource type="Resource" id="F11"]
+script = ExtResource("feature")
+scene = ExtResource("rock")
+distance = 16600.0
+lane = 0
+rock_radius = 50
+
+[resource]
+script = ExtResource("definition")
+id = "jardin"
+display_name = "Jardín Acuático"
+description = "Hojas lentas; corrientes suaves"
+price = 0
+length = 18000
+width = 780
+curve_amplitude = 135
+curve_period = 1700
+secondary_curve_period = 850
+width_variation = 35
+seed_value = 137
+water_color = Color(0.15, 0.65, 0.55, 1)
+difficulty_rating = 2
+recommended_level = 1
+theme_id = "jardin"
+authored_layout = true
+features = Array[ExtResource("feature")]([SubResource("F0"), SubResource("F1"), SubResource("F2"), SubResource("F3"), SubResource("F4"), SubResource("F5"), SubResource("F6"), SubResource("F7"), SubResource("F8"), SubResource("F9"), SubResource("F10"), SubResource("F11")])

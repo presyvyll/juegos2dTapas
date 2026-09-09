@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="CapAppearance" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/cap_appearance.gd" id="1"]
+[resource]
+script = ExtResource("1")
+personality = "Campeona reservada"
+style = 4
+accent = Color(0.890196, 0.807843, 1.000000, 1)
+trail_color = Color(0.396078, 0.325490, 0.505882, 1)

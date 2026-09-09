@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CapAbilityDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/cap_ability_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "fantasma_ability"
+display_name = "Flujo Fantasma"
+description = "Durante 1.5 s las hojas reducen menos la velocidad; conserva todas las colisiones."
+trigger = "light_obstacle"
+duration = 1.5
+cooldown = 10
+max_uses = 0
+modifiers = {"light_slow_floor":0.92}
+feedback_color = Color(0.862745, 0.925490, 0.968627, 1)
+art_requirement = "TODO_ART_ABILITY_FANTASMA"

@@ -13,14 +13,23 @@ func run() -> void:
 	save.coins = 0
 	save.best_times = {}
 	var baseline := root.get_child_count()
-	for circuit in ["fuente", "cascada"]:
+	var circuit_ids := RacingCatalog.circuit_ids()
+	for argument in OS.get_cmdline_user_args():
+		if argument.begins_with("--circuit="):
+			var requested := argument.trim_prefix("--circuit=")
+			if requested not in circuit_ids:
+				push_error("Unknown circuit: " + requested)
+				quit(1)
+				return
+			circuit_ids = [requested]
+	for circuit in circuit_ids:
 		for difficulty in ["easy", "normal", "hard"]:
 			for cap_id in ["sol", "coral", "menta", "oceano", "uva", "coco"]:
 				save.selected_circuit = circuit
 				save.selected_cap = cap_id
 				save.settings.difficulty = difficulty
 				await simulate(save, 1)
-	for circuit in ["fuente", "cascada"]:
+	for circuit in circuit_ids:
 		save.selected_circuit = circuit
 		save.selected_cap = "sol"
 		save.settings.difficulty = "normal"
@@ -38,6 +47,10 @@ func simulate(save: Node, laps: int) -> void:
 	var race: Node2D = load("res://levels/race.tscn").instantiate()
 	root.add_child(race)
 	await process_frame
+	# Rendering is covered separately; preserve all race and hazard physics here.
+	if DisplayServer.get_name() == "headless":
+		disable_presentation(race)
+		race.hud.set_process(false)
 	Engine.max_fps = 0
 	var session: RaceSession = race.session
 	session.circuit = session.circuit.duplicate() as CircuitDefinition
@@ -61,8 +74,14 @@ func simulate(save: Node, laps: int) -> void:
 		times.append(cap.finish_time)
 		if not cap.finished or not cap.position.is_finite():
 			failures += 1
-			push_error("Did not finish: %s / %s / %s / %s at %s" % [save.selected_circuit, save.settings.difficulty, save.selected_cap, cap.racer_name, cap.position])
+			push_error("Did not finish: %s / %s / %s / %s at %s, checkpoint %d, lap %d" % [save.selected_circuit, save.settings.difficulty, save.selected_cap, cap.racer_name, cap.position, cap.checkpoint_index, cap.lap])
 	rows.append({"circuit": save.selected_circuit, "difficulty": save.settings.difficulty, "cap": save.selected_cap, "laps": laps, "finish_times": times, "finished": session.finish_order.size()})
 	print("CASE: %s/%s/%s x%d: %s" % [save.selected_circuit, save.settings.difficulty, save.selected_cap, laps, times])
 	race.queue_free()
 	await process_frame
+
+func disable_presentation(node: Node) -> void:
+	if node is CapPresentation or node is AmbientMotion or node is WaterSurface or node is WaterVFXPool:
+		node.set_process(false)
+	for child in node.get_children():
+		disable_presentation(child)

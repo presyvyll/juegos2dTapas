@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="CapAbilityDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/cap_ability_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "eclipse_ability"
+display_name = "Pulso Eclipse"
+description = "Al superar media carrera, aceleración +10% y empuje recibido -15% durante 2 s; una vez."
+trigger = "race_midpoint"
+duration = 2
+cooldown = 0
+max_uses = 1
+modifiers = {"acceleration":1.1,"received_push":0.85}
+feedback_color = Color(0.396078, 0.325490, 0.505882, 1)
+art_requirement = "TODO_ART_ABILITY_ECLIPSE"
+threshold = 0.5

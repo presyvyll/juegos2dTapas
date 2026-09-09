@@ -30,10 +30,11 @@ func build() -> void:
 		stats.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		add_child(stats)
 	else:
-		var description := RacingUI.label(item.description + "\n60–90 s aprox. · %d vuelta(s)" % item.laps)
+		var description := RacingUI.label(item.description + "\nPista %d/%d · Dificultad %d/10 · %d vuelta(s)" % [index + 1, entries.size(), item.difficulty_rating, item.laps])
+		description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		description.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		add_child(description)
-		var key := "%s_%s_%d" % [item.id, SaveManager.settings.difficulty, item.laps]
+		var key: String = item.record_key(SaveManager.settings.difficulty, item.laps)
 		var best := float(SaveManager.best_times.get(key, 0))
 		add_child(RacingUI.label("Mejor tiempo: %.2f s" % best if best > 0 else "Mejor tiempo: por descubrir"))
 	var navigation := HBoxContainer.new()

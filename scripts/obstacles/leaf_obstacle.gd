@@ -2,11 +2,13 @@ class_name LeafObstacle
 extends WaterCurrentArea
 var visual_motion: AmbientMotion
 
-func _ready() -> void:
+func _init() -> void:
 	size = Vector2(100, 120)
 	strength = 80
 	direction = Vector2.DOWN
 	max_speed_modifier = 0.78
+
+func _ready() -> void:
 	super._ready()
 	visual_motion = AmbientMotion.new()
 	add_child(visual_motion)

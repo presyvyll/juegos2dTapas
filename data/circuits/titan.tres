@@ -1,0 +1,126 @@
+[gd_resource type="Resource" script_class="CircuitDefinition" load_steps=20 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/circuit_definition.gd" id="definition"]
+[ext_resource type="Script" path="res://scripts/resources/circuit_feature.gd" id="feature"]
+[ext_resource type="PackedScene" path="res://scenes/obstacles/moving_obstacle.tscn" id="moving"]
+[ext_resource type="PackedScene" path="res://scenes/water/water_drop.tscn" id="drop"]
+[ext_resource type="PackedScene" path="res://scenes/water/water_current_area.tscn" id="current"]
+[ext_resource type="PackedScene" path="res://scenes/obstacles/water_jet.tscn" id="jet"]
+
+[sub_resource type="Resource" id="F0"]
+script = ExtResource("feature")
+scene = ExtResource("moving")
+distance = 1700.0
+lane = 0.15
+travel = 65
+frequency = 0.8
+
+[sub_resource type="Resource" id="F1"]
+script = ExtResource("feature")
+scene = ExtResource("drop")
+distance = 2900.0
+lane = 0
+
+[sub_resource type="Resource" id="F2"]
+script = ExtResource("feature")
+scene = ExtResource("current")
+distance = 3900.0
+lane = 0
+speed_modifier = 0.85
+current_direction = Vector2(0, -1)
+current_strength = 70
+current_size = Vector2(420, 330)
+turbulence = 8
+
+[sub_resource type="Resource" id="F3"]
+script = ExtResource("feature")
+scene = ExtResource("moving")
+distance = 5200.0
+lane = -0.15
+travel = 65
+frequency = 0.8
+
+[sub_resource type="Resource" id="F4"]
+script = ExtResource("feature")
+scene = ExtResource("jet")
+distance = 6400.0
+lane = 0.3
+
+[sub_resource type="Resource" id="F5"]
+script = ExtResource("feature")
+scene = ExtResource("drop")
+distance = 7600.0
+lane = 0
+
+[sub_resource type="Resource" id="F6"]
+script = ExtResource("feature")
+scene = ExtResource("moving")
+distance = 9100.0
+lane = 0.15
+travel = 65
+frequency = 0.8
+
+[sub_resource type="Resource" id="F7"]
+script = ExtResource("feature")
+scene = ExtResource("current")
+distance = 10400.0
+lane = 0
+speed_modifier = 0.85
+current_direction = Vector2(0, -1)
+current_strength = 70
+current_size = Vector2(420, 330)
+turbulence = 8
+
+[sub_resource type="Resource" id="F8"]
+script = ExtResource("feature")
+scene = ExtResource("drop")
+distance = 11600.0
+lane = 0
+
+[sub_resource type="Resource" id="F9"]
+script = ExtResource("feature")
+scene = ExtResource("moving")
+distance = 13100.0
+lane = -0.15
+travel = 65
+frequency = 0.8
+
+[sub_resource type="Resource" id="F10"]
+script = ExtResource("feature")
+scene = ExtResource("jet")
+distance = 14400.0
+lane = -0.3
+
+[sub_resource type="Resource" id="F11"]
+script = ExtResource("feature")
+scene = ExtResource("drop")
+distance = 15600.0
+lane = 0
+
+[sub_resource type="Resource" id="F12"]
+script = ExtResource("feature")
+scene = ExtResource("moving")
+distance = 17000.0
+lane = 0
+travel = 65
+frequency = 0.8
+
+[resource]
+script = ExtResource("definition")
+id = "titan"
+display_name = "Cascada del Titán"
+description = "Objetos móviles y caídas; evita encadenar impactos"
+price = 320
+length = 18000
+width = 700
+curve_amplitude = 265
+curve_period = 1120
+secondary_curve_period = 590
+width_variation = 65
+seed_value = 544
+water_color = Color(0.12, 0.43, 0.59, 1)
+difficulty_rating = 8
+recommended_level = 10
+theme_id = "titan"
+authored_layout = true
+features = Array[ExtResource("feature")]([SubResource("F0"), SubResource("F1"), SubResource("F2"), SubResource("F3"), SubResource("F4"), SubResource("F5"), SubResource("F6"), SubResource("F7"), SubResource("F8"), SubResource("F9"), SubResource("F10"), SubResource("F11"), SubResource("F12")])

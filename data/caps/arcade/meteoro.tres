@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CapDefinition" load_steps=7 format=3]
+[ext_resource type="Script" path="res://scripts/resources/cap_definition.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/resources/cap_ratings.gd" id="ratings"]
+[ext_resource type="Resource" path="res://data/abilities/meteoro.tres" id="ability"]
+[ext_resource type="Resource" path="res://data/appearances/arcade/meteoro.tres" id="appearance"]
+[ext_resource type="Resource" path="res://data/ai_profiles/nova.tres" id="profile"]
+[sub_resource type="Resource" id="stats"]
+script = ExtResource("ratings")
+speed = 8
+acceleration = 5
+handling = 4
+weight = 5
+boost = 10
+impact = 4
+[resource]
+script = ExtResource("1")
+id = "meteoro"
+display_name = "Meteoro"
+color = Color(0.270588, 0.254902, 0.305882, 1)
+ratings = SubResource("stats")
+ability = ExtResource("ability")
+appearance = ExtResource("appearance")
+preferred_ai_profile = ExtResource("profile")
+archetype = "Turbo"
+description = "Salida ofensiva; recarga más lenta durante 4 s."
+rarity = "epica"
+unlock_method = "cup_podium"
+unlock_requirement = "leyenda"
+legacy_ids = PackedStringArray()
+primary_visual_theme = "Grafito con estela naranja"
+art_requirement = "TODO_ART_CAP_METEORO"
+defeat_animation_reference = "TODO_ART_CAP_METEORO_DEFEAT"
+speed = 1.03333333
+acceleration = 0.97777778
+handling = 0.93333333
+weight = 0.97777778
+boost = 1.20000000

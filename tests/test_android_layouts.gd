@@ -31,6 +31,13 @@ func run() -> void:
 		menu.show_selection("caps")
 		await settle()
 		check_controls(menu, root.get_visible_rect(), str(resolution) + " caps")
+		menu.show_selection("circuits")
+		var circuit_page: Control = menu.content.get_child(0)
+		for circuit_index in range(RacingCatalog.circuits().size()):
+			circuit_page.index = circuit_index
+			circuit_page.build()
+			await settle()
+			check_controls(menu, root.get_visible_rect(), str(resolution) + " circuit " + str(circuit_index))
 		menu.show_settings()
 		await settle()
 		check_controls(menu, root.get_visible_rect(), str(resolution) + " settings")

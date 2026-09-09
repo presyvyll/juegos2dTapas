@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="CapAbilityDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/cap_ability_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "glacial_ability"
+display_name = "Precisión Glacial"
+description = "Amortiguación lateral +15% durante 2 s al derrapar con fuerza; recarga de 9 s."
+trigger = "strong_drift"
+duration = 2
+cooldown = 9
+max_uses = 0
+modifiers = {"drift_damping":1.15}
+feedback_color = Color(0.596078, 0.803922, 0.921569, 1)
+art_requirement = "TODO_ART_ABILITY_GLACIAL"
+threshold = 90.0
+condition_seconds = 0.3

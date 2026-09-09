@@ -1,5 +1,11 @@
 # Entrega arcade Android
 
+Actualización de contenido, etapa D: [quince pistas jugables](ETAPA_D_CIRCUITOS.md)
+y carga de trazados bajo demanda. APK ARM64 y x86_64 regenerados; firma verificada.
+Las fichas y trazados extraídos del APK pasan pruebas de carga y geometría con
+Godot de Windows. Esto no sustituye ejecutar el juego en un teléfono físico.
+El AAB y ejecutable Windows previos no se regeneraron en esta etapa.
+
 ## Bloques implementados
 
 | Bloque | Resultado | Archivos principales |

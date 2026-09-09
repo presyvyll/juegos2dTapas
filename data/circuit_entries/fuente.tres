@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="CircuitDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/circuit_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "fuente"
+display_name = "Fuente Central"
+description = "Inicial: curvas amplias, pocas rocas y corriente estable."
+price = 0
+length = 18000
+width = 760
+curve_amplitude = 120
+seed_value = 42
+curve_period = 1800
+secondary_curve_period = 850
+width_variation = 35
+water_color = Color(0.094, 0.714, 0.769, 1)
+record_version = 2
+difficulty_rating = 1
+recommended_level = 1
+theme_id = "fuente"
+layout_path = "res://data/circuits/fuente.tres"

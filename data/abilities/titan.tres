@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CapAbilityDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/cap_ability_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "titan_ability"
+display_name = "Muro Móvil"
+description = "Empuje recibido -20% durante 1.5 s después de un impacto; recarga de 9 s."
+trigger = "impact_received"
+duration = 1.5
+cooldown = 9
+max_uses = 0
+modifiers = {"received_push":0.8}
+feedback_color = Color(0.533333, 0.592157, 0.639216, 1)
+art_requirement = "TODO_ART_ABILITY_TITAN"

@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CapDefinition" load_steps=7 format=3]
+[ext_resource type="Script" path="res://scripts/resources/cap_definition.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/resources/cap_ratings.gd" id="ratings"]
+[ext_resource type="Resource" path="res://data/abilities/fantasma.tres" id="ability"]
+[ext_resource type="Resource" path="res://data/appearances/arcade/fantasma.tres" id="appearance"]
+[ext_resource type="Resource" path="res://data/ai_profiles/nyx.tres" id="profile"]
+[sub_resource type="Resource" id="stats"]
+script = ExtResource("ratings")
+speed = 7
+acceleration = 6
+handling = 8
+weight = 3
+boost = 7
+impact = 5
+[resource]
+script = ExtResource("1")
+id = "fantasma"
+display_name = "Fantasma"
+color = Color(0.862745, 0.925490, 0.968627, 1)
+ratings = SubResource("stats")
+ability = ExtResource("ability")
+appearance = ExtResource("appearance")
+preferred_ai_profile = ExtResource("profile")
+archetype = "Especial"
+description = "Evita frenadas leves; vulnerable a empujones."
+rarity = "epica"
+unlock_method = "cup_champion"
+unlock_requirement = "maestra"
+legacy_ids = PackedStringArray()
+primary_visual_theme = "Blanco azulado"
+art_requirement = "TODO_ART_CAP_FANTASMA"
+defeat_animation_reference = "TODO_ART_CAP_FANTASMA_DEFEAT"
+speed = 1.02000000
+acceleration = 1.02222222
+handling = 1.11111111
+weight = 0.88888889
+boost = 1.06666667

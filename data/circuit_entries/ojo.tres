@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="CircuitDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/circuit_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "ojo"
+display_name = "Ojo del Torbellino"
+description = "Remolino central que pulsa; pasos laterales"
+price = 320
+length = 18000
+width = 770
+curve_amplitude = 215
+curve_period = 1300
+secondary_curve_period = 700
+width_variation = 55
+seed_value = 507
+water_color = Color(0.04, 0.32, 0.64, 1)
+difficulty_rating = 8
+recommended_level = 10
+theme_id = "ojo"
+layout_path = "res://data/circuits/ojo.tres"

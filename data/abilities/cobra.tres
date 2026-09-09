@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="CapAbilityDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/cap_ability_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "cobra_ability"
+display_name = "Ataque de Oportunidad"
+description = "Velocidad +5% durante 1.5 s tras adelantar por un lateral; recarga de 9 s."
+trigger = "side_overtake"
+duration = 1.5
+cooldown = 9
+max_uses = 0
+modifiers = {"speed":1.05}
+feedback_color = Color(0.505882, 0.803922, 0.282353, 1)
+art_requirement = "TODO_ART_ABILITY_COBRA"
+threshold = 0.45

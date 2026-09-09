@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CapAbilityDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/cap_ability_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "rayo_ability"
+display_name = "Sobrecarga"
+description = "Velocidad +5% durante 1.5 s tras adelantar; recarga de 8 s."
+trigger = "overtake"
+duration = 1.5
+cooldown = 8
+max_uses = 0
+modifiers = {"speed":1.05}
+feedback_color = Color(1.000000, 0.886275, 0.278431, 1)
+art_requirement = "TODO_ART_ABILITY_RAYO"

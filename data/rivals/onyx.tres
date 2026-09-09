@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RivalDefinition" load_steps=4 format=3]
+[ext_resource type="Script" path="res://scripts/resources/rival_definition.gd" id="1"]
+[ext_resource type="Resource" path="res://data/caps/arcade/eclipse.tres" id="cap"]
+[ext_resource type="Resource" path="res://data/ai_profiles/onyx.tres" id="profile"]
+[resource]
+script = ExtResource("1")
+id = "onyx"
+display_name = "Onyx"
+favorite_cap = ExtResource("cap")
+profile = ExtResource("profile")
+personality = "Dominio equilibrado"
+favorite_powerups = PackedStringArray("shield", "recharge")
+rivalry_level = 10
+intro_line = "Cada vuelta cuenta."
+victory_line = "La leyenda continúa."
+champion_cup_id = "leyenda"

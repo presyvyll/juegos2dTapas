@@ -13,7 +13,10 @@ func _ready() -> void:
 	for item in RacingCatalog.circuits():
 		if item.id == SaveManager.selected_circuit:
 			circuit = item
-	circuit = circuit.duplicate() as CircuitDefinition
+	circuit = RacingCatalog.load_circuit(circuit)
+	if circuit == null:
+		get_tree().call_deferred("change_scene_to_file", "res://ui/main_menu.tscn")
+		return
 	circuit.laps = int(SaveManager.settings.get("race_laps", 1))
 	track = RaceTrack.new()
 	track.definition = circuit
@@ -25,6 +28,7 @@ func _ready() -> void:
 	session = RaceSession.new()
 	session.circuit = circuit
 	add_child(session)
+	track.checkpoint_count = session.checkpoint_count
 	spawn_racers()
 	var water := WaterSurface.new()
 	water.track = track
@@ -66,8 +70,8 @@ func spawn_pickups() -> void:
 	for index in range(8):
 		var pickup := RacingPickup.new()
 		pickup.definition = effects[index % effects.size()]
-		var y := -1500.0 - index * 1900
-		pickup.position = Vector2(track.center_at(y) + (-100 if index % 2 == 0 else 100), y)
+		var y := (-1500.0 - index * 1900) * track.definition.length / 18000.0
+		pickup.position = track.pickup_position(y, -100 if index % 2 == 0 else 100)
 		add_child(pickup)
 
 func spawn_racers() -> void:
@@ -142,7 +146,7 @@ func on_finish(place: int, time: float) -> void:
 	rewarded = true
 	player.controls.clear()
 	player.controls.set_process_unhandled_input(false)
-	var key := "%s_%s_%d" % [track.definition.id, SaveManager.settings.difficulty, track.definition.laps]
+	var key := track.definition.record_key(SaveManager.settings.difficulty, track.definition.laps)
 	var reward := SaveManager.record_result(key, time, place)
 	AudioManager.play("victory")
 	AudioManager.set_racing(false)

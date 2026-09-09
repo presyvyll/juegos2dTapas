@@ -1,13 +1,275 @@
-[gd_resource type="Resource" script_class="CircuitDefinition" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="CircuitDefinition" load_steps=36 format=3]
 
-[ext_resource type="Script" path="res://scripts/resources/circuit_definition.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/resources/circuit_definition.gd" id="definition"]
+[ext_resource type="Script" path="res://scripts/resources/circuit_feature.gd" id="feature"]
+[ext_resource type="PackedScene" path="res://scenes/water/water_drop.tscn" id="drop"]
+[ext_resource type="PackedScene" path="res://scenes/obstacles/water_jet.tscn" id="jet"]
+[ext_resource type="PackedScene" path="res://scenes/obstacles/rock_obstacle.tscn" id="rock"]
+[ext_resource type="PackedScene" path="res://scenes/obstacles/moving_obstacle.tscn" id="moving"]
+[ext_resource type="PackedScene" path="res://scenes/water/water_current_area.tscn" id="current"]
+[ext_resource type="PackedScene" path="res://scenes/obstacles/branch_obstacle.tscn" id="branch"]
+
+[sub_resource type="Resource" id="F0"]
+script = ExtResource("feature")
+scene = ExtResource("drop")
+distance = 2500.0
+lane = 0
+current_strength = 330
+speed_modifier = 1.4
+current_size = Vector2(510, 160)
+
+[sub_resource type="Resource" id="F1"]
+script = ExtResource("feature")
+scene = ExtResource("drop")
+distance = 5600.0
+lane = 0
+current_strength = 330
+speed_modifier = 1.4
+current_size = Vector2(510, 160)
+
+[sub_resource type="Resource" id="F2"]
+script = ExtResource("feature")
+scene = ExtResource("drop")
+distance = 8700.0
+lane = 0
+current_strength = 330
+speed_modifier = 1.4
+current_size = Vector2(510, 160)
+
+[sub_resource type="Resource" id="F3"]
+script = ExtResource("feature")
+scene = ExtResource("drop")
+distance = 11800.0
+lane = 0
+current_strength = 330
+speed_modifier = 1.4
+current_size = Vector2(510, 160)
+
+[sub_resource type="Resource" id="F4"]
+script = ExtResource("feature")
+scene = ExtResource("drop")
+distance = 14900.0
+lane = 0
+current_strength = 330
+speed_modifier = 1.4
+current_size = Vector2(510, 160)
+
+[sub_resource type="Resource" id="F5"]
+script = ExtResource("feature")
+scene = ExtResource("jet")
+distance = 1800.0
+lane = 0.42
+current_direction = Vector2(-0.7, -1)
+current_strength = 400
+speed_modifier = 1.35
+current_size = Vector2(180, 330)
+turbulence = 30
+
+[sub_resource type="Resource" id="F6"]
+script = ExtResource("feature")
+scene = ExtResource("jet")
+distance = 4000.0
+lane = -0.42
+current_direction = Vector2(0.7, -1)
+current_strength = 400
+speed_modifier = 1.35
+current_size = Vector2(180, 330)
+turbulence = 30
+
+[sub_resource type="Resource" id="F7"]
+script = ExtResource("feature")
+scene = ExtResource("jet")
+distance = 6200.0
+lane = 0.42
+current_direction = Vector2(-0.7, -1)
+current_strength = 400
+speed_modifier = 1.35
+current_size = Vector2(180, 330)
+turbulence = 30
+
+[sub_resource type="Resource" id="F8"]
+script = ExtResource("feature")
+scene = ExtResource("jet")
+distance = 8400.0
+lane = -0.42
+current_direction = Vector2(0.7, -1)
+current_strength = 400
+speed_modifier = 1.35
+current_size = Vector2(180, 330)
+turbulence = 30
+
+[sub_resource type="Resource" id="F9"]
+script = ExtResource("feature")
+scene = ExtResource("jet")
+distance = 10600.0
+lane = 0.42
+current_direction = Vector2(-0.7, -1)
+current_strength = 400
+speed_modifier = 1.35
+current_size = Vector2(180, 330)
+turbulence = 30
+
+[sub_resource type="Resource" id="F10"]
+script = ExtResource("feature")
+scene = ExtResource("jet")
+distance = 12800.0
+lane = -0.42
+current_direction = Vector2(0.7, -1)
+current_strength = 400
+speed_modifier = 1.35
+current_size = Vector2(180, 330)
+turbulence = 30
+
+[sub_resource type="Resource" id="F11"]
+script = ExtResource("feature")
+scene = ExtResource("jet")
+distance = 15000.0
+lane = 0.42
+current_direction = Vector2(-0.7, -1)
+current_strength = 400
+speed_modifier = 1.35
+current_size = Vector2(180, 330)
+turbulence = 30
+
+[sub_resource type="Resource" id="F12"]
+script = ExtResource("feature")
+scene = ExtResource("rock")
+distance = 3200.0
+lane = -0.2
+rock_radius = 60
+
+[sub_resource type="Resource" id="F13"]
+script = ExtResource("feature")
+scene = ExtResource("moving")
+distance = 4200.0
+lane = 0
+travel = 70
+frequency = 0.95
+
+[sub_resource type="Resource" id="F14"]
+script = ExtResource("feature")
+scene = ExtResource("current")
+distance = 3700.0
+lane = 0
+current_direction = Vector2(0, -1)
+current_strength = 90
+speed_modifier = 0.8
+current_size = Vector2(480, 350)
+turbulence = 10
+
+[sub_resource type="Resource" id="F15"]
+script = ExtResource("feature")
+scene = ExtResource("rock")
+distance = 6900.0
+lane = 0.2
+rock_radius = 60
+
+[sub_resource type="Resource" id="F16"]
+script = ExtResource("feature")
+scene = ExtResource("moving")
+distance = 7700.0
+lane = 0
+travel = 70
+frequency = 0.95
+
+[sub_resource type="Resource" id="F17"]
+script = ExtResource("feature")
+scene = ExtResource("current")
+distance = 7300.0
+lane = 0
+current_direction = Vector2(0, -1)
+current_strength = 90
+speed_modifier = 0.8
+current_size = Vector2(480, 350)
+turbulence = 10
+
+[sub_resource type="Resource" id="F18"]
+script = ExtResource("feature")
+scene = ExtResource("rock")
+distance = 10600.0
+lane = -0.2
+rock_radius = 60
+
+[sub_resource type="Resource" id="F19"]
+script = ExtResource("feature")
+scene = ExtResource("moving")
+distance = 11200.0
+lane = 0
+travel = 70
+frequency = 0.95
+
+[sub_resource type="Resource" id="F20"]
+script = ExtResource("feature")
+scene = ExtResource("current")
+distance = 10900.0
+lane = 0
+current_direction = Vector2(0, -1)
+current_strength = 90
+speed_modifier = 0.8
+current_size = Vector2(480, 350)
+turbulence = 10
+
+[sub_resource type="Resource" id="F21"]
+script = ExtResource("feature")
+scene = ExtResource("rock")
+distance = 14300.0
+lane = 0.2
+rock_radius = 60
+
+[sub_resource type="Resource" id="F22"]
+script = ExtResource("feature")
+scene = ExtResource("moving")
+distance = 14700.0
+lane = 0
+travel = 70
+frequency = 0.95
+
+[sub_resource type="Resource" id="F23"]
+script = ExtResource("feature")
+scene = ExtResource("current")
+distance = 14500.0
+lane = 0
+current_direction = Vector2(0, -1)
+current_strength = 90
+speed_modifier = 0.8
+current_size = Vector2(480, 350)
+turbulence = 10
+
+[sub_resource type="Resource" id="F24"]
+script = ExtResource("feature")
+scene = ExtResource("branch")
+distance = 5400.0
+lane = -0.18
+
+[sub_resource type="Resource" id="F25"]
+script = ExtResource("feature")
+scene = ExtResource("branch")
+distance = 10100.0
+lane = 0.18
+
+[sub_resource type="Resource" id="F26"]
+script = ExtResource("feature")
+scene = ExtResource("branch")
+distance = 14800.0
+lane = -0.18
 
 [resource]
-script = ExtResource("1")
+script = ExtResource("definition")
 id = "cascada"
-display_name = "Canal Cascada"
-description = "Pasos estrechos y curvas más intensas."
+display_name = "Cascada Extrema"
+description = "Alta: saltos de agua, chorros y curvas rápidas."
 price = 200
-width = 610.0
-curve_amplitude = 260.0
+length = 18000
+width = 610
+curve_amplitude = 270
 seed_value = 87
+curve_period = 950
+secondary_curve_period = 490
+width_variation = 85
+water_color = Color(0.11, 0.56, 0.75, 1)
+authored_layout = true
+difficulty_rating = 8
+recommended_level = 8
+theme_id = "cascada"
+record_version = 2
+features = Array[ExtResource("feature")]([SubResource("F0"), SubResource("F1"), SubResource("F2"), SubResource("F3"), SubResource("F4"), SubResource("F5"), SubResource("F6"), SubResource("F7"), SubResource("F8"), SubResource("F9"), SubResource("F10"), SubResource("F11"), SubResource("F12"), SubResource("F13"), SubResource("F14"), SubResource("F15"), SubResource("F16"), SubResource("F17"), SubResource("F18"), SubResource("F19"), SubResource("F20"), SubResource("F21"), SubResource("F22"), SubResource("F23"), SubResource("F24"), SubResource("F25"), SubResource("F26")])

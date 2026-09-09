@@ -1,0 +1,247 @@
+{
+  "failures": 0,
+  "measurements": [
+    {
+      "circuit": "fuente",
+      "construction_ms": 542.703,
+      "features": 10,
+      "quality": "low",
+      "solids": 6,
+      "static_memory_delta_bytes": 27884016
+    },
+    {
+      "circuit": "jardin",
+      "construction_ms": 92.162,
+      "features": 12,
+      "quality": "low",
+      "solids": 3,
+      "static_memory_delta_bytes": 6870368
+    },
+    {
+      "circuit": "plaza",
+      "construction_ms": 142.944,
+      "features": 11,
+      "quality": "low",
+      "solids": 3,
+      "static_memory_delta_bytes": 2471132
+    },
+    {
+      "circuit": "tropical",
+      "construction_ms": 160.937,
+      "features": 28,
+      "quality": "low",
+      "solids": 10,
+      "static_memory_delta_bytes": 2708492
+    },
+    {
+      "circuit": "canal_turbo",
+      "construction_ms": 148.975,
+      "features": 15,
+      "quality": "low",
+      "solids": 4,
+      "static_memory_delta_bytes": 2454304
+    },
+    {
+      "circuit": "remolino",
+      "construction_ms": 148.955,
+      "features": 25,
+      "quality": "low",
+      "solids": 9,
+      "static_memory_delta_bytes": 2647112
+    },
+    {
+      "circuit": "express",
+      "construction_ms": 152.533,
+      "features": 11,
+      "quality": "low",
+      "solids": 4,
+      "static_memory_delta_bytes": 2392940
+    },
+    {
+      "circuit": "templo",
+      "construction_ms": 210.968,
+      "features": 15,
+      "quality": "low",
+      "solids": 12,
+      "static_memory_delta_bytes": 2437176
+    },
+    {
+      "circuit": "neon",
+      "construction_ms": 202.914,
+      "features": 14,
+      "quality": "low",
+      "solids": 4,
+      "static_memory_delta_bytes": 2502668
+    },
+    {
+      "circuit": "laberinto",
+      "construction_ms": 140.219,
+      "features": 13,
+      "quality": "low",
+      "solids": 11,
+      "static_memory_delta_bytes": 2386388
+    },
+    {
+      "circuit": "cascada",
+      "construction_ms": 182.731,
+      "features": 27,
+      "quality": "low",
+      "solids": 11,
+      "static_memory_delta_bytes": 2822580
+    },
+    {
+      "circuit": "ojo",
+      "construction_ms": 158.122,
+      "features": 11,
+      "quality": "low",
+      "solids": 2,
+      "static_memory_delta_bytes": 2368212
+    },
+    {
+      "circuit": "titan",
+      "construction_ms": 207.656,
+      "features": 13,
+      "quality": "low",
+      "solids": 5,
+      "static_memory_delta_bytes": 2442756
+    },
+    {
+      "circuit": "tormenta",
+      "construction_ms": 209.69,
+      "features": 28,
+      "quality": "low",
+      "solids": 12,
+      "static_memory_delta_bytes": 2734484
+    },
+    {
+      "circuit": "eclipse",
+      "construction_ms": 204.661,
+      "features": 14,
+      "quality": "low",
+      "solids": 6,
+      "static_memory_delta_bytes": 2461080
+    },
+    {
+      "circuit": "fuente",
+      "construction_ms": 228.489,
+      "features": 10,
+      "quality": "high",
+      "solids": 6,
+      "static_memory_delta_bytes": 2349020
+    },
+    {
+      "circuit": "jardin",
+      "construction_ms": 187.932,
+      "features": 12,
+      "quality": "high",
+      "solids": 3,
+      "static_memory_delta_bytes": 2436632
+    },
+    {
+      "circuit": "plaza",
+      "construction_ms": 117.49,
+      "features": 11,
+      "quality": "high",
+      "solids": 3,
+      "static_memory_delta_bytes": 2482404
+    },
+    {
+      "circuit": "tropical",
+      "construction_ms": 163.27,
+      "features": 28,
+      "quality": "high",
+      "solids": 10,
+      "static_memory_delta_bytes": 2722132
+    },
+    {
+      "circuit": "canal_turbo",
+      "construction_ms": 198.289,
+      "features": 15,
+      "quality": "high",
+      "solids": 4,
+      "static_memory_delta_bytes": 2472684
+    },
+    {
+      "circuit": "remolino",
+      "construction_ms": 186.06,
+      "features": 25,
+      "quality": "high",
+      "solids": 9,
+      "static_memory_delta_bytes": 2660476
+    },
+    {
+      "circuit": "express",
+      "construction_ms": 125.605,
+      "features": 11,
+      "quality": "high",
+      "solids": 4,
+      "static_memory_delta_bytes": 2408468
+    },
+    {
+      "circuit": "templo",
+      "construction_ms": 181.3,
+      "features": 15,
+      "quality": "high",
+      "solids": 12,
+      "static_memory_delta_bytes": 2452932
+    },
+    {
+      "circuit": "neon",
+      "construction_ms": 160.498,
+      "features": 14,
+      "quality": "high",
+      "solids": 4,
+      "static_memory_delta_bytes": 2510168
+    },
+    {
+      "circuit": "laberinto",
+      "construction_ms": 189.536,
+      "features": 13,
+      "quality": "high",
+      "solids": 11,
+      "static_memory_delta_bytes": 2397920
+    },
+    {
+      "circuit": "cascada",
+      "construction_ms": 142.09,
+      "features": 27,
+      "quality": "high",
+      "solids": 11,
+      "static_memory_delta_bytes": 2840672
+    },
+    {
+      "circuit": "ojo",
+      "construction_ms": 175.439,
+      "features": 11,
+      "quality": "high",
+      "solids": 2,
+      "static_memory_delta_bytes": 2386688
+    },
+    {
+      "circuit": "titan",
+      "construction_ms": 211.748,
+      "features": 13,
+      "quality": "high",
+      "solids": 5,
+      "static_memory_delta_bytes": 2461200
+    },
+    {
+      "circuit": "tormenta",
+      "construction_ms": 246.844,
+      "features": 28,
+      "quality": "high",
+      "solids": 12,
+      "static_memory_delta_bytes": 2777536
+    },
+    {
+      "circuit": "eclipse",
+      "construction_ms": 239.757,
+      "features": 14,
+      "quality": "high",
+      "solids": 6,
+      "static_memory_delta_bytes": 2464536
+    }
+  ],
+  "platform": "Windows",
+  "renderer": "Windows"
+}

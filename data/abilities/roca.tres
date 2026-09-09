@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CapAbilityDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/cap_ability_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "roca_ability"
+display_name = "Inercia"
+description = "Durante 2 s pierde menos velocidad en corrientes adversas; recarga de 8 s."
+trigger = "adverse_current"
+duration = 2
+cooldown = 8
+max_uses = 0
+modifiers = {"adverse_slow_floor":0.88}
+feedback_color = Color(0.552941, 0.549020, 0.533333, 1)
+art_requirement = "TODO_ART_ABILITY_ROCA"

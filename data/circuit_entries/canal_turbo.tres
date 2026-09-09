@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="CircuitDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/circuit_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "canal_turbo"
+display_name = "Canal Turbo"
+description = "Franjas rápidas separadas por curvas de frenado"
+price = 160
+length = 18000
+width = 720
+curve_amplitude = 225
+curve_period = 1200
+secondary_curve_period = 650
+width_variation = 65
+seed_value = 248
+water_color = Color(0.02, 0.64, 0.75, 1)
+difficulty_rating = 4
+recommended_level = 4
+theme_id = "canal_turbo"
+layout_path = "res://data/circuits/canal_turbo.tres"

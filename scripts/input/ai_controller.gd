@@ -12,13 +12,31 @@ var boost_requested := false
 var think_timer := 0.0
 var lane_timer := 0.0
 var error := 0.0
+var last_safe_position := Vector2.ZERO
+var outside_time := 0.0
 
 func _ready() -> void:
 	lane = rng.randf_range(-0.5, 0.5)
+	last_safe_position = cap.position
 
 func _physics_process(delta: float) -> void:
 	if not cap.active or cap.finished:
 		return
+	var bank_distance := absf(cap.position.x - track.center_at(cap.position.y))
+	var bank_half := track.width_at(cap.position.y) / 2
+	var next_checkpoint_y := -track.definition.length * (cap.checkpoint_index + 1) / track.checkpoint_count
+	# Retain a point before the pending gate; re-entry downstream cannot skip it.
+	if bank_distance < bank_half - 55 and cap.position.y >= next_checkpoint_y + 60 and cap.position.y <= 600:
+		last_safe_position = cap.position
+	if bank_distance > bank_half + 80 or cap.position.y < next_checkpoint_y - 150 or cap.position.y > 600:
+		outside_time += delta
+		if outside_time >= 1.0:
+			cap.position = last_safe_position
+			cap.velocity = Vector2.ZERO
+			cap.currents.clear()
+			outside_time = 0.0
+	else:
+		outside_time = 0.0
 	think_timer -= delta
 	lane_timer -= delta
 	if think_timer > 0:

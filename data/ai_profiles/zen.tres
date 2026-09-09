@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="AIProfile" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/ai_profile.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "zen"
+skill_level = 8
+aggression = 0.15
+risk_tolerance = 0.3
+boost_usage = 0.5
+powerup_skill = 0.8
+overtake_skill = 0.6
+defensive_skill = 0.8
+mistake_probability = 0.025
+preferred_line = 0
+recovery_skill = 0.9
+strategy = "Consistencia defensiva"

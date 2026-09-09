@@ -29,3 +29,12 @@ func _draw() -> void:
 			var x := center + lane * track.width_at(world_y) / 2
 			var glint := 0.12 + 0.09 * sin(clock * 1.6 + row)
 			draw_arc(Vector2(x, y), 18 + 5 * sin(row), 0.2, 2.3, 8, Color(0.8, 1, 0.95, glint), 2, true)
+	if track.definition.storm:
+		# Rain is bounded to this camera-following patch and shares its 10/20 Hz redraw.
+		var count := 36 if track.high_quality else 16
+		for index in range(count):
+			var y := fposmod(index * 137.0 + clock * 520, 1800) - 900
+			var world_y := position.y + y
+			var lane := sin(index * 7.13) * 0.88
+			var x := track.center_at(world_y) + lane * track.width_at(world_y) / 2
+			draw_line(Vector2(x, y), Vector2(x - 12, y + 27), Color(0.78, 0.91, 1, 0.42), 2, true)

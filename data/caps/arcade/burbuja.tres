@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CapDefinition" load_steps=7 format=3]
+[ext_resource type="Script" path="res://scripts/resources/cap_definition.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/resources/cap_ratings.gd" id="ratings"]
+[ext_resource type="Resource" path="res://data/abilities/burbuja.tres" id="ability"]
+[ext_resource type="Resource" path="res://data/appearances/arcade/burbuja.tres" id="appearance"]
+[ext_resource type="Resource" path="res://data/ai_profiles/luna.tres" id="profile"]
+[sub_resource type="Resource" id="stats"]
+script = ExtResource("ratings")
+speed = 5
+acceleration = 7
+handling = 9
+weight = 4
+boost = 6
+impact = 5
+[resource]
+script = ExtResource("1")
+id = "burbuja"
+display_name = "Burbuja"
+color = Color(0.470588, 0.862745, 0.917647, 1)
+ratings = SubResource("stats")
+ability = ExtResource("ability")
+appearance = ExtResource("appearance")
+preferred_ai_profile = ExtResource("profile")
+archetype = "Técnica"
+description = "Control de corrientes; poca masa."
+rarity = "comun"
+unlock_method = "start"
+unlock_requirement = ""
+legacy_ids = PackedStringArray("menta")
+primary_visual_theme = "Azul cristalino"
+art_requirement = "TODO_ART_CAP_BURBUJA"
+defeat_animation_reference = "TODO_ART_CAP_BURBUJA_DEFEAT"
+speed = 0.99333333
+acceleration = 1.06666667
+handling = 1.15555556
+weight = 0.93333333
+boost = 1.02222222

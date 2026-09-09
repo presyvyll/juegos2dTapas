@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CapDefinition" load_steps=7 format=3]
+[ext_resource type="Script" path="res://scripts/resources/cap_definition.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/resources/cap_ratings.gd" id="ratings"]
+[ext_resource type="Resource" path="res://data/abilities/rayo.tres" id="ability"]
+[ext_resource type="Resource" path="res://data/appearances/arcade/rayo.tres" id="appearance"]
+[ext_resource type="Resource" path="res://data/ai_profiles/volt.tres" id="profile"]
+[sub_resource type="Resource" id="stats"]
+script = ExtResource("ratings")
+speed = 9
+acceleration = 7
+handling = 4
+weight = 3
+boost = 8
+impact = 5
+[resource]
+script = ExtResource("1")
+id = "rayo"
+display_name = "Rayo"
+color = Color(1.000000, 0.886275, 0.278431, 1)
+ratings = SubResource("stats")
+ability = ExtResource("ability")
+appearance = ExtResource("appearance")
+preferred_ai_profile = ExtResource("profile")
+archetype = "Velocista"
+description = "Rectas fuertes; sensible a golpes."
+rarity = "poco_comun"
+unlock_method = "cup_podium"
+unlock_requirement = "bronce"
+legacy_ids = PackedStringArray("oceano")
+primary_visual_theme = "Amarillo eléctrico"
+art_requirement = "TODO_ART_CAP_RAYO"
+defeat_animation_reference = "TODO_ART_CAP_RAYO_DEFEAT"
+speed = 1.04666667
+acceleration = 1.06666667
+handling = 0.93333333
+weight = 0.88888889
+boost = 1.11111111

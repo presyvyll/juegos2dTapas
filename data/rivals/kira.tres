@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RivalDefinition" load_steps=4 format=3]
+[ext_resource type="Script" path="res://scripts/resources/rival_definition.gd" id="1"]
+[ext_resource type="Resource" path="res://data/caps/arcade/cobra.tres" id="cap"]
+[ext_resource type="Resource" path="res://data/ai_profiles/kira.tres" id="profile"]
+[resource]
+script = ExtResource("1")
+id = "kira"
+display_name = "Kira"
+favorite_cap = ExtResource("cap")
+profile = ExtResource("profile")
+personality = "Adelantamientos laterales"
+favorite_powerups = PackedStringArray("recharge")
+rivalry_level = 7
+intro_line = "Siempre queda un hueco."
+victory_line = "Ese hueco era mío."
+champion_cup_id = ""

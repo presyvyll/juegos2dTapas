@@ -1,0 +1,190 @@
+{
+  "stage": "D",
+  "platform": "Windows headless Godot 4.3",
+  "player_control": "AI autopilot; presentation disabled in matrix only",
+  "races": 285,
+  "finishes": 1140,
+  "failures": 0,
+  "circuits": {
+    "fuente": {
+      "races": 19,
+      "finishes": 76,
+      "single_lap_seconds_min": 58.8666666666646,
+      "single_lap_seconds_max": 78.6999999999968,
+      "three_lap_finish_times": [
+        204.883333333389,
+        201.300000000052,
+        207.116666666724,
+        190.900000000044
+      ]
+    },
+    "jardin": {
+      "races": 19,
+      "finishes": 76,
+      "single_lap_seconds_min": 59.7999999999979,
+      "single_lap_seconds_max": 77.1333333333302,
+      "three_lap_finish_times": [
+        202.96666666672,
+        205.600000000056,
+        206.98333333339,
+        190.683333333377
+      ]
+    },
+    "plaza": {
+      "races": 19,
+      "finishes": 76,
+      "single_lap_seconds_min": 60.6333333333312,
+      "single_lap_seconds_max": 76.8666666666636,
+      "three_lap_finish_times": [
+        196.883333333382,
+        199.716666666718,
+        206.900000000057,
+        190.833333333377
+      ]
+    },
+    "tropical": {
+      "races": 19,
+      "finishes": 76,
+      "single_lap_seconds_min": 64.1666666666643,
+      "single_lap_seconds_max": 77.5666666666636,
+      "three_lap_finish_times": [
+        205.566666666722,
+        207.750000000057,
+        209.133333333392,
+        196.450000000048
+      ]
+    },
+    "canal_turbo": {
+      "races": 19,
+      "finishes": 76,
+      "single_lap_seconds_min": 58.499999999998,
+      "single_lap_seconds_max": 77.2999999999969,
+      "three_lap_finish_times": [
+        198.983333333384,
+        197.783333333383,
+        200.533333333385,
+        190.850000000044
+      ]
+    },
+    "remolino": {
+      "races": 19,
+      "finishes": 76,
+      "single_lap_seconds_min": 64.033333333331,
+      "single_lap_seconds_max": 80.2166666666634,
+      "three_lap_finish_times": [
+        208.866666666725,
+        209.800000000059,
+        214.850000000063,
+        198.616666666717
+      ]
+    },
+    "express": {
+      "races": 19,
+      "finishes": 76,
+      "single_lap_seconds_min": 60.6499999999978,
+      "single_lap_seconds_max": 80.0833333333301,
+      "three_lap_finish_times": [
+        203.950000000054,
+        210.366666666726,
+        208.300000000058,
+        192.166666666712
+      ]
+    },
+    "templo": {
+      "races": 19,
+      "finishes": 76,
+      "single_lap_seconds_min": 60.8666666666645,
+      "single_lap_seconds_max": 84.3666666666632,
+      "three_lap_finish_times": [
+        206.616666666723,
+        209.416666666725,
+        206.23333333339,
+        192.350000000045
+      ]
+    },
+    "neon": {
+      "races": 19,
+      "finishes": 76,
+      "single_lap_seconds_min": 58.299999999998,
+      "single_lap_seconds_max": 74.7166666666637,
+      "three_lap_finish_times": [
+        193.800000000046,
+        199.033333333384,
+        197.350000000049,
+        184.983333333373
+      ]
+    },
+    "laberinto": {
+      "races": 19,
+      "finishes": 76,
+      "single_lap_seconds_min": 60.5833333333312,
+      "single_lap_seconds_max": 78.6833333333302,
+      "three_lap_finish_times": [
+        205.500000000056,
+        210.250000000059,
+        212.033333333394,
+        193.816666666713
+      ]
+    },
+    "cascada": {
+      "races": 19,
+      "finishes": 76,
+      "single_lap_seconds_min": 61.3166666666645,
+      "single_lap_seconds_max": 82.8333333333299,
+      "three_lap_finish_times": [
+        206.88333333339,
+        209.616666666726,
+        210.150000000059,
+        192.983333333379
+      ]
+    },
+    "ojo": {
+      "races": 19,
+      "finishes": 76,
+      "single_lap_seconds_min": 60.8833333333312,
+      "single_lap_seconds_max": 76.7333333333303,
+      "three_lap_finish_times": [
+        206.816666666723,
+        204.983333333389,
+        208.383333333391,
+        200.666666666719
+      ]
+    },
+    "titan": {
+      "races": 19,
+      "finishes": 76,
+      "single_lap_seconds_min": 59.2999999999979,
+      "single_lap_seconds_max": 78.6333333333302,
+      "three_lap_finish_times": [
+        208.033333333391,
+        206.266666666723,
+        209.666666666726,
+        195.100000000047
+      ]
+    },
+    "tormenta": {
+      "races": 19,
+      "finishes": 76,
+      "single_lap_seconds_min": 58.0833333333313,
+      "single_lap_seconds_max": 79.0333333333301,
+      "three_lap_finish_times": [
+        200.233333333385,
+        195.500000000048,
+        205.750000000056,
+        192.016666666712
+      ]
+    },
+    "eclipse": {
+      "races": 19,
+      "finishes": 76,
+      "single_lap_seconds_min": 59.4166666666646,
+      "single_lap_seconds_max": 79.8499999999968,
+      "three_lap_finish_times": [
+        201.616666666719,
+        203.266666666721,
+        207.983333333391,
+        191.350000000044
+      ]
+    }
+  }
+}

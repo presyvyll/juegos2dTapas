@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="CapAbilityDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/cap_ability_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "pixel_ability"
+display_name = "Trayectoria Perfecta"
+description = "Control +12% durante 2 s tras una zona de precisión; recarga de 8 s."
+trigger = "precision_zone"
+duration = 2
+cooldown = 8
+max_uses = 0
+modifiers = {"handling":1.12}
+feedback_color = Color(0.513725, 0.874510, 0.654902, 1)
+art_requirement = "TODO_ART_ABILITY_PIXEL"
+threshold = 45.0
+condition_seconds = 1.0

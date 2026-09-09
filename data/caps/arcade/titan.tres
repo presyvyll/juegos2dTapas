@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CapDefinition" load_steps=7 format=3]
+[ext_resource type="Script" path="res://scripts/resources/cap_definition.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/resources/cap_ratings.gd" id="ratings"]
+[ext_resource type="Resource" path="res://data/abilities/titan.tres" id="ability"]
+[ext_resource type="Resource" path="res://data/appearances/arcade/titan.tres" id="appearance"]
+[ext_resource type="Resource" path="res://data/ai_profiles/toro.tres" id="profile"]
+[sub_resource type="Resource" id="stats"]
+script = ExtResource("ratings")
+speed = 5
+acceleration = 3
+handling = 4
+weight = 9
+boost = 6
+impact = 9
+[resource]
+script = ExtResource("1")
+id = "titan"
+display_name = "Titán"
+color = Color(0.533333, 0.592157, 0.639216, 1)
+ratings = SubResource("stats")
+ability = ExtResource("ability")
+appearance = ExtResource("appearance")
+preferred_ai_profile = ExtResource("profile")
+archetype = "Pesada"
+description = "Defiende línea; recupera lentamente."
+rarity = "poco_comun"
+unlock_method = "cup_podium"
+unlock_requirement = "bronce"
+legacy_ids = PackedStringArray("coco")
+primary_visual_theme = "Metal industrial"
+art_requirement = "TODO_ART_CAP_TITAN"
+defeat_animation_reference = "TODO_ART_CAP_TITAN_DEFEAT"
+speed = 0.99333333
+acceleration = 0.88888889
+handling = 0.93333333
+weight = 1.15555556
+boost = 1.02222222

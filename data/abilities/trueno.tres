@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="CapAbilityDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/cap_ability_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "trueno_ability"
+display_name = "Golpe de Trueno"
+description = "Empuje de un impacto rápido +10%; recarga de 6 s."
+trigger = "fast_impact"
+duration = 0.15
+cooldown = 6
+max_uses = 0
+modifiers = {"outgoing_push":1.1}
+feedback_color = Color(0.317647, 0.329412, 0.396078, 1)
+art_requirement = "TODO_ART_ABILITY_TRUENO"
+threshold = 300.0

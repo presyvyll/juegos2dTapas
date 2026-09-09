@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="CircuitDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/circuit_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "eclipse"
+display_name = "Circuito Eclipse"
+description = "Secciones de precisión, turbo, giro y salto, señalizadas"
+price = 400
+length = 18000
+width = 680
+curve_amplitude = 270
+curve_period = 1080
+secondary_curve_period = 560
+width_variation = 60
+seed_value = 618
+water_color = Color(0.19, 0.14, 0.36, 1)
+difficulty_rating = 10
+recommended_level = 12
+theme_id = "eclipse"
+layout_path = "res://data/circuits/eclipse.tres"

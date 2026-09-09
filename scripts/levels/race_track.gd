@@ -5,18 +5,40 @@ const STEP: float = 120.0
 @export var definition: CircuitDefinition
 @export var high_quality := true
 var obstacles: Array[Node2D] = []
+var checkpoint_count := 12
 var water_polygon := PackedVector2Array()
 var left_edge := PackedVector2Array()
 var right_edge := PackedVector2Array()
 
 func center_at(y: float) -> float:
-	return sin(-y / 1450.0) * definition.curve_amplitude + sin(-y / 630.0) * definition.curve_amplitude * 0.22
+	return sin(-y / definition.curve_period) * definition.curve_amplitude + sin(-y / definition.secondary_curve_period) * definition.curve_amplitude * 0.22
 
 func width_at(y: float) -> float:
-	return definition.width + sin(-y / 1100.0) * 85.0
+	return definition.width + sin(-y / 1100.0) * definition.width_variation
 
 func flow_at(y: float) -> Vector2:
 	return Vector2(center_at(y - 80) - center_at(y), -80).normalized()
+
+func pickup_clear(point: Vector2) -> bool:
+	if absf(point.x - center_at(point.y)) + 60 >= width_at(point.y) / 2:
+		return false
+	for obstacle in obstacles:
+		var travel: float = obstacle.travel if obstacle is MovingObstacle else 0.0
+		var closest := Vector2(clampf(point.x, obstacle.position.x - travel, obstacle.position.x + travel), obstacle.position.y)
+		if point.distance_to(closest) < obstacle.radius + 60:
+			return false
+	return true
+
+func pickup_position(y: float, preferred_offset: float) -> Vector2:
+	for shift in [0.0, -220.0, 220.0, -440.0, 440.0]:
+		var candidate_y: float = y + shift
+		var half_width := width_at(candidate_y) / 2
+		for offset in [preferred_offset, -preferred_offset, 0.0, half_width * 0.55, -half_width * 0.55, half_width * 0.72, -half_width * 0.72]:
+			var point := Vector2(center_at(candidate_y) + offset, candidate_y)
+			if pickup_clear(point):
+				return point
+	push_error("No accessible pickup position in " + definition.id)
+	return Vector2(center_at(y), y)
 
 func _ready() -> void:
 	build_banks()
@@ -47,6 +69,9 @@ func build_banks() -> void:
 	water_polygon.append_array(reverse)
 
 func populate() -> void:
+	if definition.authored_layout:
+		populate_features()
+		return
 	var rng := RandomNumberGenerator.new()
 	rng.seed = definition.seed_value
 	for y in [-4200.0, -10800.0, -15700.0]:
@@ -90,9 +115,46 @@ func populate() -> void:
 			current.max_speed_modifier = 1.15
 			add_child(current)
 
+func populate_features() -> void:
+	for feature in definition.features:
+		if not feature.scene or feature.distance <= 300 or feature.distance >= definition.length - 200:
+			push_error("Invalid circuit feature in " + definition.id)
+			continue
+		var obstacle := feature.scene.instantiate() as Node2D
+		var y := -feature.distance
+		obstacle.position = Vector2(center_at(y) + feature.lane * width_at(y) / 2, y)
+		if obstacle is RockObstacle and feature.rock_radius > 0:
+			obstacle.radius = feature.rock_radius
+		if obstacle is MovingObstacle:
+			if feature.travel >= 0:
+				obstacle.travel = feature.travel
+			if feature.frequency > 0:
+				obstacle.frequency = feature.frequency
+		if obstacle is WhirlpoolArea:
+			obstacle.pulse_depth = feature.pulse_depth
+			obstacle.pulse_period = feature.pulse_period
+			if feature.whirlpool_radius > 0:
+				obstacle.radius = feature.whirlpool_radius
+			if feature.attraction >= 0:
+				obstacle.attraction = feature.attraction
+		if obstacle is WaterCurrentArea:
+			if feature.current_direction != Vector2.ZERO:
+				obstacle.direction = feature.current_direction
+			if feature.current_strength > 0:
+				obstacle.strength = feature.current_strength
+			if feature.speed_modifier > 0:
+				obstacle.max_speed_modifier = feature.speed_modifier
+			if feature.current_size != Vector2.ZERO:
+				obstacle.size = feature.current_size
+			if feature.turbulence >= 0:
+				obstacle.turbulence = feature.turbulence
+		add_child(obstacle)
+		if obstacle is RockObstacle:
+			obstacles.append(obstacle)
+
 func _draw() -> void:
 	# Static layers follow the existing banks; collision geometry is unchanged.
-	draw_colored_polygon(water_polygon, Color("18b6c4"))
+	draw_colored_polygon(water_polygon, definition.water_color)
 	for edge in [left_edge, right_edge]:
 		# Dark shallow-water band and a narrow outline give the rim depth.
 		draw_polyline(edge, Color("168594"), 65, true)
@@ -107,14 +169,44 @@ func _draw() -> void:
 		for lane in [-1, 0, 1]:
 			var x: float = center + lane * 150
 			draw_arc(Vector2(x, y), 22, 0.2, 2.8, 8, Color(0.7, 1, 1, 0.24), 2, true)
-		if index % 4 == 0 and high_quality:
+		if index % (4 if high_quality else 8) == 0:
 			for side in [-1, 1]:
 				var spot := Vector2(center + side * (width_at(y) / 2 + 65), y)
-				draw_circle(spot, 28, Color("407f60"))
-				draw_circle(spot + Vector2(12, -15), 22, Color("7cac69"))
+				draw_bank_detail(spot, index)
 	draw_line(Vector2(-300, 90), Vector2(300, 90), Color("fff2c6"), 7)
+	for index in range(mini(definition.section_distances.size(), definition.section_labels.size())):
+		var y := -definition.section_distances[index]
+		var spot := Vector2(center_at(y) + width_at(y) / 2 - 132, y)
+		draw_style_box(section_sign_style(), Rect2(spot - Vector2(6, 24), Vector2(125, 32)))
+		draw_string(ThemeDB.fallback_font, spot, definition.section_labels[index], HORIZONTAL_ALIGNMENT_CENTER, 113, 17, Color("fff0bf"))
 	var finish_y := -definition.length
 	for tile in range(20):
 		var x := center_at(finish_y) - width_at(finish_y) / 2 + tile * width_at(finish_y) / 20
 		for row in range(2):
 			draw_rect(Rect2(x, finish_y + row * 22, width_at(finish_y) / 20, 22), Color.WHITE if (tile + row) % 2 == 0 else Color("184953"))
+
+func draw_bank_detail(spot: Vector2, index: int) -> void:
+	match definition.theme_id:
+		"jardin":
+			draw_circle(spot, 30, Color("407f60"))
+			for petal in range(5):
+				draw_circle(spot + Vector2.from_angle(petal * TAU / 5) * 14, 11, Color("ffaccf"))
+			draw_circle(spot, 8, Color("ffe399"))
+		"templo", "laberinto", "plaza":
+			draw_rect(Rect2(spot - Vector2(23, 35), Vector2(46, 70)), Color("607c79"))
+			draw_rect(Rect2(spot - Vector2(29, 35), Vector2(58, 12)), Color("c6c6a5"))
+			draw_line(spot + Vector2(-10, -16), spot + Vector2(-10, 25), Color("abc0b1"), 5)
+		"neon", "eclipse":
+			var tint := Color("79f8ef") if index % 8 == 0 else Color("ef8cfa")
+			draw_rect(Rect2(spot - Vector2(13, 40), Vector2(26, 80)), Color("26365f"))
+			draw_line(spot - Vector2(0, 34), spot + Vector2(0, 34), tint, 6)
+		_:
+			if high_quality:
+				draw_circle(spot, 28, Color("407f60"))
+				draw_circle(spot + Vector2(12, -15), 22, Color("7cac69"))
+
+func section_sign_style() -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color("26365f")
+	style.set_corner_radius_all(6)
+	return style

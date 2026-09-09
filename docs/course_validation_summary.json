@@ -1,0 +1,15 @@
+{
+  "engine": "Godot 4.3",
+  "log": "builds/logs/courses-matrix-final.log",
+  "races": 95,
+  "finishes": 380,
+  "failures": 0,
+  "courses": ["fuente", "tropical", "remolino", "cascada", "tormenta"],
+  "races_per_course": 19,
+  "finishes_per_course": 76,
+  "caps_per_course": 6,
+  "difficulties": ["easy", "normal", "hard"],
+  "three_lap_cases_per_course": 1,
+  "player_input": "AI autopilot",
+  "physical_android_device_tested": false
+}

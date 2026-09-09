@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CapDefinition" load_steps=7 format=3]
+[ext_resource type="Script" path="res://scripts/resources/cap_definition.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/resources/cap_ratings.gd" id="ratings"]
+[ext_resource type="Resource" path="res://data/abilities/cobra.tres" id="ability"]
+[ext_resource type="Resource" path="res://data/appearances/arcade/cobra.tres" id="appearance"]
+[ext_resource type="Resource" path="res://data/ai_profiles/kira.tres" id="profile"]
+[sub_resource type="Resource" id="stats"]
+script = ExtResource("ratings")
+speed = 8
+acceleration = 7
+handling = 6
+weight = 3
+boost = 7
+impact = 5
+[resource]
+script = ExtResource("1")
+id = "cobra"
+display_name = "Cobra"
+color = Color(0.505882, 0.803922, 0.282353, 1)
+ratings = SubResource("stats")
+ability = ExtResource("ability")
+appearance = ExtResource("appearance")
+preferred_ai_profile = ExtResource("profile")
+archetype = "Velocista"
+description = "Adelanta por bordes; frágil al contacto."
+rarity = "epica"
+unlock_method = "cup_podium"
+unlock_requirement = "leyenda"
+legacy_ids = PackedStringArray()
+primary_visual_theme = "Verde brillante"
+art_requirement = "TODO_ART_CAP_COBRA"
+defeat_animation_reference = "TODO_ART_CAP_COBRA_DEFEAT"
+speed = 1.03333333
+acceleration = 1.06666667
+handling = 1.02222222
+weight = 0.88888889
+boost = 1.06666667

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CapAbilityDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/cap_ability_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "burbuja_ability"
+display_name = "Estabilidad Acuática"
+description = "Fuerza lateral de corrientes -25% durante 2 s al entrar; recarga de 8 s."
+trigger = "current_enter"
+duration = 2
+cooldown = 8
+max_uses = 0
+modifiers = {"current_lateral":0.75}
+feedback_color = Color(0.470588, 0.862745, 0.917647, 1)
+art_requirement = "TODO_ART_ABILITY_BURBUJA"

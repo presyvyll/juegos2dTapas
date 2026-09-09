@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CapDefinition" load_steps=7 format=3]
+[ext_resource type="Script" path="res://scripts/resources/cap_definition.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/resources/cap_ratings.gd" id="ratings"]
+[ext_resource type="Resource" path="res://data/abilities/trueno.tres" id="ability"]
+[ext_resource type="Resource" path="res://data/appearances/arcade/trueno.tres" id="appearance"]
+[ext_resource type="Resource" path="res://data/ai_profiles/toro.tres" id="profile"]
+[sub_resource type="Resource" id="stats"]
+script = ExtResource("ratings")
+speed = 7
+acceleration = 5
+handling = 4
+weight = 7
+boost = 5
+impact = 8
+[resource]
+script = ExtResource("1")
+id = "trueno"
+display_name = "Trueno"
+color = Color(0.317647, 0.329412, 0.396078, 1)
+ratings = SubResource("stats")
+ability = ExtResource("ability")
+appearance = ExtResource("appearance")
+preferred_ai_profile = ExtResource("profile")
+archetype = "Agresiva"
+description = "Golpea a velocidad; pierde en curvas largas."
+rarity = "rara"
+unlock_method = "cup_champion"
+unlock_requirement = "oro"
+legacy_ids = PackedStringArray()
+primary_visual_theme = "Grafito y amarillo"
+art_requirement = "TODO_ART_CAP_TRUENO"
+defeat_animation_reference = "TODO_ART_CAP_TRUENO_DEFEAT"
+speed = 1.02000000
+acceleration = 0.97777778
+handling = 0.93333333
+weight = 1.06666667
+boost = 0.97777778

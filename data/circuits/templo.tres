@@ -1,0 +1,142 @@
+[gd_resource type="Resource" script_class="CircuitDefinition" load_steps=21 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/circuit_definition.gd" id="definition"]
+[ext_resource type="Script" path="res://scripts/resources/circuit_feature.gd" id="feature"]
+[ext_resource type="PackedScene" path="res://scenes/obstacles/rock_obstacle.tscn" id="rock"]
+[ext_resource type="PackedScene" path="res://scenes/water/water_current_area.tscn" id="current"]
+[ext_resource type="PackedScene" path="res://scenes/obstacles/branch_obstacle.tscn" id="branch"]
+
+[sub_resource type="Resource" id="F0"]
+script = ExtResource("feature")
+scene = ExtResource("rock")
+distance = 1600.0
+lane = -0.12
+rock_radius = 105
+
+[sub_resource type="Resource" id="F1"]
+script = ExtResource("feature")
+scene = ExtResource("rock")
+distance = 1840.0
+lane = -0.12
+rock_radius = 105
+
+[sub_resource type="Resource" id="F2"]
+script = ExtResource("feature")
+scene = ExtResource("current")
+distance = 3200.0
+lane = 0.25
+speed_modifier = 1.12
+current_direction = Vector2(0, -1)
+current_strength = 160
+current_size = Vector2(420, 330)
+turbulence = 8
+
+[sub_resource type="Resource" id="F3"]
+script = ExtResource("feature")
+scene = ExtResource("rock")
+distance = 4600.0
+lane = 0.12
+rock_radius = 105
+
+[sub_resource type="Resource" id="F4"]
+script = ExtResource("feature")
+scene = ExtResource("rock")
+distance = 4840.0
+lane = 0.12
+rock_radius = 105
+
+[sub_resource type="Resource" id="F5"]
+script = ExtResource("feature")
+scene = ExtResource("branch")
+distance = 6200.0
+lane = -0.3
+
+[sub_resource type="Resource" id="F6"]
+script = ExtResource("feature")
+scene = ExtResource("rock")
+distance = 7800.0
+lane = -0.12
+rock_radius = 110
+
+[sub_resource type="Resource" id="F7"]
+script = ExtResource("feature")
+scene = ExtResource("rock")
+distance = 8050.0
+lane = -0.12
+rock_radius = 110
+
+[sub_resource type="Resource" id="F8"]
+script = ExtResource("feature")
+scene = ExtResource("current")
+distance = 9400.0
+lane = 0
+speed_modifier = 0.82
+current_direction = Vector2(0.3, -1)
+current_strength = 100
+current_size = Vector2(420, 330)
+turbulence = 8
+
+[sub_resource type="Resource" id="F9"]
+script = ExtResource("feature")
+scene = ExtResource("rock")
+distance = 10800.0
+lane = 0.12
+rock_radius = 105
+
+[sub_resource type="Resource" id="F10"]
+script = ExtResource("feature")
+scene = ExtResource("rock")
+distance = 11040.0
+lane = 0.12
+rock_radius = 105
+
+[sub_resource type="Resource" id="F11"]
+script = ExtResource("feature")
+scene = ExtResource("branch")
+distance = 12500.0
+lane = 0.3
+
+[sub_resource type="Resource" id="F12"]
+script = ExtResource("feature")
+scene = ExtResource("rock")
+distance = 14200.0
+lane = -0.12
+rock_radius = 110
+
+[sub_resource type="Resource" id="F13"]
+script = ExtResource("feature")
+scene = ExtResource("rock")
+distance = 14450.0
+lane = -0.12
+rock_radius = 110
+
+[sub_resource type="Resource" id="F14"]
+script = ExtResource("feature")
+scene = ExtResource("current")
+distance = 16300.0
+lane = 0
+speed_modifier = 1.1
+current_direction = Vector2(0, -1)
+current_strength = 160
+current_size = Vector2(420, 330)
+turbulence = 8
+
+[resource]
+script = ExtResource("definition")
+id = "templo"
+display_name = "Templo Sumergido"
+description = "Islas alargadas: paso ancho sinuoso o paso estrecho directo"
+price = 240
+length = 18000
+width = 790
+curve_amplitude = 260
+curve_period = 1500
+secondary_curve_period = 750
+width_variation = 60
+seed_value = 359
+water_color = Color(0.10, 0.40, 0.43, 1)
+difficulty_rating = 6
+recommended_level = 6
+theme_id = "templo"
+authored_layout = true
+features = Array[ExtResource("feature")]([SubResource("F0"), SubResource("F1"), SubResource("F2"), SubResource("F3"), SubResource("F4"), SubResource("F5"), SubResource("F6"), SubResource("F7"), SubResource("F8"), SubResource("F9"), SubResource("F10"), SubResource("F11"), SubResource("F12"), SubResource("F13"), SubResource("F14")])

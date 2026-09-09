@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="CapAbilityDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/cap_ability_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "torbellino_ability"
+display_name = "Mini Remolino"
+description = "Un pulso lateral suave contra rivales a 150 unidades; recarga de 12 s."
+trigger = "near_rival"
+duration = 0.4
+cooldown = 12
+max_uses = 0
+modifiers = {"lateral_pulse":35}
+feedback_color = Color(0.454902, 0.403922, 0.847059, 1)
+art_requirement = "TODO_ART_ABILITY_TORBELLINO"
+radius = 150.0
