@@ -2,6 +2,13 @@
 
 ## Etapa actual: F completada
 
+Actualización 2026-09-13: menú/Garage y feedback de carrera modernizados; seis perfiles
+de IA activos y dificultad Experto. 64 carreras/256 llegadas validadas en la entrega
+de IA; falta Android físico y estabilizar calidad alta. Mapa de copas/pistas aún sin
+integrar. Auditoría actual: docs/AUDITORIA_EVOLUCION.md. XP, niveles, mejoras,
+Perfect Shot, combos y ghost siguen pendientes. Fase 2: señal de swipe aplicado
+reutiliza HUD, audio, haptics y pool VFX sin modificar fuerza/cooldown.
+
 - F: introducciones de cinco campeones solo en la final de cada copa. ChampionIntro
   reutiliza retrato del corredor activo, frase y color de ChampionshipDefinition.
   Dura 2,5 s; después de verla se puede saltar. seen_champion_intros en SaveManager
