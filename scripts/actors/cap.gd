@@ -5,6 +5,7 @@ signal wall_hit(speed: float)
 signal boosted
 signal impacted(point: Vector2, normal: Vector2, strength: float)
 signal landed
+signal swiped(direction: float)
 signal powerup_received(definition: PowerUpDefinition)
 var shield_time := 0.0
 @export var turbo: TurboConfig = preload("res://data/turbo/default.tres")
@@ -56,6 +57,7 @@ func _physics_process(delta: float) -> void:
 		if swipe != 0 and swipe_cooldown <= 0:
 			velocity += Vector2(-flow.y, flow.x) * swipe * motion.config.lateral_impulse
 			swipe_cooldown = 0.6
+			swiped.emit(swipe)
 	var external := Vector2.ZERO
 	var modifier := 0.0
 	var count := 0
