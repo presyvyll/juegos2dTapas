@@ -12,6 +12,10 @@ var cup_round := 0
 var cup_closed := false
 var cup_rows: Array = []
 var champion_intro: ChampionIntro
+var finish_presented := false
+var last_impact_feedback := -1000
+## Set a positive seed for reproducible QA; zero varies decisions between races.
+@export var ai_seed := 0
 
 func _ready() -> void:
 	var selected_id: String = SaveManager.selected_circuit
@@ -66,7 +70,7 @@ func _ready() -> void:
 	hud.menu_requested.connect(menu)
 	session.player_finished.connect(on_finish)
 	session.countdown_changed.connect(func(value: int) -> void:
-		AudioManager.play("ui")
+		AudioManager.play("boost" if value == 0 else "ui")
 		if value == 0:
 			vfx.burst(player.global_position, Vector2.UP, Color("ffdc6c"), 1.3)
 			SaveManager.haptic(20)
@@ -148,6 +152,11 @@ func spawn_pickups() -> void:
 
 func spawn_racers() -> void:
 	var definitions := RacingCatalog.caps()
+	var race_rng := RandomNumberGenerator.new()
+	if ai_seed == 0: race_rng.randomize()
+	else: race_rng.seed = ai_seed
+	var personalities := ["equilibrado", "agresivo", "velocista", "tecnico", "defensivo", "oportunista"]
+	var first_profile := race_rng.randi_range(0, personalities.size() - 1)
 	for index in range(4):
 		var cap: RacingCap = CAP_SCENE.instantiate()
 		cap.active = false
@@ -162,9 +171,12 @@ func spawn_racers() -> void:
 			for definition in definitions:
 				if definition.id == selected_cap:
 					cap.apply_definition(definition, SaveManager.selected_skin == "perla")
-			cap.wall_hit.connect(func(_speed: float) -> void:
+			cap.impacted.connect(func(_point: Vector2, _normal: Vector2, force: float) -> void:
+				var now := Time.get_ticks_msec()
+				if now - last_impact_feedback < 120: return
+				last_impact_feedback = now
 				AudioManager.play("collisions")
-				SaveManager.haptic(25)
+				if force > 120: SaveManager.haptic(int(clampf(force / 15, 10, 25)))
 			)
 			cap.boosted.connect(func() -> void:
 				AudioManager.play("boost")
@@ -184,10 +196,15 @@ func spawn_racers() -> void:
 			controller.track = track
 			controller.difficulty = SaveManager.settings.difficulty
 			if cup: controller.difficulty = cup.difficulty
-			controller.rng.seed = track.definition.seed_value + index * 173
+			controller.rng.seed = race_rng.randi()
+			controller.rivals = session.caps
+			var profile_id: String = personalities[(first_profile + index - 1) % personalities.size()]
+			if cup and ResourceLoader.exists("res://data/ai_profiles/%s.tres" % cup.rival_ids[index - 1]):
+				profile_id = cup.rival_ids[index - 1]
+			controller.profile = load("res://data/ai_profiles/%s.tres" % profile_id)
 			cap.ai = controller
 			cap.add_child(controller)
-			cap.motion.config.current_speed *= 0.94 if controller.difficulty == "easy" else (1.035 if controller.difficulty == "hard" else 1.0)
+			cap.motion.config.current_speed *= 0.94 if controller.difficulty == "easy" else (1.035 if controller.difficulty in ["hard", "expert"] else 1.0)
 	player.get_node("Camera2D").make_current()
 	player.get_node("Camera2D").global_position = player.position
 
@@ -224,6 +241,14 @@ func _notification(what: int) -> void:
 			toggle_pause()
 
 func on_finish(place: int, time: float) -> void:
+	if finish_presented: return
+	finish_presented = true
+	player.get_node("Camera2D").celebrate_finish()
+	player.get_node("Visual").victory = place == 1
+	hud.announce("¡VICTORIA!" if place == 1 else "¡META! · %d.º/%d" % [place, session.caps.size()], 3)
+	AudioManager.play("victory" if place == 1 else "ui")
+	SaveManager.haptic(45 if place == 1 else 15)
+	vfx.burst(player.global_position, Vector2.UP, Color("ffdc6c") if place == 1 else Color("b2fff4"), 1.2)
 	if cup:
 		player.controls.clear()
 		player.controls.set_process_unhandled_input(false)
@@ -242,15 +267,11 @@ func on_finish(place: int, time: float) -> void:
 	player.controls.set_process_unhandled_input(false)
 	var key := track.definition.record_key(SaveManager.settings.difficulty, track.definition.laps)
 	var reward := SaveManager.record_result(key, time, place)
-	AudioManager.play("victory")
 	AudioManager.set_racing(false)
-	SaveManager.haptic(80)
-	for cap in session.finish_order:
-		cap.get_node("Visual").victory = true
-	vfx.burst(player.global_position, Vector2.UP, Color("ffdc6c"), 1.4)
-	if not session.finish_order.is_empty():
-		player.get_node("Camera2D").target = session.finish_order[0]
-	hud.show_results(place, time, reward)
+	# Persist immediately; only presentation waits. Bound tween dies on scene exit.
+	var finish_transition := create_tween()
+	finish_transition.tween_interval(0.65)
+	finish_transition.tween_callback(func() -> void: hud.show_results(place, time, reward))
 
 func restart() -> void:
 	if cup_closed: return

@@ -13,3 +13,5 @@ extends Resource
 @export_range(-0.6, 0.6) var preferred_line: float = 0.0
 @export_range(0, 1) var recovery_skill: float = 0.5
 @export var strategy := ""
+@export_range(0.16, 0.35) var reaction_interval := 0.2
+@export_range(0.8, 1.35) var corner_anticipation := 1.0

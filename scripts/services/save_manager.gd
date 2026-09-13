@@ -75,7 +75,7 @@ func read_save(path: String) -> bool:
 	settings.effects = clampf(float(settings.effects), 0, 1)
 	if settings.quality not in ["low", "high"]:
 		settings.quality = "high"
-	if settings.difficulty not in ["easy", "normal", "hard"]:
+	if settings.difficulty not in ["easy", "normal", "hard", "expert"]:
 		settings.difficulty = "normal"
 	selected_cap = str(parsed.get("selected_cap", "sol"))
 	selected_circuit = str(parsed.get("selected_circuit", "fuente"))

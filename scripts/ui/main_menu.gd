@@ -4,6 +4,7 @@ var content: VBoxContainer
 var wallet: Label
 var heading: Label
 var transition: Tween
+var navigation: HBoxContainer
 
 func _ready() -> void:
 	SaveManager.cup_race_requested = false
@@ -39,6 +40,16 @@ func _ready() -> void:
 	center.add_child(panel)
 	content = VBoxContainer.new()
 	panel.add_child(content)
+	navigation = HBoxContainer.new()
+	layout.add_child(navigation)
+	for entry in [["INICIO", show_home], ["COPAS", show_championships], ["TAPAS", func() -> void: show_selection("caps")], ["AJUSTES", show_settings]]:
+		var button := RacingUI.button(entry[0], entry[1])
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		navigation.add_child(button)
+	if OS.get_name() != "iOS":
+		var exit_button := RacingUI.button("SALIR", func() -> void: get_tree().quit())
+		exit_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		navigation.add_child(exit_button)
 	SaveManager.changed.connect(update_wallet)
 	SaveManager.save_failed.connect(update_wallet)
 	show_home()
@@ -56,22 +67,51 @@ func clear() -> void:
 	update_wallet()
 	content.modulate.a = 0.55
 	transition = create_tween()
-	transition.tween_property(content, "modulate:a", 1.0, 0.16)
+	transition.tween_property(content, "modulate:a", 1.0, 0.25)
+	# Other pages retain their full available height, including cup results.
+	navigation.hide()
 
 func show_home() -> void:
 	clear()
 	heading.text = "TAPA RACING"
-	var title := RacingUI.label("¡A TODA AGUA!", 34)
+	navigation.show()
+	var title := RacingUI.label("¡A TODA AGUA!", 30)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_color_override("font_color", Color("ffdc6c"))
 	content.add_child(title)
-	content.add_child(RacingUI.label("El torneo de la fuente · Cuatro tapas, una victoria."))
-	content.add_child(RacingUI.button("JUGAR", show_race_setup))
-	content.add_child(RacingUI.button("TAPAS", func() -> void: show_selection("caps")))
-	content.add_child(RacingUI.button("CIRCUITOS", func() -> void: show_selection("circuits")))
-	content.add_child(RacingUI.button("COPAS", show_championships))
-	content.add_child(RacingUI.button("CONFIGURACIÓN", show_settings))
-	if OS.get_name() != "iOS":
-		content.add_child(RacingUI.button("SALIR", func() -> void: get_tree().quit()))
+	for cap in RacingCatalog.caps():
+		if cap.id != SaveManager.selected_cap: continue
+		var preview := preload("res://scripts/ui/cap_preview.gd").new()
+		preview.animated = true
+		preview.tint = cap.color.lightened(0.25) if SaveManager.selected_skin == "perla" else cap.color
+		preview.appearance = cap.appearance if cap.appearance else CapAppearance.new()
+		content.add_child(preview)
+		var name_label := RacingUI.label(cap.display_name, 26)
+		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		content.add_child(name_label)
+	var play := RacingUI.button("JUGAR", show_race_setup)
+	play.custom_minimum_size.y = 64
+	play.add_theme_font_size_override("font_size", 28)
+	content.add_child(play)
+	var shortcuts := HBoxContainer.new()
+	content.add_child(shortcuts)
+	for entry in [["COPAS", show_championships], ["PISTAS", func() -> void: show_selection("circuits")], ["PREMIOS", show_rewards]]:
+		var button := RacingUI.button(entry[0], entry[1])
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		shortcuts.add_child(button)
+	navigation.get_child(0).disabled = true
+
+func show_rewards() -> void:
+	clear()
+	heading.text = "PREMIOS"
+	content.add_child(RacingUI.label("Premios de las cinco copas", 28))
+	for cup in RacingCatalog.championships():
+		var best := int(SaveManager.championships.completed.get(cup.id, 0))
+		var earned := best > 0 and best <= 3
+		content.add_child(RacingUI.label("%s · %d monedas · %s" % [cup.display_name, cup.coin_reward, "Conseguido" if earned else "Consigue podio"], 19))
+	content.add_child(RacingUI.label("Cada premio se entrega automáticamente una sola vez.", 17))
+	content.add_child(RacingUI.button("Ver copas", show_championships))
+	content.add_child(RacingUI.button("Volver al menú", show_home))
 
 func show_race_setup() -> void:
 	SaveManager.cup_race_requested = false
@@ -88,8 +128,8 @@ func show_championships() -> void:
 
 func show_selection(kind: String) -> void:
 	clear()
-	heading.text = "TAPAS" if kind == "caps" else "CIRCUITOS"
-	var page := SelectionPage.new()
+	heading.text = "GARAGE DE TAPAS" if kind == "caps" else "CIRCUITOS"
+	var page := preload("res://scripts/ui/garage_page.gd").new() if kind == "caps" else SelectionPage.new()
 	page.kind = kind
 	page.rebuild_callback = update_wallet
 	content.add_child(page)

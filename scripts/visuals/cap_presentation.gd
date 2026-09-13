@@ -13,6 +13,8 @@ var victory := false
 var had_shield := false
 var wake_timer := 0.0
 var fx: WaterVFXPool
+var impact_strength := 0.0
+var visual_stretch := 0.0
 
 func _ready() -> void:
 	cap = get_parent() as RacingCap
@@ -45,8 +47,10 @@ func _process(delta: float) -> void:
 	impact_time = maxf(0, impact_time - delta)
 	landing_time = maxf(0, landing_time - delta)
 	var lift := sin(PI * cap.jump_time / maxf(0.01, cap.jump_duration))
-	var squash := sin(impact_time / 0.25 * PI) * 0.23 + sin(landing_time / 0.25 * PI) * 0.16
-	var stretch := 0.10 if cap.boost_time > 0 else 0.0
+	var squash := sin(impact_time / 0.25 * PI) * 0.23 * impact_strength + sin(landing_time / 0.25 * PI) * 0.16
+	visual_stretch = lerpf(visual_stretch, 0.10 if cap.boost_time > 0 else 0.0, 1 - exp(-12 * delta))
+	var stretch := visual_stretch
+	body.modulate = Color.WHITE.lerp(Color(1.35, 1.3, 1.15), clampf(impact_time / 0.25, 0, 1) * impact_strength)
 	body.scale = Vector2(1 + squash - stretch, 1 - squash + stretch) * (1 + lift * 0.2)
 	body.position = Vector2(0, -lift * 14 + sin(clock * 3) * 1.2)
 	var tilt := clampf(cap.velocity.x / 600, -0.22, 0.22)
@@ -57,11 +61,12 @@ func _process(delta: float) -> void:
 	body.set_mood(1 if impact_time > 0 else (2 if cap.boost_time > 0 else 0))
 	wake_timer -= delta
 	if cap.active and cap.velocity.length() > 90 and wake_timer <= 0 and is_instance_valid(fx):
-		wake_timer = 0.09 if cap.boost_time > 0 else 0.22
+		wake_timer = 0.09 if cap.boost_time > 0 else lerpf(0.27, 0.14, clampf((cap.velocity.length() - 90) / 400, 0, 1))
 		fx.wake(global_position + Vector2(0, 22), cap.velocity, appearance.trail_color if cap.boost_time > 0 else Color("b2fff4"), cap.boost_time > 0)
 
 func on_impact(point: Vector2, normal: Vector2, strength: float) -> void:
 	impact_time = 0.25
+	impact_strength = clampf(strength / 300, 0.2, 1.0)
 	if is_instance_valid(fx):
 		fx.burst(point, normal, Color("fff1b8"), clampf(strength / 250, 0.5, 1.4))
 		if strength > 120:

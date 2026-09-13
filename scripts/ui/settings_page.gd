@@ -5,7 +5,7 @@ var race_setup_only := false
 
 func _ready() -> void:
 	if race_setup_only:
-		add_options("Dificultad", "difficulty", ["easy", "normal", "hard"], ["Fácil", "Normal", "Difícil"])
+		add_options("Dificultad", "difficulty", ["easy", "normal", "hard", "expert"], ["Fácil", "Normal", "Difícil", "Experto"])
 		add_options("Vueltas", "race_laps", [1, 2, 3], ["1 vuelta", "2 vueltas", "3 vueltas"])
 		return
 	for entry in [["music", "Volumen de música"], ["effects", "Volumen de efectos"]]:
@@ -30,7 +30,7 @@ func _ready() -> void:
 	add_child(vibration)
 	add_options("Calidad gráfica", "quality", ["low", "high"], ["Baja", "Alta"])
 	add_options("Límite de FPS", "fps", [30, 60], ["30 FPS", "60 FPS"])
-	add_options("Dificultad", "difficulty", ["easy", "normal", "hard"], ["Fácil", "Normal", "Difícil"])
+	add_options("Dificultad", "difficulty", ["easy", "normal", "hard", "expert"], ["Fácil", "Normal", "Difícil", "Experto"])
 
 func add_options(title: String, key: String, values: Array, labels: Array) -> void:
 	var row := HBoxContainer.new()
