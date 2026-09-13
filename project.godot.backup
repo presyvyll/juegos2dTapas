@@ -1,0 +1,31 @@
+; Tapa Racing — Godot 4
+config_version=5
+
+[application]
+config/name="Tapa Racing"
+run/main_scene="res://ui/main_menu.tscn"
+config/features=PackedStringArray("4.3", "GL Compatibility")
+config/icon="res://assets/icon.svg"
+
+[autoload]
+SaveManager="*res://scripts/services/save_manager.gd"
+AudioManager="*res://scripts/services/audio_manager.gd"
+
+[display]
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/size/window_width_override=1152
+window/size/window_height_override=648
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/handheld/orientation=0
+
+[rendering]
+textures/vram_compression/import_etc2_astc=true
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+environment/defaults/default_clear_color=Color(0.055, 0.18, 0.20, 1)
+
+[physics]
+common/physics_ticks_per_second=60
+2d/default_gravity=0.0
