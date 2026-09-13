@@ -48,7 +48,7 @@ static func label(text: String, size: int = 20) -> Label:
 	return node
 
 static func button(text: String, action: Callable) -> Button:
-	var node := Button.new()
+	var node := preload("res://scripts/ui/animated_button.gd").new()
 	node.text = text
 	node.custom_minimum_size.y = 52
 	node.pressed.connect(func() -> void:

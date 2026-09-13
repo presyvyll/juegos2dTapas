@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AIProfile" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/ai_profile.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "defensivo"
+aggression = 0.25
+risk_tolerance = 0.2
+boost_usage = 0.35
+overtake_skill = 0.35
+defensive_skill = 0.9
+mistake_probability = 0.05
+preferred_line = 0.1
+corner_anticipation = 1.15
+strategy = "defensivo"

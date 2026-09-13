@@ -23,6 +23,17 @@ var speed_label: Label
 var turbo_label: Label
 var countdown_tween: Tween
 var result_tween: Tween
+var notice: Label
+var notice_tween: Tween
+var position_tween: Tween
+var turbo_tween: Tween
+var last_place := 0
+var last_lap := 1
+var last_progress := 0.0
+var notice_priority := 0
+var notice_time := 0.0
+var pass_cooldown := 0.0
+var near_finish_shown := false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -31,6 +42,10 @@ func _ready() -> void:
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.theme = RacingUI.theme()
 	add_child(root)
+	var speed_fx := preload("res://scripts/ui/race_speed_overlay.gd").new()
+	speed_fx.player = player
+	speed_fx.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	root.add_child(speed_fx)
 	var top := HBoxContainer.new()
 	top.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
 	top.offset_left = 24
@@ -122,7 +137,23 @@ func _ready() -> void:
 	countdown_label.offset_bottom = 90
 	countdown_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	root.add_child(countdown_label)
+	notice = RacingUI.label("", 28)
+	notice.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	notice.add_theme_color_override("font_color", Color("ffdc6c"))
+	notice.add_theme_color_override("font_outline_color", Color("10283b"))
+	notice.add_theme_constant_override("outline_size", 4)
+	notice.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
+	notice.offset_top = 125
+	notice.offset_bottom = 170
+	notice.hide()
+	root.add_child(notice)
 	session.countdown_changed.connect(animate_countdown)
+	player.boosted.connect(func() -> void:
+		if turbo_tween: turbo_tween.kill()
+		turbo_label.modulate = Color("69e7d4")
+		turbo_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_STOP)
+		turbo_tween.tween_property(turbo_label, "modulate", Color.WHITE, 0.30)
+	)
 	player.powerup_received.connect(func(effect: PowerUpDefinition) -> void:
 		pickup_notice = effect.display_name
 		pickup_notice_time = 2.0
@@ -155,7 +186,7 @@ func apply_touch_rects() -> void:
 func animate_countdown(value: int) -> void:
 	if countdown_tween:
 		countdown_tween.kill()
-	countdown_label.text = str(value) if value > 0 else "¡CORRE!"
+	countdown_label.text = str(value) if value > 0 else "¡YA!"
 	countdown_label.show()
 	countdown_label.pivot_offset = countdown_label.size / 2
 	countdown_label.scale = Vector2.ONE * 1.35
@@ -174,8 +205,11 @@ func set_mouse_passthrough(node: Node) -> void:
 		set_mouse_passthrough(child)
 
 func _process(delta: float) -> void:
-	if not get_tree().paused:
-		pickup_notice_time = maxf(0, pickup_notice_time - delta)
+	if get_tree().paused: return
+	pickup_notice_time = maxf(0, pickup_notice_time - delta)
+	pass_cooldown = maxf(0, pass_cooldown - delta)
+	notice_time = maxf(0, notice_time - delta)
+	if notice_time <= 0: notice_priority = 0
 	tick += delta
 	if tick < 0.1 or not is_instance_valid(player):
 		return
@@ -183,9 +217,10 @@ func _process(delta: float) -> void:
 	player.controls.excluded_rects = [boost_button.get_global_rect(), pause_button.get_global_rect()]
 	var place := session.standings().find(player) + 1
 	var shown_time := player.finish_time if player.finished else session.elapsed
-	position_label.text = "%dº" % place
-	info.text = "DE %d TAPAS  ·  VUELTA %d/%d  ·  %.1f s" % [session.caps.size(), player.lap, session.circuit.laps, shown_time]
-	speed_label.text = "%d u/s" % player.velocity.length()
+	position_label.text = "%d.º/%d" % [place, session.caps.size()]
+	update_race_feedback(place)
+	info.text = "VUELTA %d/%d  ·  %.1f s" % [player.lap, session.circuit.laps, shown_time]
+	speed_label.text = "%d u/s" % (0.0 if player.finished else player.velocity.length())
 	boost_bar.value = player.boost_energy * 100
 	boost_button.disabled = not player.can_boost()
 	turbo_label.text = "¡A TODA AGUA!" if player.boost_time > 0 else ("CARGANDO…" if player.boost_energy < player.turbo.energy_cost else "TURBO LISTO")
@@ -193,11 +228,52 @@ func _process(delta: float) -> void:
 		turbo_label.text = "BURBUJA · %.1f s" % player.shield_time
 	elif pickup_notice_time > 0:
 		turbo_label.text = pickup_notice
+	if player.finished: turbo_label.text = "CARRERA TERMINADA"
 	player.controls.boost_touch_rect = boost_button.get_global_rect()
 	player.controls.boost_touch_enabled = not boost_button.disabled
 	progress_bar.value = session.progress(player) / (session.circuit.length * session.circuit.laps) * 100
 	if is_instance_valid(result_rows):
 		update_results()
+
+func announce(text: String, priority: int = 1) -> void:
+	if priority < notice_priority or get_tree().paused: return
+	if notice_tween: notice_tween.kill()
+	notice_priority = priority
+	notice_time = 1.5
+	notice.text = text
+	notice.show()
+	notice.pivot_offset = notice.size / 2
+	notice.scale = Vector2.ONE * 0.94
+	notice.modulate.a = 0
+	notice_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_STOP)
+	notice_tween.tween_property(notice, "modulate:a", 1.0, 0.2)
+	notice_tween.parallel().tween_property(notice, "scale", Vector2.ONE, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	notice_tween.tween_interval(0.95)
+	notice_tween.tween_property(notice, "modulate:a", 0.0, 0.25)
+	notice_tween.tween_callback(notice.hide)
+
+func update_race_feedback(place: int) -> void:
+	var progress := session.progress(player)
+	if session.running and not player.finished:
+		if place != last_place and last_place > 0:
+			if position_tween: position_tween.kill()
+			position_label.pivot_offset = position_label.size / 2
+			position_label.scale = Vector2.ONE * 1.08
+			position_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_STOP)
+			position_tween.tween_property(position_label, "scale", Vector2.ONE, 0.25)
+			if place < last_place and session.elapsed > 3 and pass_cooldown <= 0 and absf(progress - last_progress) < 120:
+				announce("¡ADELANTAMIENTO!")
+				AudioManager.play("ui")
+				pass_cooldown = 3.5
+		if player.lap > last_lap:
+			announce("ÚLTIMA VUELTA" if player.lap == session.circuit.laps else "VUELTA %d/%d" % [player.lap, session.circuit.laps], 2)
+			AudioManager.play("boost")
+		if player.lap == session.circuit.laps and player.checkpoint_index == session.checkpoint_count - 1 and not near_finish_shown:
+			announce("¡META A LA VISTA!", 2)
+			near_finish_shown = true
+	last_place = place
+	last_lap = player.lap
+	last_progress = progress
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode == KEY_ESCAPE:
@@ -205,6 +281,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 func modal(title: String) -> VBoxContainer:
+	if notice_tween: notice_tween.kill()
+	notice.hide()
+	notice_priority = 0
+	notice_time = 0
 	if is_instance_valid(overlay):
 		overlay.queue_free()
 	overlay = PanelContainer.new()
@@ -235,12 +315,14 @@ func hide_pause() -> void:
 func show_results(place: int, time: float, reward: int) -> void:
 	countdown_label.hide()
 	pause_button.disabled = true
-	var content := modal("¡Victoria!" if place == 1 else "¡Meta! · Puesto %d/4" % place)
+	var content := modal("¡VICTORIA!" if place == 1 else "RESULTADO · Puesto %d/%d" % [place, session.caps.size()])
 	overlay.pivot_offset = Vector2(300, 220)
 	overlay.scale = Vector2.ONE * 0.92
 	result_tween = create_tween()
 	result_tween.tween_property(overlay, "scale", Vector2.ONE, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	content.add_child(RacingUI.label("Tiempo: %.2f s  ·  +%d monedas" % [time, reward]))
+	var best := float(SaveManager.best_times.get(session.circuit.record_key(SaveManager.settings.difficulty, session.circuit.laps), time))
+	content.add_child(RacingUI.label("Récord local: %.2f s · %s" % [best, "★".repeat(maxi(0, 4 - place)) + "☆".repeat(mini(3, place - 1))], 17))
 	var podium := HBoxContainer.new()
 	content.add_child(podium)
 	var winner: RacingCap = session.standings()[0]

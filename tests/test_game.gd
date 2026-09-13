@@ -91,7 +91,10 @@ func run() -> void:
 	await process_frame
 	menu.show_home()
 	await process_frame
-	check(menu.content.get_child_count() >= 6, "all menu pages build and return")
+	var has_play := false
+	for button in menu.content.find_children("*", "Button", true, false):
+		if button.text == "JUGAR" and not button.disabled: has_play = true
+	check(has_play and menu.heading.text == "TAPA RACING" and menu.navigation.visible, "all menu pages build and return")
 	menu.queue_free()
 	await process_frame
 	for circuit_id in ["fuente", "cascada"]:
