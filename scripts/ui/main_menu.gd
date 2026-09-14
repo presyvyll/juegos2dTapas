@@ -56,7 +56,7 @@ func _ready() -> void:
 	AudioManager.set_racing(false)
 
 func update_wallet() -> void:
-	wallet.text = "%d monedas%s" % [SaveManager.coins, "" if SaveManager.last_save_ok else " · Error al guardar"]
+	wallet.text = "Nv. %d · %d XP · %d monedas%s" % [SaveManager.cap_level(SaveManager.selected_cap), SaveManager.cap_xp(SaveManager.selected_cap), SaveManager.coins, "" if SaveManager.last_save_ok else " · Error al guardar"]
 
 func clear() -> void:
 	if transition:

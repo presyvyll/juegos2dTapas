@@ -1,5 +1,6 @@
 class_name CapDefinition
 extends Resource
+const PROGRESSION: ProgressionConfig = preload("res://data/progression/default.tres")
 
 @export var id: String = "sol"
 @export var display_name: String = "Sol Caribe"
@@ -34,11 +35,11 @@ extends Resource
 @export var defeat_animation_reference := ""
 @export var art_requirement := ""
 
-func resolve_physics(base: CapPhysicsConfig) -> CapPhysicsConfig:
+func resolve_physics(base: CapPhysicsConfig, level: int = 1) -> CapPhysicsConfig:
 	var result := base.duplicate() as CapPhysicsConfig
 	result.current_speed *= speed
-	result.acceleration *= acceleration
-	result.lateral_force *= handling
+	result.acceleration *= acceleration * PROGRESSION.multiplier(level)
+	result.lateral_force *= handling * PROGRESSION.multiplier(level)
 	result.weight *= weight
 	result.boost_impulse *= boost
 	result.wall_bounce = clampf(result.wall_bounce * bounce, 0.0, 1.0)
@@ -47,9 +48,10 @@ func resolve_physics(base: CapPhysicsConfig) -> CapPhysicsConfig:
 	result.lateral_impulse *= lateral_impulse
 	return result
 
-func garage_indices() -> PackedFloat32Array:
+func garage_indices(level: int = 1) -> PackedFloat32Array:
 	# Relative indices (100 = baseline), not the staged 1–10 designer ratings.
-	return PackedFloat32Array([speed * 100, acceleration * 100, handling * 100, weight * 100, boost * 100])
+	var growth := PROGRESSION.multiplier(level)
+	return PackedFloat32Array([speed * 100, acceleration * growth * 100, handling * growth * 100, weight * 100, boost * 100])
 
 func movement_summary(base: CapPhysicsConfig) -> String:
 	var resolved := resolve_physics(base)

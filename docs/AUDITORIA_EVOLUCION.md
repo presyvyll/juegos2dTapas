@@ -180,3 +180,22 @@ No iniciar todas las fases simultáneamente. Reestimar después del prototipo de
   transaccional en fase 7. No se ofrecen compras de mejoras sin efecto.
 - Sin pruebas ni compilación. Al cierre validar comparación tras equipar/compra,
   guardado fallido, cambios rápidos, descripciones largas y tamaños Android.
+
+## Fase 7 — Progresión y mejoras (sin validar)
+
+- XP individual por tapa: 30/24/18/12 por llegada en las cuatro posiciones; una ronda
+  de copa no terminada no da XP. No se consume la XP al mejorar ni se concede por
+  abandonar. Sin XP retroactiva para resultados de partidas antiguas.
+- Cinco niveles; XP acumulada 0/100/250/450/700 y costes de mejora 100/175/250/350
+  monedas. Aceleración y control ganan 1% de la base por nivel, máximo 4%; velocidad
+  máxima y habilidades no escalan. Valores provisionales en Resource compartido.
+- MEJORAR activo en Garage con coste/requisitos; comparación de estadísticas con
+  niveles actuales. El jugador recibe su nivel al iniciar; NPC conservan nivel base.
+  Nivel y XP individual visibles en menú, Garage y resultados.
+- Guardado esquema 2, misma ruta: lectura de versiones 1/2, saneamiento de progreso
+  por IDs desbloqueados y límite del nivel según XP. Copas guardan XP junto a ronda
+  y recompensa. Resultados libres revierten monedas/XP/récord ante fallo y ofrecen
+  reintento; el controlador evita volver a acreditar un resultado ya guardado.
+- Sin pruebas ni exportación. Validación final pendiente: migración/backup, datos
+  malformados, guardado fallido/reintentos, compra y doble toque, límites de nivel,
+  copas repetidas/DNF, balance frente a NPC base, layout y compatibilidad Android.

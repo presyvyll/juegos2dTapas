@@ -37,7 +37,17 @@ muestran habilidades reales. Las otras doce habilidades siguen sin integración.
 Fase 6 (sin pruebas): Garage compara los cinco índices con la tapa equipada y
 permite alternar habilidad/estadísticas sin salir del carrusel. Compra, equipamiento,
 Perla, bloqueos y swipe existentes conservados. MEJORAR sigue deshabilitado hasta
-implementar niveles/economía en fase 7; no se inventan estadísticas de mejora.
+implementar niveles/economía en fase 7; integrado en la actualización siguiente.
+
+Fase 7 implementada (sin pruebas): progreso por tapa con XP y niveles 1–5, Resource
+data/progression/default.tres. XP por llegada 30/24/18/12; requisitos acumulados
+0/100/250/450/700 XP y costes 100/175/250/350 monedas. Cada nivel añade 1% de la base
+de aceleración/control, hasta 4%; no cambia velocidad máxima, turbo ni habilidades.
+Garage permite comprar mejoras; comparaciones y jugador usan el nivel guardado.
+SaveManager escribe esquema 2 en el mismo archivo y acepta v1 sin progreso previo.
+XP integrada en la transacción de copa y resultado libre; rollback y reintento de
+guardado libre. Nivel/XP visibles en Garage, menú y resultados. Balance, migración,
+regresiones y compilación aplazados al cierre por instrucción del usuario.
 
 - F: introducciones de cinco campeones solo en la final de cada copa. ChampionIntro
   reutiliza retrato del corredor activo, frase y color de ChampionshipDefinition.

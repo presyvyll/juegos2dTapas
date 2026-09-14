@@ -28,6 +28,7 @@ var finish_time: float = 0.0
 var jump_time: float = 0.0
 var jump_duration: float = 0.65
 var base_physics: CapPhysicsConfig
+var definition_id := ""
 var ability := CapAbilityRuntime.new()
 var burst_speed_multiplier := 1.6
 
@@ -121,10 +122,11 @@ func try_boost(flow: Vector2) -> void:
 	velocity += flow * motion.config.boost_impulse
 	boosted.emit()
 
-func apply_definition(definition: CapDefinition, skin: bool = false) -> void:
+func apply_definition(definition: CapDefinition, skin: bool = false, level: int = 1) -> void:
 	# Cup setup can replace a provisional cap; never compound its multipliers.
 	if base_physics == null:
 		base_physics = motion.config.duplicate() as CapPhysicsConfig
-	motion.config = definition.resolve_physics(base_physics)
+	definition_id = definition.id
+	motion.config = definition.resolve_physics(base_physics, level)
 	ability.configure(definition.ability)
 	$Visual.configure(definition.appearance, definition.color.lightened(0.25) if skin else definition.color)

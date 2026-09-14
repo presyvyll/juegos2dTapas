@@ -14,6 +14,7 @@ var comparison_label: Label
 var detail_button: Button
 var showing_ability := false
 var equip: Button
+var upgrade: Button
 var unlock: Button
 var skin: Button
 var bars: Array[ProgressBar] = []
@@ -98,7 +99,7 @@ func construct() -> void:
 		label.custom_minimum_size.x = 115
 		row.add_child(label)
 		var bar := ProgressBar.new()
-		bar.max_value = 120
+		bar.max_value = 130
 		bar.show_percentage = false
 		bar.custom_minimum_size.y = 16
 		bar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -124,9 +125,7 @@ func construct() -> void:
 	add_child(actions)
 	equip = RacingUI.button("EQUIPAR", equip_cap)
 	actions.add_child(equip)
-	var upgrade := RacingUI.button("MEJORAR", func() -> void: pass)
-	upgrade.disabled = true
-	upgrade.tooltip_text = "La progresión de niveles y mejoras todavía no está disponible."
+	upgrade = RacingUI.button("MEJORAR", upgrade_cap)
 	actions.add_child(upgrade)
 	detail_button = RacingUI.button("HABILIDAD", func() -> void:
 		if busy: return
@@ -161,10 +160,25 @@ func apply_cap() -> void:
 	portrait.queue_redraw()
 	lock_overlay.queue_redraw()
 	state_label.text = "EQUIPADA" if SaveManager.selected_cap == cap.id else ("DISPONIBLE" if owned else "BLOQUEADA")
+	var level := SaveManager.cap_level(cap.id)
+	var xp := SaveManager.cap_xp(cap.id)
+	state_label.text += " · Nivel %d\n%d XP" % [level, xp]
 	state_label.add_theme_color_override("font_color", Color("69e7d4") if owned else Color("ffce58"))
 	equip.text = "EQUIPADA" if SaveManager.selected_cap == cap.id else ("EQUIPAR" if owned else "BLOQUEADA")
 	equip.disabled = not owned or SaveManager.selected_cap == cap.id
 	requirement.text = "Lista para correr" if owned else "Requisito: desbloquea esta tapa por %d monedas" % cap.price
+	var progression: ProgressionConfig = SaveManager.PROGRESSION
+	upgrade.disabled = true
+	upgrade.text = "MEJORAR"
+	if level >= progression.max_level():
+		upgrade.text = "NIVEL MÁXIMO"
+	elif owned:
+		var cost := progression.upgrade_costs[level - 1]
+		var required_xp := progression.xp_thresholds[level]
+		upgrade.text = "MEJORAR · %d" % cost
+		upgrade.disabled = xp < required_xp or SaveManager.coins < cost
+		requirement.text = "Nivel %d: %d/%d XP · %d monedas · +%.0f%% base en aceleración/control" % [level + 1, xp, required_xp, cost, progression.gain_per_level * 100]
+	upgrade.tooltip_text = "La XP no se consume. La mejora cuesta monedas y aumenta aceleración y control, hasta cinco niveles."
 	unlock.text = "DESBLOQUEAR · %d monedas" % cap.price
 	unlock.visible = not owned
 	unlock.disabled = SaveManager.coins < cap.price
@@ -173,13 +187,13 @@ func apply_cap() -> void:
 	if not SaveManager.last_save_ok: requirement.text = "No se pudo guardar. Reintenta para conservar el cambio."
 	if bar_motion: bar_motion.kill()
 	bar_motion = create_tween().set_parallel(true)
-	var targets := cap.garage_indices()
+	var targets := cap.garage_indices(level)
 	var equipped := cap
 	for entry in RacingCatalog.caps():
 		if entry.id == SaveManager.selected_cap:
 			equipped = entry
 			break
-	var baseline := equipped.garage_indices()
+	var baseline := equipped.garage_indices(SaveManager.cap_level(equipped.id))
 	var comparing := cap.id != equipped.id
 	comparison_label.text = "Comparada con " + equipped.display_name if comparing else "Tapa equipada · índices base: 100"
 	for i in range(bars.size()):
@@ -212,6 +226,7 @@ func change_cap(step: int) -> void:
 	if transition: transition.kill()
 	busy = true
 	equip.disabled = true
+	upgrade.disabled = true
 	unlock.disabled = true
 	SaveManager.haptic(12)
 	portrait.pivot_offset = portrait.size / 2
@@ -237,6 +252,11 @@ func change_cap(step: int) -> void:
 	transition.parallel().tween_property(name_label, "modulate:a", 1.0, 0.20)
 	transition.parallel().tween_property(detail, "modulate:a", 1.0, 0.20)
 	transition.chain().tween_callback(func() -> void: busy = false)
+
+func upgrade_cap() -> void:
+	if busy: return
+	SaveManager.upgrade_cap(RacingCatalog.caps()[shown_index].id)
+	build()
 
 func equip_cap() -> void:
 	if busy: return

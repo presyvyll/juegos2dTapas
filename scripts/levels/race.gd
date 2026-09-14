@@ -14,6 +14,7 @@ var cup_rows: Array = []
 var champion_intro: ChampionIntro
 var finish_presented := false
 var last_impact_feedback := -1000
+var saved_free_reward := -1
 ## Set a positive seed for reproducible QA; zero varies decisions between races.
 @export var ai_seed := 0
 
@@ -144,6 +145,7 @@ func save_cup_results() -> void:
 	hud.overlay.offset_top = -300
 	hud.overlay.offset_bottom = 300
 	if SaveManager.submit_cup_round(cup_round, cup_rows):
+		content.add_child(RacingUI.label("Progreso de tapa: %d XP · nivel %d" % [SaveManager.cap_xp(player.definition_id), SaveManager.cap_level(player.definition_id)], 16))
 		var page := ChampionshipPage.new()
 		page.race_results = true
 		content.add_child(page)
@@ -181,7 +183,7 @@ func spawn_racers() -> void:
 			var selected_cap: String = SaveManager.championships.active.cap_id if cup else SaveManager.selected_cap
 			for definition in definitions:
 				if definition.id == selected_cap:
-					cap.apply_definition(definition, SaveManager.selected_skin == "perla")
+					cap.apply_definition(definition, SaveManager.selected_skin == "perla", SaveManager.cap_level(selected_cap))
 			cap.impacted.connect(func(_point: Vector2, _normal: Vector2, force: float) -> void:
 				var now := Time.get_ticks_msec()
 				if now - last_impact_feedback < 120: return
@@ -277,12 +279,20 @@ func on_finish(place: int, time: float) -> void:
 	player.controls.clear()
 	player.controls.set_process_unhandled_input(false)
 	var key := track.definition.record_key(SaveManager.settings.difficulty, track.definition.laps)
-	var reward := SaveManager.record_result(key, time, place)
+	saved_free_reward = SaveManager.record_result(key, time, place, player.definition_id)
 	AudioManager.set_racing(false)
 	# Persist immediately; only presentation waits. Bound tween dies on scene exit.
 	var finish_transition := create_tween()
 	finish_transition.tween_interval(0.65)
-	finish_transition.tween_callback(func() -> void: hud.show_results(place, time, reward))
+	finish_transition.tween_callback(func() -> void: show_free_result(place, time))
+
+func show_free_result(place: int, time: float) -> void:
+	hud.show_results(place, time, saved_free_reward, func() -> void:
+		if saved_free_reward < 0:
+			var key := track.definition.record_key(SaveManager.settings.difficulty, track.definition.laps)
+			saved_free_reward = SaveManager.record_result(key, time, place, player.definition_id)
+		show_free_result(place, time)
+	)
 
 func restart() -> void:
 	if cup_closed: return

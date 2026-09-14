@@ -320,7 +320,7 @@ func hide_pause() -> void:
 	if is_instance_valid(overlay):
 		overlay.queue_free()
 
-func show_results(place: int, time: float, reward: int) -> void:
+func show_results(place: int, time: float, reward: int, retry_save: Callable = Callable()) -> void:
 	countdown_label.hide()
 	pause_button.disabled = true
 	var content := modal("¡VICTORIA!" if place == 1 else "RESULTADO · Puesto %d/%d" % [place, session.caps.size()])
@@ -328,7 +328,9 @@ func show_results(place: int, time: float, reward: int) -> void:
 	overlay.scale = Vector2.ONE * 0.92
 	result_tween = create_tween()
 	result_tween.tween_property(overlay, "scale", Vector2.ONE, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	content.add_child(RacingUI.label("Tiempo: %.2f s  ·  +%d monedas" % [time, reward]))
+	content.add_child(RacingUI.label("Tiempo: %.2f s  ·  +%d monedas" % [time, maxi(0, reward)]))
+	if reward >= 0:
+		content.add_child(RacingUI.label("+%d XP · Total de tapa: %d XP · Nivel %d" % [SaveManager.PROGRESSION.reward(place), SaveManager.cap_xp(player.definition_id), SaveManager.cap_level(player.definition_id)], 16))
 	var best := float(SaveManager.best_times.get(session.circuit.record_key(SaveManager.settings.difficulty, session.circuit.laps), time))
 	content.add_child(RacingUI.label("Récord local: %.2f s · %s" % [best, "★".repeat(maxi(0, 4 - place)) + "☆".repeat(mini(3, place - 1))], 17))
 	var podium := HBoxContainer.new()
@@ -347,8 +349,9 @@ func show_results(place: int, time: float, reward: int) -> void:
 	result_rows.add_theme_font_size_override("font_size", 18)
 	content.add_child(result_rows)
 	update_results()
-	if not SaveManager.last_save_ok:
-		content.add_child(RacingUI.label("No se pudo guardar. Las monedas siguen en memoria.", 16))
+	if reward < 0:
+		content.add_child(RacingUI.label("Resultado sin guardar. Reintenta antes de salir.", 16))
+		if retry_save.is_valid(): content.add_child(RacingUI.button("Reintentar guardado", retry_save))
 	content.add_child(RacingUI.button("Volver a correr", func() -> void: restart_requested.emit()))
 	content.add_child(RacingUI.button("Volver al menú", func() -> void: menu_requested.emit()))
 
