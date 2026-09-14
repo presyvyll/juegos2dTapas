@@ -12,6 +12,8 @@ var elapsed := 0.0
 var countdown := 3.0
 var running := false
 var announced := -1
+var ability_sample := 0.0
+var previous_ability_places: Dictionary = {}
 
 func _physics_process(delta: float) -> void:
 	if not caps.is_empty() and finish_order.size() == caps.size():
@@ -29,6 +31,15 @@ func _physics_process(delta: float) -> void:
 			started.emit()
 		return
 	elapsed += delta
+	ability_sample -= delta
+	if ability_sample <= 0:
+		ability_sample = 0.15
+		var ordered := standings()
+		for index in range(ordered.size()):
+			var racer := ordered[index]
+			if previous_ability_places.has(racer) and index < int(previous_ability_places[racer]):
+				racer.trigger_ability("overtake")
+			previous_ability_places[racer] = index
 
 func cross_checkpoint(cap: RacingCap, index: int) -> void:
 	if not running or cap.finished or index != cap.checkpoint_index:

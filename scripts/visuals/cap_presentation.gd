@@ -26,6 +26,9 @@ func _ready() -> void:
 	cap.boosted.connect(on_boost)
 	cap.landed.connect(on_landing)
 	cap.swiped.connect(on_swipe)
+	cap.ability_activated.connect(func(effect: CapAbilityDefinition) -> void:
+		if is_instance_valid(fx): fx.burst(global_position, Vector2.UP, effect.feedback_color, 0.8)
+	)
 	cap.powerup_received.connect(func(effect: PowerUpDefinition) -> void:
 		if is_instance_valid(fx):
 			fx.burst(global_position, Vector2.UP, effect.color)

@@ -85,6 +85,11 @@ func _ready() -> void:
 		SaveManager.haptic(18 if perfect else 12)
 		hud.announce(player.controls.perfect_shot.caption(grade) if grade >= 0 else "¡IMPULSO!", 1)
 	)
+	player.ability_activated.connect(func(effect: CapAbilityDefinition) -> void:
+		AudioManager.play("boost")
+		SaveManager.haptic(16)
+		hud.announce(effect.display_name.to_upper(), 1)
+	)
 	AudioManager.set_racing(true)
 	get_window().focus_exited.connect(pause_on_focus_loss)
 	if cup and cup_round == cup.track_ids.size() - 1:

@@ -27,6 +27,13 @@ la tapa provisional de un rival de copa. Garage muestra cinco índices reales y 
 cuatro valores adicionales; CapRatings 1–10 permanece como dato de diseño del catálogo
 futuro. No se activan las 18 tapas ni se migran IDs/desbloqueos en esta etapa.
 
+Fase 5 implementada (sin pruebas): CapAbilityRuntime mantiene estado por corredor.
+Las seis tapas actuales enlazan las habilidades de sus equivalentes de diseño:
+sol/chispa, coral/coral, menta/burbuja, oceano/rayo, uva/brasa, coco/titan. Activación
+automática por salida, impacto, entrada en corriente, adelantamiento o turbo; timers
+solo avanzan durante conducción activa. Recursos base inmutables, HUD y Garage
+muestran habilidades reales. Las otras doce habilidades siguen sin integración.
+
 - F: introducciones de cinco campeones solo en la final de cada copa. ChampionIntro
   reutiliza retrato del corredor activo, frase y color de ChampionshipDefinition.
   Dura 2,5 s; después de verla se puede saltar. seen_champion_intros en SaveManager

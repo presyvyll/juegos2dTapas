@@ -21,6 +21,7 @@ var pickup_notice_time := 0.0
 var position_label: Label
 var speed_label: Label
 var turbo_label: Label
+var ability_label: Label
 var countdown_tween: Tween
 var result_tween: Tween
 var notice: Label
@@ -125,7 +126,11 @@ func _ready() -> void:
 	turbo_label = RacingUI.label("TURBO LISTO", 14)
 	turbo_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	boost_column.add_child(turbo_label)
-	bottom.offset_top = -144
+	ability_label = RacingUI.label("", 14)
+	ability_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	ability_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	boost_column.add_child(ability_label)
+	bottom.offset_top = -166
 	countdown_label = RacingUI.label("3", 96)
 	countdown_label.add_theme_color_override("font_color", Color("ffdd69"))
 	countdown_label.add_theme_color_override("font_outline_color", Color("10283b"))
@@ -222,6 +227,9 @@ func _process(delta: float) -> void:
 	info.text = "VUELTA %d/%d  ·  %.1f s" % [player.lap, session.circuit.laps, shown_time]
 	speed_label.text = "%d u/s" % (0.0 if player.finished else player.velocity.length())
 	boost_bar.value = player.boost_energy * 100
+	ability_label.text = "" if player.finished else player.ability.status()
+	if player.ability.definition:
+		ability_label.tooltip_text = player.ability.definition.description
 	boost_button.disabled = not player.can_boost()
 	turbo_label.text = "¡A TODA AGUA!" if player.boost_time > 0 else ("CARGANDO…" if player.boost_energy < player.turbo.energy_cost else "TURBO LISTO")
 	if player.shield_time > 0:

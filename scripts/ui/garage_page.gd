@@ -9,6 +9,7 @@ var rarity_label: Label
 var state_label: Label
 var requirement: Label
 var detail: Label
+var ability_name: Label
 var equip: Button
 var unlock: Button
 var skin: Button
@@ -103,7 +104,9 @@ func construct() -> void:
 		value.custom_minimum_size.x = 65
 		row.add_child(value)
 		values.append(value)
-	stats.add_child(RacingUI.label("Habilidad: Turbo de corriente", 18))
+	ability_name = RacingUI.label("", 18)
+	ability_name.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	stats.add_child(ability_name)
 	detail = RacingUI.label("", 16)
 	detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	detail.custom_minimum_size.y = 66
@@ -121,7 +124,9 @@ func construct() -> void:
 	upgrade.tooltip_text = "La progresión de niveles y mejoras todavía no está disponible."
 	actions.add_child(upgrade)
 	var ability := RacingUI.button("HABILIDAD", func() -> void:
-		detail.text = "Turbo de corriente · Usa el control de turbo durante la carrera. Potencia base: %d. No hay habilidades individuales activas." % int(RacingCatalog.caps()[shown_index].boost * 100)
+		if busy: return
+		var selected := RacingCatalog.caps()[shown_index]
+		detail.text = selected.ability.description if selected.ability else "Turbo de corriente · Usa el control de turbo durante la carrera."
 	)
 	actions.add_child(ability)
 	for button in actions.get_children(): button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -142,6 +147,7 @@ func apply_cap() -> void:
 	var cap := RacingCatalog.caps()[index]
 	var owned: bool = cap.id in SaveManager.unlocked_caps
 	name_label.text = cap.display_name
+	ability_name.text = "Habilidad: " + (cap.ability.display_name if cap.ability else "Turbo de corriente")
 	name_label.modulate.a = 1
 	rarity_label.text = cap.rarity.replace("_", " ").capitalize()
 	portrait.tint = cap.color.lightened(0.25) if SaveManager.selected_skin == "perla" else cap.color

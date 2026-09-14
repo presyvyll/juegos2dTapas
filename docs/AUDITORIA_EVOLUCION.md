@@ -150,3 +150,20 @@ No iniciar todas las fases simultáneamente. Reestimar después del prototipo de
   aplazada a su integración de habilidades/desbloqueos. No se ejecutaron pruebas ni
   exportación; revisar valores heredados, reemplazo de definiciones, copas, límites
   del Garage y guardado junto a las demás fases al finalizar el desarrollo.
+
+## Fase 5 — Habilidades del catálogo activo (sin validar)
+
+- Estado por corredor en CapAbilityRuntime: duración, cooldown, usos y disparadores;
+  recursos compartidos inmutables. Configuración mediante los seis recursos ya
+  definidos para los equivalentes de las tapas actuales, conservando IDs y compras.
+- Sol: aceleración inicial; Coral: recuperación tras impacto; Menta: menor fuerza
+  lateral de corrientes; Océano: velocidad tras adelantar; Uva: turbo más corto y
+  potente; Coco: reducción temporal del empuje recibido después de un impacto.
+- IA y jugador usan las mismas condiciones. Posiciones muestreadas a 6,7 Hz con
+  standings existente. No hay búsquedas globales, nodos de efectos por activación,
+  botones adicionales ni colisiones desactivadas. El escudo recogido sigue igual.
+- Habilidades automáticas visibles en HUD/Garage con VFX, audio y haptics existentes.
+  Aplazadas las doce habilidades del catálogo no activo y sus eventos específicos.
+- Sin ejecución ni exportación por petición del usuario. Al cierre: comprobar
+  duración/cooldown/usos, pausas, intro/countdown/meta, solapamientos de corrientes,
+  turbo + powerups, adelantamientos/recuperaciones y balance de las seis tapas.

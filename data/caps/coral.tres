@@ -1,10 +1,13 @@
-[gd_resource type="Resource" script_class="CapDefinition" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="CapDefinition" load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/cap_definition.gd" id="1"]
 
 [ext_resource type="Resource" path="res://data/appearances/coral.tres" id="2"]
 
+[ext_resource type="Resource" path="res://data/abilities/coral.tres" id="ability"]
+
 [resource]
+ability = ExtResource("ability")
 script = ExtResource("1")
 id = "coral"
 display_name = "Coral Pop"

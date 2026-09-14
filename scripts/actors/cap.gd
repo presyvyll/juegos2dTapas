@@ -7,6 +7,7 @@ signal impacted(point: Vector2, normal: Vector2, strength: float)
 signal landed
 signal swiped(direction: float)
 signal shot_graded(grade: int)
+signal ability_activated(definition: CapAbilityDefinition)
 signal powerup_received(definition: PowerUpDefinition)
 var shield_time := 0.0
 @export var turbo: TurboConfig = preload("res://data/turbo/default.tres")
@@ -27,12 +28,21 @@ var finish_time: float = 0.0
 var jump_time: float = 0.0
 var jump_duration: float = 0.65
 var base_physics: CapPhysicsConfig
+var ability := CapAbilityRuntime.new()
+var burst_speed_multiplier := 1.6
 
 @onready var motion: CapMotion = $Motion
 @onready var controls: CapPlayerInput = $PlayerInput
 
 func _ready() -> void:
 	controls.boost_available = can_boost
+	ability.activated.connect(func(value: CapAbilityDefinition) -> void: ability_activated.emit(value))
+	impacted.connect(func(_point: Vector2, _normal: Vector2, _strength: float) -> void: trigger_ability("impact_received"))
+	burst_speed_multiplier = turbo.speed_multiplier
+
+func trigger_ability(event: String) -> bool:
+	if not active or finished or get_tree().paused: return false
+	return ability.trigger(event)
 
 func can_boost() -> bool:
 	return active and not finished and not get_tree().paused and boost_time <= 0 and boost_energy >= turbo.energy_cost
@@ -40,6 +50,9 @@ func can_boost() -> bool:
 func _physics_process(delta: float) -> void:
 	if not active or finished:
 		return
+	var first_active_frame := not ability.started
+	ability.advance(delta)
+	if first_active_frame and not currents.is_empty(): trigger_ability("current_enter")
 	shield_time = maxf(0, shield_time - delta)
 	var was_airborne := jump_time > 0
 	jump_time = maxf(0, jump_time - delta)
@@ -75,8 +88,11 @@ func _physics_process(delta: float) -> void:
 	else:
 		modifier = 1.0
 	if boost_time > 0:
-		modifier *= turbo.speed_multiplier
-	velocity = motion.integrate(velocity, steering, delta, flow, external, modifier)
+		modifier *= burst_speed_multiplier
+	modifier *= ability.value("speed")
+	var lateral := Vector2(-flow.y, flow.x).normalized()
+	external += lateral * external.dot(lateral) * (ability.value("current_lateral") - 1.0)
+	velocity = motion.integrate(velocity, steering, delta, flow, external, modifier, ability.value("acceleration"))
 	var collision := move_and_collide(velocity * delta)
 	if collision:
 		var impact := absf(velocity.dot(collision.get_normal()))
@@ -93,13 +109,15 @@ func _physics_process(delta: float) -> void:
 
 func receive_push(impulse: Vector2) -> void:
 	if shield_time <= 0:
-		velocity += impulse
+		velocity += impulse * ability.value("received_push")
 
 func try_boost(flow: Vector2) -> void:
-	if boost_energy < turbo.energy_cost or boost_time > 0:
+	if not can_boost():
 		return
+	trigger_ability("turbo")
 	boost_energy -= turbo.energy_cost
-	boost_time = turbo.duration
+	boost_time = ability.value("turbo_duration", turbo.duration)
+	burst_speed_multiplier = ability.value("turbo_speed", turbo.speed_multiplier)
 	velocity += flow * motion.config.boost_impulse
 	boosted.emit()
 
@@ -108,4 +126,5 @@ func apply_definition(definition: CapDefinition, skin: bool = false) -> void:
 	if base_physics == null:
 		base_physics = motion.config.duplicate() as CapPhysicsConfig
 	motion.config = definition.resolve_physics(base_physics)
+	ability.configure(definition.ability)
 	$Visual.configure(definition.appearance, definition.color.lightened(0.25) if skin else definition.color)
