@@ -10,6 +10,9 @@ var state_label: Label
 var requirement: Label
 var detail: Label
 var ability_name: Label
+var comparison_label: Label
+var detail_button: Button
+var showing_ability := false
 var equip: Button
 var unlock: Button
 var skin: Button
@@ -85,7 +88,9 @@ func construct() -> void:
 	stats.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	columns.add_child(stats)
 	stats.add_child(RacingUI.label("RENDIMIENTO", 23))
-	stats.add_child(RacingUI.label("Nivel: sin progresión de niveles", 16))
+	comparison_label = RacingUI.label("", 16)
+	comparison_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	stats.add_child(comparison_label)
 	for title in ["Velocidad", "Aceleración", "Control", "Peso", "Turbo"]:
 		var row := HBoxContainer.new()
 		stats.add_child(row)
@@ -100,8 +105,8 @@ func construct() -> void:
 		bar.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		row.add_child(bar)
 		bars.append(bar)
-		var value := RacingUI.label("", 16)
-		value.custom_minimum_size.x = 65
+		var value := RacingUI.label("", 14)
+		value.custom_minimum_size.x = 100
 		row.add_child(value)
 		values.append(value)
 	ability_name = RacingUI.label("", 18)
@@ -123,12 +128,12 @@ func construct() -> void:
 	upgrade.disabled = true
 	upgrade.tooltip_text = "La progresión de niveles y mejoras todavía no está disponible."
 	actions.add_child(upgrade)
-	var ability := RacingUI.button("HABILIDAD", func() -> void:
+	detail_button = RacingUI.button("HABILIDAD", func() -> void:
 		if busy: return
-		var selected := RacingCatalog.caps()[shown_index]
-		detail.text = selected.ability.description if selected.ability else "Turbo de corriente · Usa el control de turbo durante la carrera."
+		showing_ability = not showing_ability
+		update_detail(RacingCatalog.caps()[shown_index])
 	)
-	actions.add_child(ability)
+	actions.add_child(detail_button)
 	for button in actions.get_children(): button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	unlock = RacingUI.button("", purchase_cap)
 	add_child(unlock)
@@ -163,14 +168,24 @@ func apply_cap() -> void:
 	unlock.text = "DESBLOQUEAR · %d monedas" % cap.price
 	unlock.visible = not owned
 	unlock.disabled = SaveManager.coins < cap.price
-	detail.text = "Índices: 100 = estándar.\n" + cap.movement_summary(BASE_PHYSICS)
+	update_detail(cap)
 	detail.modulate.a = 1
 	if not SaveManager.last_save_ok: requirement.text = "No se pudo guardar. Reintenta para conservar el cambio."
 	if bar_motion: bar_motion.kill()
 	bar_motion = create_tween().set_parallel(true)
 	var targets := cap.garage_indices()
+	var equipped := cap
+	for entry in RacingCatalog.caps():
+		if entry.id == SaveManager.selected_cap:
+			equipped = entry
+			break
+	var baseline := equipped.garage_indices()
+	var comparing := cap.id != equipped.id
+	comparison_label.text = "Comparada con " + equipped.display_name if comparing else "Tapa equipada · índices base: 100"
 	for i in range(bars.size()):
-		values[i].text = str(roundi(targets[i]))
+		var difference := roundi(targets[i]) - roundi(baseline[i])
+		values[i].text = "%d (%+d)" % [roundi(targets[i]), difference] if comparing else str(roundi(targets[i]))
+		values[i].tooltip_text = "Diferencia respecto a la tapa equipada; más peso no significa mejor control." if i == 3 else "Índice actual y diferencia respecto a la tapa equipada."
 		bars[i].modulate.a = 1.0
 		bar_motion.tween_property(bars[i], "value", targets[i], 0.30).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	for i in range(chips.size()):
@@ -181,6 +196,15 @@ func apply_cap() -> void:
 	var has_skin: bool = "perla" in SaveManager.unlocked_skins
 	skin.text = ("PERLA · usar original" if SaveManager.selected_skin == "perla" else "ORIGINAL · usar Perla") if has_skin else "PERLA · 75 monedas"
 	skin.disabled = not has_skin and SaveManager.coins < 75
+
+func update_detail(cap: CapDefinition) -> void:
+	detail_button.text = "ESTADÍSTICAS" if showing_ability else "HABILIDAD"
+	if showing_ability:
+		detail.text = cap.ability.description if cap.ability else "Turbo de corriente · Usa el control de turbo durante la carrera."
+		detail.tooltip_text = "La habilidad se activa automáticamente al cumplir su condición. El turbo conserva su botón."
+	else:
+		detail.text = "Índices: 100 = estándar.\n" + cap.movement_summary(BASE_PHYSICS)
+		detail.tooltip_text = "Estabilidad: amortiguación lateral del agua. Mayor peso reduce la respuesta a fuerzas. Rebote y fricción implican ventajas y desventajas."
 
 func change_cap(step: int) -> void:
 	if step == 0: return

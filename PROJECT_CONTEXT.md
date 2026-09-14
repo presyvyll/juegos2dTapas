@@ -34,6 +34,11 @@ automática por salida, impacto, entrada en corriente, adelantamiento o turbo; t
 solo avanzan durante conducción activa. Recursos base inmutables, HUD y Garage
 muestran habilidades reales. Las otras doce habilidades siguen sin integración.
 
+Fase 6 (sin pruebas): Garage compara los cinco índices con la tapa equipada y
+permite alternar habilidad/estadísticas sin salir del carrusel. Compra, equipamiento,
+Perla, bloqueos y swipe existentes conservados. MEJORAR sigue deshabilitado hasta
+implementar niveles/economía en fase 7; no se inventan estadísticas de mejora.
+
 - F: introducciones de cinco campeones solo en la final de cada copa. ChampionIntro
   reutiliza retrato del corredor activo, frase y color de ChampionshipDefinition.
   Dura 2,5 s; después de verla se puede saltar. seen_champion_intros en SaveManager

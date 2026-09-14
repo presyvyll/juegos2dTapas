@@ -167,3 +167,16 @@ No iniciar todas las fases simultáneamente. Reestimar después del prototipo de
 - Sin ejecución ni exportación por petición del usuario. Al cierre: comprobar
   duración/cooldown/usos, pausas, intro/countdown/meta, solapamientos de corrientes,
   turbo + powerups, adelantamientos/recuperaciones y balance de las seis tapas.
+
+## Fase 6 — Garage (integración visual, sin validar)
+
+- Comparación de velocidad, aceleración, control, peso y turbo frente a la tapa
+  equipada, incluso en tapas bloqueadas. Diferencias numéricas neutrales: el peso
+  no se presenta como una mejora universal. Equipar actualiza la referencia.
+- Botón HABILIDAD/ESTADÍSTICAS para alternar descripción real y parámetros de
+  movimiento; conserva el modo al recorrer tapas. Retrato, swipe, flechas, compra,
+  equipamiento y apariencia Perla reutilizan los sistemas existentes.
+- Dependencia pendiente: activar MEJORAR después de implementar niveles y economía
+  transaccional en fase 7. No se ofrecen compras de mejoras sin efecto.
+- Sin pruebas ni compilación. Al cierre validar comparación tras equipar/compra,
+  guardado fallido, cambios rápidos, descripciones largas y tamaños Android.
