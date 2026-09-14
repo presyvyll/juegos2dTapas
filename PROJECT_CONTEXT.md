@@ -8,6 +8,9 @@ de IA; falta Android físico y estabilizar calidad alta. Mapa de copas/pistas a�
 integrar. Auditoría actual: docs/AUDITORIA_EVOLUCION.md. XP, niveles, mejoras,
 Perfect Shot, combos y ghost siguen pendientes. Fase 2: señal de swipe aplicado
 reutiliza HUD, audio, haptics y pool VFX sin modificar fuerza/cooldown.
+Actualización 2026-09-14: ondas decorativas acotadas al viewport en WaterSurface;
+248–398 draw calls y 60 FPS observados en PC (antes 1.073–1.236 draw calls).
+Pruebas de límites visuales y carreras pasan; falta medición en Android físico.
 
 - F: introducciones de cinco campeones solo en la final de cada copa. ChampionIntro
   reutiliza retrato del corredor activo, frase y color de ChampionshipDefinition.

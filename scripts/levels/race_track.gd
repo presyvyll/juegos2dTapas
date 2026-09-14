@@ -166,9 +166,7 @@ func _draw() -> void:
 	for index in range(int(definition.length / 180)):
 		var y := -index * 180.0
 		var center := center_at(y)
-		for lane in [-1, 0, 1]:
-			var x: float = center + lane * 150
-			draw_arc(Vector2(x, y), 22, 0.2, 2.8, 8, Color(0.7, 1, 1, 0.24), 2, true)
+		# WaterSurface draws these wave marks only inside the current viewport.
 		if index % (4 if high_quality else 8) == 0:
 			for side in [-1, 1]:
 				var spot := Vector2(center + side * (width_at(y) / 2 + 65), y)

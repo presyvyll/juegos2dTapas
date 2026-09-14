@@ -5,6 +5,15 @@ var track: RaceTrack
 var target: RacingCap
 var clock := 0.0
 var refresh := 0.0
+var visible_wave_rows := 0
+
+func wave_row_range() -> Vector2i:
+	var inverse := get_viewport().get_canvas_transform().affine_inverse()
+	var top_y := (inverse * Vector2.ZERO).y
+	var bottom_y := (inverse * get_viewport_rect().size).y
+	var total := int(track.definition.length / 180)
+	# One-row margin prevents popping while the existing 10/20 Hz refresh catches up.
+	return Vector2i(clampi(int(floor(-bottom_y / 180)) - 1, 0, total), clampi(int(ceil(-top_y / 180)) + 2, 0, total))
 
 func _process(delta: float) -> void:
 	clock += delta
@@ -16,6 +25,14 @@ func _process(delta: float) -> void:
 	queue_redraw()
 
 func _draw() -> void:
+	var rows := wave_row_range()
+	visible_wave_rows = maxi(0, rows.y - rows.x)
+	for index in range(rows.x, rows.y):
+		var world_y := -index * 180.0
+		var center := track.center_at(world_y)
+		for lane in [-1, 0, 1]:
+			var spot := to_local(track.to_global(Vector2(center + lane * 150, world_y)))
+			draw_arc(spot, 22, 0.2, 2.8, 8, Color(0.7, 1, 1, 0.24), 2, true)
 	for row in range(-5, 5):
 		var y := row * 180.0 + fmod(clock * 38, 180)
 		var world_y := position.y + y

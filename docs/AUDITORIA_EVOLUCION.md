@@ -93,3 +93,29 @@ Estimaciones en ciclos de implementación + ejecución + corrección, no fechas 
 | 14 | Balance humano, accesibilidad y pulido | 3–6 |
 
 No iniciar todas las fases simultáneamente. Reestimar después del prototipo de lanzamiento.
+
+## Ejecución de fase 2 — 14 septiembre
+
+- Swipe: feedback solo cuando se aplica el impulso; fuerza y cooldown conservados.
+- Export: Godot AI permanece en el repositorio pero no se incluye en los APK.
+- Ondas estáticas: trasladadas al WaterSurface existente y limitadas al viewport;
+  las colisiones, bancos y obstáculos no cambian. Queda pendiente estudiar las
+  decoraciones de orilla si el perfilado móvil lo requiere.
+- Medición PC 1280×720 con cuatro corredores: antes 1.073–1.236 draw calls,
+  después 248–398. Las ocho muestras posteriores dieron 60 FPS en baja/alta.
+  No es una garantía de rendimiento en teléfonos ni una comparación de trayectorias idénticas.
+- Pruebas: swipe headless/render, límites de ondas en tres resoluciones y
+  comienzo/medio/meta, carreras completas y tres vueltas: cero fallos finales.
+  Evidencias: builds/logs/audit-swipe-final.log, audit-swipe-render.log,
+  audit-water-culling.log, audit-game-culling.log y audit-render-culling.log.
+- APK 0.2.0 ARM64/x86_64 regenerados y firmas verificadas. Instalación conservando
+  datos y apertura en TapaRacing_Test comprobadas; menú, preparación, carrera y pausa
+  visibles a 1280×720. No se certifica una carrera completa manual en Android.
+- Limitación pendiente: SwiftShader registra exceso de uniforms al compilar
+  SceneShaderGLES3; el juego 2D se dibuja, pero los tiempos EGL observados rondan
+  150–250 ms por cuadro. También aparece can_process fuera del árbol al navegar.
+  No hay SCRIPT ERROR ni FATAL EXCEPTION en el log del proceso revisado.
+  Investigar las transiciones y repetir con GPU acelerada/teléfono antes de aprobar
+  rendimiento Android. Evidencia: builds/logs/audit-android-runtime.log.
+- Emulador recuperado sin borrar datos: crash-report-mode disabled, no-metrics,
+  puertos 5574/5575, ADB local puerto 5045 hacia 127.0.0.1:5575; override 720×1280.
