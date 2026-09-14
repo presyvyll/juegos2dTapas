@@ -26,6 +26,7 @@ var checkpoint_index: int = 0
 var finish_time: float = 0.0
 var jump_time: float = 0.0
 var jump_duration: float = 0.65
+var base_physics: CapPhysicsConfig
 
 @onready var motion: CapMotion = $Motion
 @onready var controls: CapPlayerInput = $PlayerInput
@@ -103,10 +104,8 @@ func try_boost(flow: Vector2) -> void:
 	boosted.emit()
 
 func apply_definition(definition: CapDefinition, skin: bool = false) -> void:
-	motion.config = motion.config.duplicate() as CapPhysicsConfig
-	motion.config.current_speed *= definition.speed
-	motion.config.acceleration *= definition.acceleration
-	motion.config.lateral_force *= definition.handling
-	motion.config.weight *= definition.weight
-	motion.config.boost_impulse *= definition.boost
+	# Cup setup can replace a provisional cap; never compound its multipliers.
+	if base_physics == null:
+		base_physics = motion.config.duplicate() as CapPhysicsConfig
+	motion.config = definition.resolve_physics(base_physics)
 	$Visual.configure(definition.appearance, definition.color.lightened(0.25) if skin else definition.color)

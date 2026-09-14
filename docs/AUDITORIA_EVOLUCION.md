@@ -132,3 +132,21 @@ No iniciar todas las fases simultáneamente. Reestimar después del prototipo de
 - Por petición del usuario no se ejecutan pruebas, juego ni exportaciones en esta
   etapa. Al cierre validar gestos diagonales/rápidos/lentos, multitouch, cooldown,
   pausa/salida/meta, prioridades del HUD y rendimiento/responsive en Android.
+
+## Fase 4 — Estadísticas (implementado, sin validar)
+
+- CapDefinition configura velocidad, aceleración, control, peso, turbo, rebote,
+  fricción, estabilidad e impulso lateral; resolve_physics genera la configuración
+  efectiva sin mutar el recurso base. Los cuatro multiplicadores nuevos valen 1.
+- Estabilidad significa amortiguación lateral del agua. No introduce salud ni
+  resistencia al daño. El límite de velocidad y las ecuaciones de movimiento siguen
+  en CapPhysicsConfig/CapMotion; los ratings 1–10 no sustituyen valores físicos.
+- Se evita aplicar dos veces multiplicadores al cambiar una definición: los rivales
+  de copa usan su tapa final desde la base, sin acumular la provisional. Esta corrección
+  puede modificar su rendimiento anterior y requiere revisar el balance al cierre.
+- Garage consume índices desde CapDefinition y muestra rebote/fricción/estabilidad/
+  impulso calculados con la misma base que player_cap.tscn. Turbo reemplaza el N/D.
+- IDs, precios, partidas y catálogo activo conservados. Activación de las 18 tapas
+  aplazada a su integración de habilidades/desbloqueos. No se ejecutaron pruebas ni
+  exportación; revisar valores heredados, reemplazo de definiciones, copas, límites
+  del Garage y guardado junto a las demás fases al finalizar el desarrollo.

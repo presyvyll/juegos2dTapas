@@ -1,5 +1,7 @@
 extends SelectionPage
 
+const BASE_PHYSICS: CapPhysicsConfig = preload("res://data/caps/prototype.tres")
+
 var portrait: Control
 var stage: Control
 var name_label: Label
@@ -83,7 +85,7 @@ func construct() -> void:
 	columns.add_child(stats)
 	stats.add_child(RacingUI.label("RENDIMIENTO", 23))
 	stats.add_child(RacingUI.label("Nivel: sin progresión de niveles", 16))
-	for title in ["Velocidad", "Aceleración", "Control", "Peso", "Resistencia"]:
+	for title in ["Velocidad", "Aceleración", "Control", "Peso", "Turbo"]:
 		var row := HBoxContainer.new()
 		stats.add_child(row)
 		var label := RacingUI.label(title, 18)
@@ -102,9 +104,10 @@ func construct() -> void:
 		row.add_child(value)
 		values.append(value)
 	stats.add_child(RacingUI.label("Habilidad: Turbo de corriente", 18))
-	detail = RacingUI.label("Valores base: 100 = estándar. Resistencia individual y mejoras aún no disponibles.", 16)
+	detail = RacingUI.label("", 16)
 	detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	detail.custom_minimum_size.y = 48
+	detail.custom_minimum_size.y = 66
+	detail.tooltip_text = "Estabilidad: amortiguación lateral del agua; no es salud. Mayor peso reduce la respuesta a fuerzas. Rebote y fricción no son mejoras universales."
 	stats.add_child(detail)
 	requirement = RacingUI.label("", 17)
 	requirement.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -154,15 +157,15 @@ func apply_cap() -> void:
 	unlock.text = "DESBLOQUEAR · %d monedas" % cap.price
 	unlock.visible = not owned
 	unlock.disabled = SaveManager.coins < cap.price
-	detail.text = "Valores base: 100 = estándar. Resistencia individual y mejoras aún no disponibles."
+	detail.text = "Índices: 100 = estándar.\n" + cap.movement_summary(BASE_PHYSICS)
 	detail.modulate.a = 1
 	if not SaveManager.last_save_ok: requirement.text = "No se pudo guardar. Reintenta para conservar el cambio."
 	if bar_motion: bar_motion.kill()
 	bar_motion = create_tween().set_parallel(true)
-	var targets := [cap.speed * 100, cap.acceleration * 100, cap.handling * 100, cap.weight * 100, 0.0]
+	var targets := cap.garage_indices()
 	for i in range(bars.size()):
-		values[i].text = str(int(targets[i])) if i < 4 else "N/D"
-		bars[i].modulate.a = 1.0 if i < 4 else 0.35
+		values[i].text = str(roundi(targets[i]))
+		bars[i].modulate.a = 1.0
 		bar_motion.tween_property(bars[i], "value", targets[i], 0.30).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	for i in range(chips.size()):
 		var entry := RacingCatalog.caps()[i]

@@ -6,7 +6,7 @@ Actualización 2026-09-13: menú/Garage y feedback de carrera modernizados; seis
 de IA activos y dificultad Experto. 64 carreras/256 llegadas validadas en la entrega
 de IA; falta Android físico y estabilizar calidad alta. Mapa de copas/pistas aún sin
 integrar. Auditoría actual: docs/AUDITORIA_EVOLUCION.md. XP, niveles, mejoras,
-Perfect Shot, combos y ghost siguen pendientes. Fase 2: señal de swipe aplicado
+Combos y ghost siguen pendientes. Fase 2: señal de swipe aplicado
 reutiliza HUD, audio, haptics y pool VFX sin modificar fuerza/cooldown.
 Actualización 2026-09-14: ondas decorativas acotadas al viewport en WaterSurface;
 248–398 draw calls y 60 FPS observados en PC (antes 1.073–1.236 draw calls).
@@ -18,6 +18,14 @@ en data/perfect_shot/default.tres; feedback en HUD/audio/haptics y pool VFX exis
 No cambia fuerza, cooldown, monedas ni XP. No añade lanzamiento por arrastrar/soltar.
 Por instrucción del usuario, aplazar pruebas y ejecución hasta el final de las fases
 de desarrollo. El APK instalado corresponde todavía a la fase 2.
+
+Fase 4 implementada (pendiente de pruebas): CapDefinition.resolve_physics centraliza
+los cinco multiplicadores existentes y añade rebote, fricción, estabilidad lateral e
+impulso lateral con valores neutros. CapPhysicsConfig sigue siendo la base compartida.
+apply_definition recalcula desde una copia base: corrige la acumulación al sustituir
+la tapa provisional de un rival de copa. Garage muestra cinco índices reales y los
+cuatro valores adicionales; CapRatings 1–10 permanece como dato de diseño del catálogo
+futuro. No se activan las 18 tapas ni se migran IDs/desbloqueos en esta etapa.
 
 - F: introducciones de cinco campeones solo en la final de cada copa. ChampionIntro
   reutiliza retrato del corredor activo, frase y color de ChampionshipDefinition.
