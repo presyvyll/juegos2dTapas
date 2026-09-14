@@ -19,6 +19,8 @@ var last_save_ok := true
 var championships: Dictionary = {"active": {}, "completed": {}}
 ## Transient launch intent: free play never advances a saved cup.
 var cup_race_requested := false
+var return_to_cups := false
+var viewed_cup_id := ""
 var seen_champion_intros: Array = []
 const DEFAULT_SETTINGS := {"music": 0.35, "effects": 0.65, "vibration": true, "quality": "high", "fps": 60, "difficulty": "normal", "race_laps": 1}
 
@@ -154,6 +156,7 @@ func submit_cup_round(round_index: int, rows: Array) -> bool:
 	if normalized.is_empty(): return false
 	var next := championships.duplicate(true)
 	next.active.rounds.append(normalized)
+	CupProgress.record_round(next, cup.id, round_index, normalized)
 	next.active.phase = "results"
 	var reward := 0
 	if next.active.rounds.size() == cup.track_ids.size():

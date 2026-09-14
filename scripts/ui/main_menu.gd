@@ -52,7 +52,11 @@ func _ready() -> void:
 		navigation.add_child(exit_button)
 	SaveManager.changed.connect(update_wallet)
 	SaveManager.save_failed.connect(update_wallet)
-	show_home()
+	if SaveManager.return_to_cups:
+		SaveManager.return_to_cups = false
+		show_championships()
+	else:
+		show_home()
 	AudioManager.set_racing(false)
 
 func update_wallet() -> void:
@@ -147,5 +151,7 @@ func show_settings() -> void:
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST and is_instance_valid(heading) and heading.text != "TAPA RACING":
+		for child in content.get_children():
+			if child is ChampionshipPage and child.go_back(): return
 		SaveManager.save()
 		show_home()

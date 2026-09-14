@@ -199,3 +199,24 @@ No iniciar todas las fases simultáneamente. Reestimar después del prototipo de
 - Sin pruebas ni exportación. Validación final pendiente: migración/backup, datos
   malformados, guardado fallido/reintentos, compra y doble toque, límites de nivel,
   copas repetidas/DNF, balance frente a NPC base, layout y compatibilidad Android.
+
+## Fase 8 — Copas y mapa (sin validar)
+
+- ChampionshipPage integra CupRoute: cinco copas, trofeo procedural, swipe en
+  cabecera/flechas, estados, estrellas, recorrido curvo y selección de nodos.
+- Tarjeta con preview ilustrativa ligera, dificultad, descripción y récord de copa;
+  final con nombre/tapa/habilidad real del campeón. Preparación indica tapa/nivel,
+  rivales, vueltas y objetivo; permite volver al mapa antes de correr.
+- Continuar tras resultados vuelve al mapa. La siguiente ronda usa active.rounds;
+  explorar nodos bloqueados no permite lanzarlos. Requisitos de copa y recompensas
+  conservados, sin sistema paralelo de progresión.
+- track_records dentro de championships guarda mejor puntuación de estrellas
+  (3/2/1/0 por puesto terminado) y tiempo por ronda; sobrevive a cerrar/repetir copa.
+  DNF no crea récord. Guardado junto al resultado/XP y saneamiento al cargar. Las
+  rondas de una participación antigua activa permiten recuperar datos reales;
+  copas históricas sin detalle no reciben estrellas ni tiempos supuestos.
+- Solo entradas de catálogo y dibujo 2D en menús; animaciones cortas de entrada,
+  nodos y siguiente ronda. Sin partículas ni shaders añadidos.
+- No se ejecutaron pruebas ni exportación. Al cierre revisar estados/guardado,
+  ronda repetida, mapas con copas activas, desbloqueo final, swipe/atrás, tamaños,
+  lecturas antiguas y retorno desde carrera antes de certificar la integración.

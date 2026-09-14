@@ -1,12 +1,11 @@
 # Contexto del proyecto
 
-## Etapa actual: F completada
+## Etapa actual: evolución fases 3–8 implementadas, sin pruebas todavía
 
 Actualización 2026-09-13: menú/Garage y feedback de carrera modernizados; seis perfiles
 de IA activos y dificultad Experto. 64 carreras/256 llegadas validadas en la entrega
-de IA; falta Android físico y estabilizar calidad alta. Mapa de copas/pistas aún sin
-integrar. Auditoría actual: docs/AUDITORIA_EVOLUCION.md. XP, niveles, mejoras,
-Combos y ghost siguen pendientes. Fase 2: señal de swipe aplicado
+de IA; falta Android físico y estabilizar calidad alta. Auditoría actual:
+docs/AUDITORIA_EVOLUCION.md. Combos y ghost siguen pendientes. Fase 2: señal de swipe aplicado
 reutiliza HUD, audio, haptics y pool VFX sin modificar fuerza/cooldown.
 Actualización 2026-09-14: ondas decorativas acotadas al viewport en WaterSurface;
 248–398 draw calls y 60 FPS observados en PC (antes 1.073–1.236 draw calls).
@@ -48,6 +47,14 @@ SaveManager escribe esquema 2 en el mismo archivo y acepta v1 sin progreso previ
 XP integrada en la transacción de copa y resultado libre; rollback y reintento de
 guardado libre. Nivel/XP visibles en Garage, menú y resultados. Balance, migración,
 regresiones y compilación aplazados al cierre por instrucción del usuario.
+
+Fase 8 implementada (sin pruebas): ChampionshipPage integra CupRoute, tarjeta de
+pista, preparación, swipe en cabecera, campeón final y retorno al mapa entre rondas.
+CupProgress conserva en championships.track_records estrellas/mejor tiempo por copa
+y número de ronda; se actualizan en la misma transacción que resultado/XP. La ruta
+jugable sigue exclusivamente active.rounds y las fases existentes, sin saltar rondas.
+Históricos antiguos sin detalle de rondas no reciben estrellas inventadas. El mapa
+usa entradas ligeras y preview ilustrativa, sin cargar geometría ni escenas de carrera.
 
 - F: introducciones de cinco campeones solo en la final de cada copa. ChampionIntro
   reutiliza retrato del corredor activo, frase y color de ChampionshipDefinition.
