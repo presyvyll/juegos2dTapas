@@ -119,3 +119,16 @@ No iniciar todas las fases simultáneamente. Reestimar después del prototipo de
   rendimiento Android. Evidencia: builds/logs/audit-android-runtime.log.
 - Emulador recuperado sin borrar datos: crash-report-mode disabled, no-metrics,
   puertos 5574/5575, ADB local puerto 5045 hacia 127.0.0.1:5575; override 720×1280.
+
+## Fase 3 — Perfect Shot (implementado, sin validar)
+
+- Se clasifica el gesto lateral existente al superar su umbral de 65 px antes de
+  300 ms; no se cambia a lanzamiento por arrastrar y soltar. Perfect: hasta 140 ms
+  y alineación horizontal ≥0,96; Great: 210 ms/0,90; Good: 280 ms/0,75; resto Weak.
+  Valores configurables en Resource y provisionales hasta las pruebas de juego.
+- La señal de clasificación se emite solo al aplicar un impulso fuera del cooldown.
+  La lectura consume también su calificación; limpiar controles elimina ambos datos.
+  HUD, audio, vibración opcional y partículas reutilizados, sin bonus físico ni XP.
+- Por petición del usuario no se ejecutan pruebas, juego ni exportaciones en esta
+  etapa. Al cierre validar gestos diagonales/rápidos/lentos, multitouch, cooldown,
+  pausa/salida/meta, prioridades del HUD y rendimiento/responsive en Android.

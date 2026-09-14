@@ -79,10 +79,11 @@ func _ready() -> void:
 		AudioManager.play("boost")
 		SaveManager.haptic(25)
 	)
-	player.swiped.connect(func(_direction: float) -> void:
-		AudioManager.play("ui")
-		SaveManager.haptic(12)
-		hud.announce("¡IMPULSO!", 1)
+	player.shot_graded.connect(func(grade: int) -> void:
+		var perfect := grade == PerfectShotConfig.Grade.PERFECT
+		AudioManager.play("boost" if perfect else "ui")
+		SaveManager.haptic(18 if perfect else 12)
+		hud.announce(player.controls.perfect_shot.caption(grade) if grade >= 0 else "¡IMPULSO!", 1)
 	)
 	AudioManager.set_racing(true)
 	get_window().focus_exited.connect(pause_on_focus_loss)

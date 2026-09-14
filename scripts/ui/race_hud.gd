@@ -103,7 +103,7 @@ func _ready() -> void:
 		bottom.offset_top = -safe.w - 124
 	get_viewport().size_changed.connect(update_margins)
 	update_margins.call()
-	var hints := RacingUI.label("◀ TOCA PARA GIRAR ▶\nDesliza para dar un impulso")
+	var hints := RacingUI.label("◀ TOCA PARA GIRAR ▶\nSwipe rápido y recto: Perfect Shot")
 	if OS.get_name() != "Android":
 		hints.text += " · A/D"
 	hints.add_theme_font_size_override("font_size", 17)

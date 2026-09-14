@@ -12,6 +12,13 @@ Actualización 2026-09-14: ondas decorativas acotadas al viewport en WaterSurfac
 248–398 draw calls y 60 FPS observados en PC (antes 1.073–1.236 draw calls).
 Pruebas de límites visuales y carreras pasan; falta medición en Android físico.
 
+Fase 3 implementada (pendiente de pruebas): Perfect Shot clasifica el swipe lateral
+aceptado en Weak/Good/Great/Perfect por duración y alineación horizontal. Configuración
+en data/perfect_shot/default.tres; feedback en HUD/audio/haptics y pool VFX existente.
+No cambia fuerza, cooldown, monedas ni XP. No añade lanzamiento por arrastrar/soltar.
+Por instrucción del usuario, aplazar pruebas y ejecución hasta el final de las fases
+de desarrollo. El APK instalado corresponde todavía a la fase 2.
+
 - F: introducciones de cinco campeones solo en la final de cada copa. ChampionIntro
   reutiliza retrato del corredor activo, frase y color de ChampionshipDefinition.
   Dura 2,5 s; después de verla se puede saltar. seen_champion_intros en SaveManager

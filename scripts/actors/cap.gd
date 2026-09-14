@@ -6,6 +6,7 @@ signal boosted
 signal impacted(point: Vector2, normal: Vector2, strength: float)
 signal landed
 signal swiped(direction: float)
+signal shot_graded(grade: int)
 signal powerup_received(definition: PowerUpDefinition)
 var shield_time := 0.0
 @export var turbo: TurboConfig = preload("res://data/turbo/default.tres")
@@ -58,6 +59,7 @@ func _physics_process(delta: float) -> void:
 			velocity += Vector2(-flow.y, flow.x) * swipe * motion.config.lateral_impulse
 			swipe_cooldown = 0.6
 			swiped.emit(swipe)
+			shot_graded.emit(controls.consumed_shot_grade)
 	var external := Vector2.ZERO
 	var modifier := 0.0
 	var count := 0

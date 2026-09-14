@@ -85,7 +85,8 @@ func on_landing() -> void:
 func on_swipe(direction: float) -> void:
 	landing_time = 0.18
 	if is_instance_valid(fx):
-		fx.burst(global_position, Vector2(-direction, 0), Color("b2fff4"), 0.55)
+		var perfect := cap.controls.consumed_shot_grade == PerfectShotConfig.Grade.PERFECT
+		fx.burst(global_position, Vector2(-direction, 0), Color("ffdc6c") if perfect else Color("b2fff4"), 0.8 if perfect else 0.55)
 
 func _draw() -> void:
 	if is_instance_valid(cap) and cap.shield_time > 0:
