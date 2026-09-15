@@ -108,6 +108,7 @@ func show_home() -> void:
 func show_rewards() -> void:
 	clear()
 	heading.text = "PREMIOS"
+	content.add_child(RacingUI.button("DESAFÍOS · progreso y recompensas", show_challenges))
 	content.add_child(RacingUI.label("Premios de las cinco copas", 28))
 	for cup in RacingCatalog.championships():
 		var best := int(SaveManager.championships.completed.get(cup.id, 0))
@@ -116,6 +117,12 @@ func show_rewards() -> void:
 	content.add_child(RacingUI.label("Cada premio se entrega automáticamente una sola vez.", 17))
 	content.add_child(RacingUI.button("Ver copas", show_championships))
 	content.add_child(RacingUI.button("Volver al menú", show_home))
+
+func show_challenges() -> void:
+	clear()
+	heading.text = "DESAFÍOS"
+	content.add_child(ChallengesPage.new())
+	content.add_child(RacingUI.button("Volver a premios", show_rewards))
 
 func show_race_setup() -> void:
 	SaveManager.cup_race_requested = false

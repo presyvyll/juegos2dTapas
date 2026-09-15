@@ -368,6 +368,8 @@ func show_results(place: int, time: float, reward: int, retry_save: Callable = C
 	if is_instance_valid(ghost): content.add_child(RacingUI.label(ghost.status, 15))
 	if combo != null: content.add_child(RacingUI.label("Mejor combo: x%d" % combo.best, 16))
 	if reward >= 0:
+		var ready := ChallengeProgress.ready_count(SaveManager.challenges)
+		if ready > 0: content.add_child(RacingUI.label("%d desafío(s) para reclamar en Premios" % ready, 16))
 		content.add_child(RacingUI.label("+%d XP · Total de tapa: %d XP · Nivel %d" % [SaveManager.PROGRESSION.reward(place), SaveManager.cap_xp(player.definition_id), SaveManager.cap_level(player.definition_id)], 16))
 	var best := float(SaveManager.best_times.get(session.circuit.record_key(SaveManager.settings.difficulty, session.circuit.laps), time))
 	content.add_child(RacingUI.label("Récord local: %.2f s · %s" % [best, "★".repeat(maxi(0, 4 - place)) + "☆".repeat(mini(3, place - 1))], 17))

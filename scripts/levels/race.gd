@@ -18,6 +18,7 @@ var saved_free_reward := -1
 var combo := RaceCombo.new()
 var ghost: RaceGhost
 var replay_mode := false
+var challenge_metrics := {"perfect_shots": 0, "pickups": 0}
 ## Set a positive seed for reproducible QA; zero varies decisions between races.
 @export var ai_seed := 0
 
@@ -159,7 +160,14 @@ func finish_champion_intro() -> void:
 
 func register_combo(action: String) -> void:
 	if get_tree().paused or not session.running or not player.active or player.finished: return
+	if action == "perfect_shot": challenge_metrics.perfect_shots = mini(100000, int(challenge_metrics.perfect_shots) + 1)
+	elif action == "pickup": challenge_metrics.pickups = mini(100000, int(challenge_metrics.pickups) + 1)
 	combo.register(action)
+
+func result_challenge_metrics() -> Dictionary:
+	var result := challenge_metrics.duplicate()
+	result["best_combo"] = combo.best
+	return result
 
 func start_ghost_replay() -> void:
 	session.set_physics_process(false)
@@ -223,7 +231,9 @@ func save_cup_results() -> void:
 	content.add_child(RacingUI.label("Mejor combo: x%d" % combo.best, 16))
 	hud.overlay.offset_top = -300
 	hud.overlay.offset_bottom = 300
-	if SaveManager.submit_cup_round(cup_round, cup_rows):
+	if SaveManager.submit_cup_round(cup_round, cup_rows, result_challenge_metrics()):
+		var ready := ChallengeProgress.ready_count(SaveManager.challenges)
+		if ready > 0: content.add_child(RacingUI.label("%d desafío(s) para reclamar en Premios" % ready, 16))
 		content.add_child(RacingUI.label("Progreso de tapa: %d XP · nivel %d" % [SaveManager.cap_xp(player.definition_id), SaveManager.cap_level(player.definition_id)], 16))
 		var page := ChampionshipPage.new()
 		page.race_results = true
@@ -383,7 +393,7 @@ func on_finish(place: int, time: float) -> void:
 	player.controls.clear()
 	player.controls.set_process_unhandled_input(false)
 	var key := track.definition.record_key(SaveManager.settings.difficulty, track.definition.laps)
-	saved_free_reward = SaveManager.record_result(key, time, place, player.definition_id)
+	saved_free_reward = SaveManager.record_result(key, time, place, player.definition_id, result_challenge_metrics())
 	AudioManager.set_racing(false)
 	# Persist immediately; only presentation waits. Bound tween dies on scene exit.
 	var finish_transition := create_tween()
@@ -394,7 +404,7 @@ func show_free_result(place: int, time: float) -> void:
 	hud.show_results(place, time, saved_free_reward, func() -> void:
 		if saved_free_reward < 0:
 			var key := track.definition.record_key(SaveManager.settings.difficulty, track.definition.laps)
-			saved_free_reward = SaveManager.record_result(key, time, place, player.definition_id)
+			saved_free_reward = SaveManager.record_result(key, time, place, player.definition_id, result_challenge_metrics())
 		show_free_result(place, time)
 	)
 

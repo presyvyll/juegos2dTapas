@@ -275,3 +275,21 @@ No iniciar todas las fases simultáneamente. Reestimar después del prototipo de
 - Sin pruebas ni exportación. Al cierre revisar persistencia/archivos inválidos,
   pausas, pérdida de foco, vueltas, tiempo final, cambio de nivel/dificultad,
   repetición sin recompensas, memoria, límites y cámara/layout Android.
+
+## Fase 12 — Desafíos y persistencia (sin validar)
+
+- Seis recursos declarativos permanentes: cinco llegadas (60 monedas), tres
+  victorias (90), completar una participación de copa (100), combo x4 (80), diez
+  Perfect Shots (75) y diez recogidas (60). No son desafíos diarios ni dependen
+  del reloj. Completar copa no exige podio; conserva las condiciones actuales.
+- ChallengeProgress actualiza acumulados/máximo de combo dentro de la transacción
+  de resultado libre o ronda de copa. Las acciones se cuentan al finalizar y guardar;
+  DNF no acredita acciones/llegada, pero cerrar la participación sí cuenta como copa.
+- Estado incluido en el guardado actual, IDs/valores saneados y partidas antiguas
+  con progreso inicial cero. Reclamación única y transaccional: monedas + claimed,
+  con rollback en fallo. Reintentos usan los controles existentes de resultado/ronda.
+- Premios > Desafíos, tres tarjetas por página, barras, requisitos, estado y botón
+  reclamar. Resultados indican premios pendientes. Ghost no participa en desafíos.
+- Sin ejecución, pruebas ni APK. Al cierre validar eventos reales, resultados
+  repetidos, DNF, reclamación/doble toque, fallos de escritura, partidas antiguas,
+  regreso desde carrera, métricas simultáneas y layouts Android.

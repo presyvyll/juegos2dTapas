@@ -1,6 +1,6 @@
 # Contexto del proyecto
 
-## Etapa actual: evolución fases 3–11 implementadas, sin pruebas todavía
+## Etapa actual: evolución fases 3–12 implementadas, sin pruebas todavía
 
 Actualización 2026-09-13: menú/Garage y feedback de carrera modernizados; seis perfiles
 de IA activos y dificultad Experto. 64 carreras/256 llegadas validadas en la entrega
@@ -79,6 +79,14 @@ colisión y replay visual con pausa/reinicio/volver desde preparación. Repetici
 sin sesión de carrera activa ni recompensas. Preferencia de ghost guardada; récords
 antiguos sin trayectoria no generan replay. Copas y ghost completo de rivales fuera
 de esta etapa. APK y pruebas siguen aplazados.
+
+Fase 12 implementada (sin pruebas): seis desafíos permanentes en data/challenges,
+procesados por ChallengeProgress desde resultados guardados. Cinco llegadas, tres
+victorias, una participación de copa completa, combo x4, diez Perfect Shots y diez
+recogidas. Métricas de acciones solo de carreras terminadas; copa completa incluye
+participaciones sin podio. Premios > Desafíos permite reclamar monedas una vez.
+SaveManager conserva challenges junto a resultados/XP, con rollback y saneamiento;
+reclamación transaccional independiente. Sin crédito retroactivo ni resets diarios.
 
 - F: introducciones de cinco campeones solo en la final de cada copa. ChampionIntro
   reutiliza retrato del corredor activo, frase y color de ChampionshipDefinition.
