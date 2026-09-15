@@ -4,6 +4,7 @@ extends CharacterBody2D
 signal wall_hit(speed: float)
 signal boosted
 signal impacted(point: Vector2, normal: Vector2, strength: float)
+signal contact_resolved(rival: bool, strength: float)
 signal landed
 signal swiped(direction: float)
 signal shot_graded(grade: int)
@@ -102,6 +103,7 @@ func _physics_process(delta: float) -> void:
 		if other is RacingCap:
 			other.receive_push(-collision.get_normal() * impact * 0.35 / other.motion.config.weight)
 		if impact > 30.0 and collision_cooldown <= 0:
+			contact_resolved.emit(other is RacingCap, impact)
 			wall_hit.emit(impact)
 			impacted.emit(collision.get_position(), collision.get_normal(), impact)
 			if other is RacingCap:

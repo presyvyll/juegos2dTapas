@@ -35,6 +35,9 @@ var notice_priority := 0
 var notice_time := 0.0
 var pass_cooldown := 0.0
 var near_finish_shown := false
+var combo: RaceCombo
+var combo_label: Label
+var combo_tween: Tween
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -53,6 +56,15 @@ func _ready() -> void:
 	top.offset_right = -24
 	top.offset_top = 20
 	root.add_child(top)
+	combo_label = RacingUI.label("", 20)
+	combo_label.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
+	combo_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	combo_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	combo_label.add_theme_color_override("font_color", Color("ffdc6c"))
+	combo_label.add_theme_color_override("font_outline_color", Color("10283b"))
+	combo_label.add_theme_constant_override("outline_size", 3)
+	combo_label.hide()
+	root.add_child(combo_label)
 	var panel := PanelContainer.new()
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -98,6 +110,10 @@ func _ready() -> void:
 		top.offset_left = safe.x
 		top.offset_top = safe.y
 		top.offset_right = -safe.z
+		combo_label.offset_left = safe.x + 100
+		combo_label.offset_right = -safe.z - 100
+		combo_label.offset_top = safe.y + 78
+		combo_label.offset_bottom = safe.y + 110
 		bottom.offset_left = safe.x
 		bottom.offset_right = -safe.z
 		bottom.offset_bottom = -safe.w
@@ -219,6 +235,11 @@ func _process(delta: float) -> void:
 	if tick < 0.1 or not is_instance_valid(player):
 		return
 	tick = 0
+	if combo != null:
+		combo_label.visible = session.running and player.active and not player.finished and combo.actions.size() >= 2 and combo.remaining > 0
+		if combo_label.visible:
+			combo_label.text = combo.caption() + " · %.1f s" % combo.remaining
+			combo_label.modulate.a = clampf(combo.remaining / 0.3, 0.0, 1.0)
 	player.controls.excluded_rects = [boost_button.get_global_rect(), pause_button.get_global_rect()]
 	var place := session.standings().find(player) + 1
 	var shown_time := player.finish_time if player.finished else session.elapsed
@@ -242,6 +263,18 @@ func _process(delta: float) -> void:
 	progress_bar.value = session.progress(player) / (session.circuit.length * session.circuit.laps) * 100
 	if is_instance_valid(result_rows):
 		update_results()
+
+func show_combo(animate: bool = true) -> void:
+	if combo == null or combo.actions.size() < 2: return
+	combo_label.text = combo.caption()
+	combo_label.show()
+	combo_label.modulate.a = 1.0
+	if not animate: return
+	if combo_tween: combo_tween.kill()
+	combo_label.pivot_offset = combo_label.size / 2
+	combo_label.scale = Vector2.ONE * 0.94
+	combo_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_STOP)
+	combo_tween.tween_property(combo_label, "scale", Vector2.ONE, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 func announce(text: String, priority: int = 1) -> void:
 	if priority < notice_priority or get_tree().paused: return
@@ -289,6 +322,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 func modal(title: String) -> VBoxContainer:
+	if combo_tween: combo_tween.kill()
+	combo_label.hide()
 	if notice_tween: notice_tween.kill()
 	notice.hide()
 	notice_priority = 0
@@ -329,6 +364,7 @@ func show_results(place: int, time: float, reward: int, retry_save: Callable = C
 	result_tween = create_tween()
 	result_tween.tween_property(overlay, "scale", Vector2.ONE, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	content.add_child(RacingUI.label("Tiempo: %.2f s  ·  +%d monedas" % [time, maxi(0, reward)]))
+	if combo != null: content.add_child(RacingUI.label("Mejor combo: x%d" % combo.best, 16))
 	if reward >= 0:
 		content.add_child(RacingUI.label("+%d XP · Total de tapa: %d XP · Nivel %d" % [SaveManager.PROGRESSION.reward(place), SaveManager.cap_xp(player.definition_id), SaveManager.cap_level(player.definition_id)], 16))
 	var best := float(SaveManager.best_times.get(session.circuit.record_key(SaveManager.settings.difficulty, session.circuit.laps), time))

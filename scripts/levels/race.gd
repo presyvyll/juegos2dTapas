@@ -15,6 +15,7 @@ var champion_intro: ChampionIntro
 var finish_presented := false
 var last_impact_feedback := -1000
 var saved_free_reward := -1
+var combo := RaceCombo.new()
 ## Set a positive seed for reproducible QA; zero varies decisions between races.
 @export var ai_seed := 0
 
@@ -65,6 +66,7 @@ func _ready() -> void:
 	hud = RaceHUD.new()
 	hud.session = session
 	hud.player = player
+	hud.combo = combo
 	add_child(hud)
 	hud.pause_requested.connect(toggle_pause)
 	hud.restart_requested.connect(restart)
@@ -90,6 +92,27 @@ func _ready() -> void:
 		AudioManager.play("boost")
 		SaveManager.haptic(16)
 		hud.announce(effect.display_name.to_upper(), 1)
+	)
+	player.shot_graded.connect(func(grade: int) -> void:
+		if grade == PerfectShotConfig.Grade.PERFECT: register_combo("perfect_shot")
+	)
+	player.boosted.connect(func() -> void: register_combo("turbo"))
+	player.powerup_received.connect(func(_effect: PowerUpDefinition) -> void: register_combo("pickup"))
+	player.contact_resolved.connect(func(rival: bool, strength: float) -> void:
+		if strength >= combo.config.minimum_impact and strength <= combo.config.maximum_controlled_impact:
+			register_combo("rival_hit" if rival else "rebound")
+	)
+	session.position_gained.connect(func(racer: RacingCap) -> void:
+		if racer == player: register_combo("overtake")
+	)
+	combo.advanced.connect(func(count: int, feedback_allowed: bool) -> void:
+		if count < 2: return
+		hud.show_combo(feedback_allowed)
+		if feedback_allowed:
+			AudioManager.play("ui")
+			SaveManager.haptic(12)
+			if count >= combo.config.mega_threshold:
+				vfx.burst(player.global_position, Vector2.UP, Color("ffdc6c"), 0.7)
 	)
 	AudioManager.set_racing(true)
 	get_window().focus_exited.connect(pause_on_focus_loss)
@@ -122,7 +145,13 @@ func finish_champion_intro() -> void:
 	hud.root.show()
 	session.set_physics_process(true)
 
+func register_combo(action: String) -> void:
+	if get_tree().paused or not session.running or not player.active or player.finished: return
+	combo.register(action)
+
 func _physics_process(_delta: float) -> void:
+	if is_instance_valid(player) and player.active and not player.finished and session.running:
+		combo.advance(_delta)
 	if is_instance_valid(champion_intro) and not champion_intro.finished: return
 	if cup == null or cup_closed or not is_instance_valid(session) or not session.running: return
 	if session.finish_order.size() < 4 and session.elapsed < 180.0 * cup.laps: return
@@ -132,6 +161,7 @@ func _physics_process(_delta: float) -> void:
 	for cap in session.caps:
 		cap.active = false
 		cap.velocity = Vector2.ZERO
+	combo.end_chain()
 	cup_rows = CupProgress.capture(session, cup)
 	save_cup_results()
 
@@ -142,6 +172,7 @@ func save_cup_results() -> void:
 	hud.pause_button.disabled = true
 	AudioManager.set_racing(false)
 	var content := hud.modal("Resultados de copa")
+	content.add_child(RacingUI.label("Mejor combo: x%d" % combo.best, 16))
 	hud.overlay.offset_top = -300
 	hud.overlay.offset_bottom = 300
 	if SaveManager.submit_cup_round(cup_round, cup_rows):
@@ -265,6 +296,7 @@ func _notification(what: int) -> void:
 
 func on_finish(place: int, time: float) -> void:
 	if finish_presented: return
+	combo.end_chain()
 	finish_presented = true
 	player.get_node("Camera2D").celebrate_finish()
 	player.get_node("Visual").victory = place == 1

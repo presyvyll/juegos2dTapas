@@ -238,3 +238,21 @@ No iniciar todas las fases simultáneamente. Reestimar después del prototipo de
 - Sin ejecución, pruebas ni exportación por petición del usuario. Pendiente al cierre:
   cinco finales, varias vueltas, pausa/intro, recuperación, cambio único por fase,
   recursos inmutables, rivales ordinarios, balance y presentación Android.
+
+## Fase 10 — Combos y feedback (sin validar)
+
+- RaceCombo mantiene hasta seis categorías únicas dentro de una ventana renovable
+  de cuatro segundos: Perfect Shot aplicado, turbo aplicado, pickup recogido,
+  adelantamiento detectado por posiciones, rebote y contacto iniciado contra rival.
+  Contactos solo entre 60–220 de fuerza y sujetos al cooldown de colisión existente.
+- Repetir categoría no suma ni prolonga cadena. Combo desde dos acciones, Mega desde
+  cinco, registro local del máximo; no modifica velocidad, monedas, XP ni guardado.
+- Reloj durante carrera activa, congelado por pausa; cierra al terminar o al agotar
+  tiempo de copa. Reiniciar crea estado nuevo. Resultado conserva el máximo de esa
+  carrera; no es un récord histórico.
+- Una etiqueta con contador temporal, animación 250 ms y desvanecimiento final.
+  Sonido/haptics espaciados 350 ms; ráfagas del pool únicamente para Mega. Avisos
+  principales de vueltas, jefe y meta siguen en su canal existente.
+- Sin pruebas ni APK nuevo. Revisar al cierre límites temporales, eventos simultáneos,
+  repeticiones, pausa, llegada/DNF, resultados libres/copas, recuperaciones de IA
+  que afectan posiciones, tamaño de HUD y presupuesto VFX en Android.

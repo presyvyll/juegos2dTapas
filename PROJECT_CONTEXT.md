@@ -1,11 +1,11 @@
 # Contexto del proyecto
 
-## Etapa actual: evolución fases 3–9 implementadas, sin pruebas todavía
+## Etapa actual: evolución fases 3–10 implementadas, sin pruebas todavía
 
 Actualización 2026-09-13: menú/Garage y feedback de carrera modernizados; seis perfiles
 de IA activos y dificultad Experto. 64 carreras/256 llegadas validadas en la entrega
 de IA; falta Android físico y estabilizar calidad alta. Auditoría actual:
-docs/AUDITORIA_EVOLUCION.md. Combos y ghost siguen pendientes. Fase 2: señal de swipe aplicado
+docs/AUDITORIA_EVOLUCION.md. Ghost sigue pendiente. Fase 2: señal de swipe aplicado
 reutiliza HUD, audio, haptics y pool VFX sin modificar fuerza/cooldown.
 Actualización 2026-09-14: ondas decorativas acotadas al viewport en WaterSurface;
 248–398 draw calls y 60 FPS observados en PC (antes 1.073–1.236 draw calls).
@@ -63,6 +63,13 @@ Capitán Ola: curvas/turbo; Toro: defensa; Volt: adelantamiento/turbo; Nyx: traz
 Onyx: presión/cierre. Cada fase parte del perfil base copiado, sin acumular ajustes.
 Se mantienen física, energía, recuperación y habilidad de la tapa. HUD anuncia fases
 y ficha de final explica estrategia. No se ejecutó Godot ni se recompiló el APK.
+
+Fase 10 implementada (sin pruebas): RaceCombo por carrera, Resource data/combo/default.tres.
+Ventana 4 s, seis acciones distintas máximo, Mega desde cinco. Perfect Shot, turbo,
+recogida real, ganancia de posición, rebote y golpe a rival resueltos (60–220 de fuerza).
+Repetir una categoría no suma ni renueva el tiempo. HUD propio de combo con Tween,
+tiempo restante y feedback limitado; mejor cadena solo en resultados de esta carrera.
+No otorga monedas/XP ni se persiste. Tiempo detenido al pausar; meta/DNF cierra cadena.
 
 - F: introducciones de cinco campeones solo en la final de cada copa. ChampionIntro
   reutiliza retrato del corredor activo, frase y color de ChampionshipDefinition.

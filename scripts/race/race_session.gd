@@ -4,6 +4,7 @@ extends Node
 signal started
 signal player_finished(place: int, time: float)
 signal countdown_changed(value: int)
+signal position_gained(cap: RacingCap)
 var caps: Array[RacingCap] = []
 var finish_order: Array[RacingCap] = []
 var circuit: CircuitDefinition
@@ -39,6 +40,7 @@ func _physics_process(delta: float) -> void:
 			var racer := ordered[index]
 			if previous_ability_places.has(racer) and index < int(previous_ability_places[racer]):
 				racer.trigger_ability("overtake")
+				position_gained.emit(racer)
 			previous_ability_places[racer] = index
 
 func cross_checkpoint(cap: RacingCap, index: int) -> void:
