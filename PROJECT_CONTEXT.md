@@ -1,11 +1,11 @@
 # Contexto del proyecto
 
-## Etapa actual: evolución fases 3–10 implementadas, sin pruebas todavía
+## Etapa actual: evolución fases 3–11 implementadas, sin pruebas todavía
 
 Actualización 2026-09-13: menú/Garage y feedback de carrera modernizados; seis perfiles
 de IA activos y dificultad Experto. 64 carreras/256 llegadas validadas en la entrega
 de IA; falta Android físico y estabilizar calidad alta. Auditoría actual:
-docs/AUDITORIA_EVOLUCION.md. Ghost sigue pendiente. Fase 2: señal de swipe aplicado
+docs/AUDITORIA_EVOLUCION.md. Fase 2: señal de swipe aplicado
 reutiliza HUD, audio, haptics y pool VFX sin modificar fuerza/cooldown.
 Actualización 2026-09-14: ondas decorativas acotadas al viewport en WaterSurface;
 248–398 draw calls y 60 FPS observados en PC (antes 1.073–1.236 draw calls).
@@ -70,6 +70,15 @@ recogida real, ganancia de posición, rebote y golpe a rival resueltos (60–220
 Repetir una categoría no suma ni renueva el tiempo. HUD propio de combo con Tween,
 tiempo restante y feedback limitado; mejor cadena solo en resultados de esta carrera.
 No otorga monedas/XP ni se persiste. Tiempo detenido al pausar; meta/DNF cierra cadena.
+
+Fase 11 implementada (sin pruebas): RaceGhost graba solo carreras libres a 10 Hz,
+máximo 600 s/6002 muestras, 1,5 MB por archivo y 64 archivos sin borrado automático.
+Mejor grabación por pista/versión/dificultad/vueltas/tapa/nivel, aislada por save_path;
+archivo JSON validado y reemplazo temporal en user://ghosts. Ghost translúcido sin
+colisión y replay visual con pausa/reinicio/volver desde preparación. Repetición
+sin sesión de carrera activa ni recompensas. Preferencia de ghost guardada; récords
+antiguos sin trayectoria no generan replay. Copas y ghost completo de rivales fuera
+de esta etapa. APK y pruebas siguen aplazados.
 
 - F: introducciones de cinco campeones solo en la final de cada copa. ChampionIntro
   reutiliza retrato del corredor activo, frase y color de ChampionshipDefinition.

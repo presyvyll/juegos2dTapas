@@ -256,3 +256,22 @@ No iniciar todas las fases simultáneamente. Reestimar después del prototipo de
 - Sin pruebas ni APK nuevo. Revisar al cierre límites temporales, eventos simultáneos,
   repeticiones, pausa, llegada/DNF, resultados libres/copas, recuperaciones de IA
   que afectan posiciones, tamaño de HUD y presupuesto VFX en Android.
+
+## Fase 11 — Ghost y repetición (sin validar)
+
+- Mejor trayectoria grabada de carreras libres por pista/versión, dificultad,
+  vueltas, tapa y nivel. No se reconstruyen récords históricos sin muestras ni se
+  mezclan niveles/configuraciones. Preferencia de visibilidad en preparación.
+- Muestras de tiempo, posición visual, rotación y vuelta a 10 Hz; interpolación
+  sin atravesar el salto entre vueltas. Un Node2D/CapIllustration sin colisiones;
+  no participa en standings, IA, checkpoints ni premios.
+- Reproducción visual de la tapa desde preparación con pausa, reinicio y volver.
+  Corredores ocultos/inactivos, sesión detenida y cámara propia; sin recompensas.
+  No reproduce rivales ni garantiza reconstrucción exacta de efectos ambientales.
+- Guardado independiente en user://ghosts, escritura temporal y sustitución solo
+  para mejor tiempo grabado. Validación de contexto, tiempos, números y tamaño.
+  Límites: 600 s, 6002 muestras, 1,5 MB/archivo, 64 entradas. Al superar límites o
+  fallar guardado se informa; no se borran grabaciones antiguas automáticamente.
+- Sin pruebas ni exportación. Al cierre revisar persistencia/archivos inválidos,
+  pausas, pérdida de foco, vueltas, tiempo final, cambio de nivel/dificultad,
+  repetición sin recompensas, memoria, límites y cámara/layout Android.

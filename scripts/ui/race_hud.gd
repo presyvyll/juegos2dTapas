@@ -38,6 +38,7 @@ var near_finish_shown := false
 var combo: RaceCombo
 var combo_label: Label
 var combo_tween: Tween
+var ghost: RaceGhost
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -364,6 +365,7 @@ func show_results(place: int, time: float, reward: int, retry_save: Callable = C
 	result_tween = create_tween()
 	result_tween.tween_property(overlay, "scale", Vector2.ONE, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	content.add_child(RacingUI.label("Tiempo: %.2f s  ·  +%d monedas" % [time, maxi(0, reward)]))
+	if is_instance_valid(ghost): content.add_child(RacingUI.label(ghost.status, 15))
 	if combo != null: content.add_child(RacingUI.label("Mejor combo: x%d" % combo.best, 16))
 	if reward >= 0:
 		content.add_child(RacingUI.label("+%d XP · Total de tapa: %d XP · Nivel %d" % [SaveManager.PROGRESSION.reward(place), SaveManager.cap_xp(player.definition_id), SaveManager.cap_level(player.definition_id)], 16))

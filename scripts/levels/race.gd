@@ -16,10 +16,14 @@ var finish_presented := false
 var last_impact_feedback := -1000
 var saved_free_reward := -1
 var combo := RaceCombo.new()
+var ghost: RaceGhost
+var replay_mode := false
 ## Set a positive seed for reproducible QA; zero varies decisions between races.
 @export var ai_seed := 0
 
 func _ready() -> void:
+	replay_mode = SaveManager.ghost_replay_requested
+	SaveManager.ghost_replay_requested = false
 	var selected_id: String = SaveManager.selected_circuit
 	if SaveManager.cup_race_requested and not SaveManager.championships.active.is_empty():
 		var active: Dictionary = SaveManager.championships.active
@@ -116,6 +120,14 @@ func _ready() -> void:
 	)
 	AudioManager.set_racing(true)
 	get_window().focus_exited.connect(pause_on_focus_loss)
+	if cup == null:
+		ghost = RaceGhost.new()
+		ghost.session = session
+		ghost.racer = player
+		ghost.key = RaceGhost.context_key(track.definition, SaveManager.settings.difficulty, track.definition.laps, player.definition_id, SaveManager.cap_level(player.definition_id))
+		add_child(ghost)
+		hud.ghost = ghost
+		if replay_mode: start_ghost_replay()
 	if cup and cup_round == cup.track_ids.size() - 1:
 		show_champion_intro()
 
@@ -148,6 +160,42 @@ func finish_champion_intro() -> void:
 func register_combo(action: String) -> void:
 	if get_tree().paused or not session.running or not player.active or player.finished: return
 	combo.register(action)
+
+func start_ghost_replay() -> void:
+	session.set_physics_process(false)
+	hud.set_process(false)
+	hud.set_process_unhandled_input(false)
+	for cap in session.caps:
+		cap.active = false
+		cap.hide()
+		cap.controls.set_process_input(false)
+		cap.controls.set_process_unhandled_input(false)
+		cap.get_node("Camera2D").enabled = false
+	hud.root.hide()
+	if ghost.samples.is_empty():
+		get_tree().call_deferred("change_scene_to_file", "res://ui/main_menu.tscn")
+		return
+	ghost.replay_only = true
+	ghost.art.modulate.a = 0.85
+	var camera := Camera2D.new()
+	ghost.add_child(camera)
+	camera.make_current()
+	var layer := CanvasLayer.new()
+	add_child(layer)
+	var bar := HBoxContainer.new()
+	bar.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
+	var safe := RacingUI.safe_insets(get_viewport())
+	bar.offset_left = safe.x
+	bar.offset_right = -safe.z
+	bar.offset_top = safe.y
+	bar.theme = RacingUI.theme()
+	layer.add_child(bar)
+	bar.add_child(RacingUI.label("REPETICIÓN · %.2f s" % ghost.best_time, 22))
+	var pause := RacingUI.button("Pausar / seguir", func() -> void: ghost.playing = not ghost.playing)
+	bar.add_child(pause)
+	bar.add_child(RacingUI.button("Repetir", ghost.restart_replay))
+	bar.add_child(RacingUI.button("Volver", menu))
+	AudioManager.set_racing(false)
 
 func _physics_process(_delta: float) -> void:
 	if is_instance_valid(player) and player.active and not player.finished and session.running:
@@ -263,10 +311,16 @@ func spawn_racers() -> void:
 	player.get_node("Camera2D").global_position = player.position
 
 func _unhandled_input(event: InputEvent) -> void:
+	if replay_mode:
+		if event is InputEventKey and event.pressed and not event.echo:
+			if event.physical_keycode == KEY_ESCAPE: menu()
+			elif event.physical_keycode == KEY_R and is_instance_valid(ghost): ghost.restart_replay()
+		return
 	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode == KEY_R:
 		restart()
 
 func toggle_pause() -> void:
+	if replay_mode: return
 	if rewarded:
 		return
 	get_tree().paused = not get_tree().paused
@@ -282,6 +336,9 @@ func toggle_pause() -> void:
 			champion_intro.show()
 
 func pause_on_focus_loss() -> void:
+	if replay_mode:
+		if is_instance_valid(ghost): ghost.playing = false
+		return
 	if not get_tree().paused and not rewarded:
 		toggle_pause()
 
@@ -289,13 +346,18 @@ func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_PAUSED and is_instance_valid(player):
 		pause_on_focus_loss()
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
+		if replay_mode:
+			menu()
+			return
 		if rewarded:
 			menu()
 		else:
 			toggle_pause()
 
 func on_finish(place: int, time: float) -> void:
+	if replay_mode: return
 	if finish_presented: return
+	if is_instance_valid(ghost): ghost.finish(time)
 	combo.end_chain()
 	finish_presented = true
 	player.get_node("Camera2D").celebrate_finish()

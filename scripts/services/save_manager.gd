@@ -21,6 +21,8 @@ var championships: Dictionary = {"active": {}, "completed": {}}
 var cup_race_requested := false
 var return_to_cups := false
 var viewed_cup_id := ""
+var ghost_enabled := true
+var ghost_replay_requested := false
 var seen_champion_intros: Array = []
 const DEFAULT_SETTINGS := {"music": 0.35, "effects": 0.65, "vibration": true, "quality": "high", "fps": 60, "difficulty": "normal", "race_laps": 1}
 
@@ -30,7 +32,7 @@ func _ready() -> void:
 	apply_settings()
 
 func snapshot() -> Dictionary:
-	return {"version": 2, "cap_progress": cap_progress, "coins": coins, "caps": unlocked_caps, "circuits": unlocked_circuits, "skins": unlocked_skins, "best_times": best_times, "settings": settings, "selected_cap": selected_cap, "selected_circuit": selected_circuit, "selected_skin": selected_skin, "championships": championships, "seen_champion_intros": seen_champion_intros}
+	return {"version": 2, "ghost_enabled": ghost_enabled, "cap_progress": cap_progress, "coins": coins, "caps": unlocked_caps, "circuits": unlocked_circuits, "skins": unlocked_skins, "best_times": best_times, "settings": settings, "selected_cap": selected_cap, "selected_circuit": selected_circuit, "selected_skin": selected_skin, "championships": championships, "seen_champion_intros": seen_champion_intros}
 
 func load_save() -> void:
 	if not read_save(save_path):
@@ -55,6 +57,7 @@ func read_save(path: String) -> bool:
 	if parsed.is_empty():
 		return false
 	coins = clampi(int(parsed.get("coins", 0)), 0, 9999999)
+	ghost_enabled = parsed.get("ghost_enabled", true) != false
 	unlocked_caps = valid_ids(parsed.get("caps", []), RacingCatalog.cap_ids(), ["sol", "coral"])
 	unlocked_circuits = valid_ids(parsed.get("circuits", []), RacingCatalog.circuit_ids(), ["fuente"])
 	unlocked_skins = valid_ids(parsed.get("skins", []), ["original", "perla"], ["original"])
