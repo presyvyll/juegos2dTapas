@@ -215,6 +215,16 @@ func spawn_racers() -> void:
 			if cup and ResourceLoader.exists("res://data/ai_profiles/%s.tres" % cup.rival_ids[index - 1]):
 				profile_id = cup.rival_ids[index - 1]
 			controller.profile = load("res://data/ai_profiles/%s.tres" % profile_id)
+			if cup and cup_round == cup.track_ids.size() - 1 and cup.rival_ids[index - 1] == cup.champion_id:
+				controller.boss_behavior = cup.boss_behavior
+				controller.boss_phase_changed.connect(func(phase_name: String, phase: int) -> void:
+					if not is_instance_valid(hud) or player.finished: return
+					hud.announce("%s · %s" % [cap.racer_name, phase_name.to_upper()], 1)
+					if phase > 0:
+						if cap.global_position.distance_squared_to(player.global_position) < 1000000:
+							vfx.burst(cap.global_position, Vector2.UP, cup.champion_accent, 0.6)
+						AudioManager.play("ui")
+				)
 			cap.ai = controller
 			cap.add_child(controller)
 			cap.motion.config.current_speed *= 0.94 if controller.difficulty == "easy" else (1.035 if controller.difficulty in ["hard", "expert"] else 1.0)

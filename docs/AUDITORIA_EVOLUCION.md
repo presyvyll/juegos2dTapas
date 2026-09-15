@@ -220,3 +220,21 @@ No iniciar todas las fases simultáneamente. Reestimar después del prototipo de
 - No se ejecutaron pruebas ni exportación. Al cierre revisar estados/guardado,
   ronda repetida, mapas con copas activas, desbloqueo final, swipe/atrás, tamaños,
   lecturas antiguas y retorno desde carrera antes de certificar la integración.
+
+## Fase 9 — Bosses (15 septiembre, sin validar)
+
+- Cinco recursos BossRaceDefinition configurables, vinculados a sus copas. Tres
+  fases por avance de checkpoints sobre todas las vueltas: 0%, 30%, 60%. El cambio
+  ocurre en la primera decisión normal tras superar el umbral; no por posición bruta.
+- Capitán Ola anticipa curvas y reserva el cierre; Toro defiende; Volt prioriza
+  huecos/turbo; Nyx alterna trazadas; Onyx pasa de equilibrio a presión y defensa.
+- Reutiliza CapAIController con una copia de AIProfile por fase, límites existentes
+  y trazada suavizada. Solo el campeón en la final recibe la configuración. No hay
+  bonus de velocidad, energía gratuita, atajos de checkpoints ni acumulación de
+  multiplicadores. La habilidad de su tapa sigue en CapAbilityRuntime.
+- HUD anuncia fases, ficha de campeón describe estrategia y VFX existentes emiten
+  como máximo dos ráfagas de transición por final, solo cerca del jugador. Sin
+  procesos adicionales ni carga de escenas en menú.
+- Sin ejecución, pruebas ni exportación por petición del usuario. Pendiente al cierre:
+  cinco finales, varias vueltas, pausa/intro, recuperación, cambio único por fase,
+  recursos inmutables, rivales ordinarios, balance y presentación Android.

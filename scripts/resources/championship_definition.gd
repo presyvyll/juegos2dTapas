@@ -12,6 +12,7 @@ extends Resource
 @export var legacy_rival_cap_ids: Array[String] = []
 @export_enum("easy", "normal", "hard") var difficulty := "normal"
 @export var champion_id := ""
+@export var boss_behavior: BossRaceDefinition
 @export var champion_line := ""
 @export var champion_accent := Color("69e7d4")
 @export var prerequisite_cup_id := ""

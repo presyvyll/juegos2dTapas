@@ -7,8 +7,8 @@
 [ext_resource type="Resource" path="res://data/abilities/brasa.tres" id="ability"]
 
 [resource]
-ability = ExtResource("ability")
 script = ExtResource("1")
+ability = ExtResource("ability")
 id = "uva"
 display_name = "Uva Fiesta"
 color = Color(0.73725, 0.62745, 1.0, 1)

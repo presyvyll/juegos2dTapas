@@ -7,8 +7,8 @@
 [ext_resource type="Resource" path="res://data/abilities/titan.tres" id="ability"]
 
 [resource]
-ability = ExtResource("ability")
 script = ExtResource("1")
+ability = ExtResource("ability")
 id = "coco"
 display_name = "Coco Loco"
 color = Color(0.95686, 0.92549, 0.82745, 1)

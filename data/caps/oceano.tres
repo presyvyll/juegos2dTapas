@@ -7,8 +7,8 @@
 [ext_resource type="Resource" path="res://data/abilities/rayo.tres" id="ability"]
 
 [resource]
-ability = ExtResource("ability")
 script = ExtResource("1")
+ability = ExtResource("ability")
 id = "oceano"
 display_name = "Océano"
 color = Color(0.4, 0.74902, 1.0, 1)

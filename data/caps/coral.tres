@@ -7,8 +7,8 @@
 [ext_resource type="Resource" path="res://data/abilities/coral.tres" id="ability"]
 
 [resource]
-ability = ExtResource("ability")
 script = ExtResource("1")
+ability = ExtResource("ability")
 id = "coral"
 display_name = "Coral Pop"
 color = Color(1.0, 0.46667, 0.4549, 1)

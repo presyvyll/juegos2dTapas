@@ -195,6 +195,10 @@ func build_map() -> void:
 	details.add_child(description)
 	if selected_track == cup.track_ids.size() - 1:
 		build_champion(cup, details)
+		if cup.boss_behavior:
+			var strategy := RacingUI.label(cup.boss_behavior.description, 15)
+			strategy.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			details.add_child(strategy)
 		if current and selected_track == completed: line("DESAFÍO FINAL DESBLOQUEADO", 19)
 	if current:
 		var can_run := selected_track == completed and active.phase in ["ready", "racing"]

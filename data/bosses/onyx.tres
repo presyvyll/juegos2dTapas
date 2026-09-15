@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="BossRaceDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/boss_race_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "onyx"
+description = "Equilibrio inicial, presión en el tramo medio y defensa final."
+phase_starts = PackedFloat32Array(0, 0.3, 0.6)
+phase_names = PackedStringArray("Observación", "Presión", "Dominio final")
+phase_preferences = Array[Dictionary]([{"aggression":0.5,"defensive_skill":0.7,"boost_usage":0.65},{"aggression":0.72,"overtake_skill":0.98,"boost_usage":0.88},{"defensive_skill":0.98,"overtake_skill":0.98,"boost_usage":0.95,"corner_anticipation":1.25,"reaction_interval":0.16}])
+

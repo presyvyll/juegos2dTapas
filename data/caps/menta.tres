@@ -7,8 +7,8 @@
 [ext_resource type="Resource" path="res://data/abilities/burbuja.tres" id="ability"]
 
 [resource]
-ability = ExtResource("ability")
 script = ExtResource("1")
+ability = ExtResource("ability")
 id = "menta"
 display_name = "Menta Brisa"
 color = Color(0.61176, 0.89804, 0.67451, 1)

@@ -1,6 +1,6 @@
 # Contexto del proyecto
 
-## Etapa actual: evolución fases 3–8 implementadas, sin pruebas todavía
+## Etapa actual: evolución fases 3–9 implementadas, sin pruebas todavía
 
 Actualización 2026-09-13: menú/Garage y feedback de carrera modernizados; seis perfiles
 de IA activos y dificultad Experto. 64 carreras/256 llegadas validadas en la entrega
@@ -55,6 +55,14 @@ y número de ronda; se actualizan en la misma transacción que resultado/XP. La 
 jugable sigue exclusivamente active.rounds y las fases existentes, sin saltar rondas.
 Históricos antiguos sin detalle de rondas no reciben estrellas inventadas. El mapa
 usa entradas ligeras y preview ilustrativa, sin cargar geometría ni escenas de carrera.
+
+Fase 9 implementada el 15 de septiembre (sin pruebas): cinco BossRaceDefinition en
+data/bosses, enlazados a las copas. Solo el campeón de la ronda final cambia de
+preferencias de IA al 0/30/60% de checkpoints completados sobre todas las vueltas.
+Capitán Ola: curvas/turbo; Toro: defensa; Volt: adelantamiento/turbo; Nyx: trazadas;
+Onyx: presión/cierre. Cada fase parte del perfil base copiado, sin acumular ajustes.
+Se mantienen física, energía, recuperación y habilidad de la tapa. HUD anuncia fases
+y ficha de final explica estrategia. No se ejecutó Godot ni se recompiló el APK.
 
 - F: introducciones de cinco campeones solo en la final de cada copa. ChampionIntro
   reutiliza retrato del corredor activo, frase y color de ChampionshipDefinition.
