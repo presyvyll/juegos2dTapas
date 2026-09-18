@@ -1,5 +1,7 @@
 extends SelectionPage
 
+const BASE_PHYSICS: CapPhysicsConfig = preload("res://data/caps/prototype.tres")
+
 var portrait: Control
 var stage: Control
 var name_label: Label
@@ -7,7 +9,12 @@ var rarity_label: Label
 var state_label: Label
 var requirement: Label
 var detail: Label
+var ability_name: Label
+var comparison_label: Label
+var detail_button: Button
+var showing_ability := false
 var equip: Button
+var upgrade: Button
 var unlock: Button
 var skin: Button
 var bars: Array[ProgressBar] = []
@@ -82,29 +89,34 @@ func construct() -> void:
 	stats.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	columns.add_child(stats)
 	stats.add_child(RacingUI.label("RENDIMIENTO", 23))
-	stats.add_child(RacingUI.label("Nivel: sin progresión de niveles", 16))
-	for title in ["Velocidad", "Aceleración", "Control", "Peso", "Resistencia"]:
+	comparison_label = RacingUI.label("", 16)
+	comparison_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	stats.add_child(comparison_label)
+	for title in ["Velocidad", "Aceleración", "Control", "Peso", "Turbo"]:
 		var row := HBoxContainer.new()
 		stats.add_child(row)
 		var label := RacingUI.label(title, 18)
 		label.custom_minimum_size.x = 115
 		row.add_child(label)
 		var bar := ProgressBar.new()
-		bar.max_value = 120
+		bar.max_value = 130
 		bar.show_percentage = false
 		bar.custom_minimum_size.y = 16
 		bar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		bar.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		row.add_child(bar)
 		bars.append(bar)
-		var value := RacingUI.label("", 16)
-		value.custom_minimum_size.x = 65
+		var value := RacingUI.label("", 14)
+		value.custom_minimum_size.x = 100
 		row.add_child(value)
 		values.append(value)
-	stats.add_child(RacingUI.label("Habilidad: Turbo de corriente", 18))
-	detail = RacingUI.label("Valores base: 100 = estándar. Resistencia individual y mejoras aún no disponibles.", 16)
+	ability_name = RacingUI.label("", 18)
+	ability_name.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	stats.add_child(ability_name)
+	detail = RacingUI.label("", 16)
 	detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	detail.custom_minimum_size.y = 48
+	detail.custom_minimum_size.y = 66
+	detail.tooltip_text = "Estabilidad: amortiguación lateral del agua; no es salud. Mayor peso reduce la respuesta a fuerzas. Rebote y fricción no son mejoras universales."
 	stats.add_child(detail)
 	requirement = RacingUI.label("", 17)
 	requirement.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -113,14 +125,14 @@ func construct() -> void:
 	add_child(actions)
 	equip = RacingUI.button("EQUIPAR", equip_cap)
 	actions.add_child(equip)
-	var upgrade := RacingUI.button("MEJORAR", func() -> void: pass)
-	upgrade.disabled = true
-	upgrade.tooltip_text = "La progresión de niveles y mejoras todavía no está disponible."
+	upgrade = RacingUI.button("MEJORAR", upgrade_cap)
 	actions.add_child(upgrade)
-	var ability := RacingUI.button("HABILIDAD", func() -> void:
-		detail.text = "Turbo de corriente · Usa el control de turbo durante la carrera. Potencia base: %d. No hay habilidades individuales activas." % int(RacingCatalog.caps()[shown_index].boost * 100)
+	detail_button = RacingUI.button("HABILIDAD", func() -> void:
+		if busy: return
+		showing_ability = not showing_ability
+		update_detail(RacingCatalog.caps()[shown_index])
 	)
-	actions.add_child(ability)
+	actions.add_child(detail_button)
 	for button in actions.get_children(): button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	unlock = RacingUI.button("", purchase_cap)
 	add_child(unlock)
@@ -139,6 +151,7 @@ func apply_cap() -> void:
 	var cap := RacingCatalog.caps()[index]
 	var owned: bool = cap.id in SaveManager.unlocked_caps
 	name_label.text = cap.display_name
+	ability_name.text = "Habilidad: " + (cap.ability.display_name if cap.ability else "Turbo de corriente")
 	name_label.modulate.a = 1
 	rarity_label.text = cap.rarity.replace("_", " ").capitalize()
 	portrait.tint = cap.color.lightened(0.25) if SaveManager.selected_skin == "perla" else cap.color
@@ -147,22 +160,47 @@ func apply_cap() -> void:
 	portrait.queue_redraw()
 	lock_overlay.queue_redraw()
 	state_label.text = "EQUIPADA" if SaveManager.selected_cap == cap.id else ("DISPONIBLE" if owned else "BLOQUEADA")
+	var level := SaveManager.cap_level(cap.id)
+	var xp := SaveManager.cap_xp(cap.id)
+	state_label.text += " · Nivel %d\n%d XP" % [level, xp]
 	state_label.add_theme_color_override("font_color", Color("69e7d4") if owned else Color("ffce58"))
 	equip.text = "EQUIPADA" if SaveManager.selected_cap == cap.id else ("EQUIPAR" if owned else "BLOQUEADA")
 	equip.disabled = not owned or SaveManager.selected_cap == cap.id
 	requirement.text = "Lista para correr" if owned else "Requisito: desbloquea esta tapa por %d monedas" % cap.price
+	var progression: ProgressionConfig = SaveManager.PROGRESSION
+	upgrade.disabled = true
+	upgrade.text = "MEJORAR"
+	if level >= progression.max_level():
+		upgrade.text = "NIVEL MÁXIMO"
+	elif owned:
+		var cost := progression.upgrade_costs[level - 1]
+		var required_xp := progression.xp_thresholds[level]
+		upgrade.text = "MEJORAR · %d" % cost
+		upgrade.disabled = xp < required_xp or SaveManager.coins < cost
+		requirement.text = "Nivel %d: %d/%d XP · %d monedas · +%.0f%% base en aceleración/control" % [level + 1, xp, required_xp, cost, progression.gain_per_level * 100]
+	upgrade.tooltip_text = "La XP no se consume. La mejora cuesta monedas y aumenta aceleración y control, hasta cinco niveles."
 	unlock.text = "DESBLOQUEAR · %d monedas" % cap.price
 	unlock.visible = not owned
 	unlock.disabled = SaveManager.coins < cap.price
-	detail.text = "Valores base: 100 = estándar. Resistencia individual y mejoras aún no disponibles."
+	update_detail(cap)
 	detail.modulate.a = 1
 	if not SaveManager.last_save_ok: requirement.text = "No se pudo guardar. Reintenta para conservar el cambio."
 	if bar_motion: bar_motion.kill()
 	bar_motion = create_tween().set_parallel(true)
-	var targets := [cap.speed * 100, cap.acceleration * 100, cap.handling * 100, cap.weight * 100, 0.0]
+	var targets := cap.garage_indices(level)
+	var equipped := cap
+	for entry in RacingCatalog.caps():
+		if entry.id == SaveManager.selected_cap:
+			equipped = entry
+			break
+	var baseline := equipped.garage_indices(SaveManager.cap_level(equipped.id))
+	var comparing := cap.id != equipped.id
+	comparison_label.text = "Comparada con " + equipped.display_name if comparing else "Tapa equipada · índices base: 100"
 	for i in range(bars.size()):
-		values[i].text = str(int(targets[i])) if i < 4 else "N/D"
-		bars[i].modulate.a = 1.0 if i < 4 else 0.35
+		var difference := roundi(targets[i]) - roundi(baseline[i])
+		values[i].text = "%d (%+d)" % [roundi(targets[i]), difference] if comparing else str(roundi(targets[i]))
+		values[i].tooltip_text = "Diferencia respecto a la tapa equipada; más peso no significa mejor control." if i == 3 else "Índice actual y diferencia respecto a la tapa equipada."
+		bars[i].modulate.a = 1.0
 		bar_motion.tween_property(bars[i], "value", targets[i], 0.30).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	for i in range(chips.size()):
 		var entry := RacingCatalog.caps()[i]
@@ -173,12 +211,22 @@ func apply_cap() -> void:
 	skin.text = ("PERLA · usar original" if SaveManager.selected_skin == "perla" else "ORIGINAL · usar Perla") if has_skin else "PERLA · 75 monedas"
 	skin.disabled = not has_skin and SaveManager.coins < 75
 
+func update_detail(cap: CapDefinition) -> void:
+	detail_button.text = "ESTADÍSTICAS" if showing_ability else "HABILIDAD"
+	if showing_ability:
+		detail.text = cap.ability.description if cap.ability else "Turbo de corriente · Usa el control de turbo durante la carrera."
+		detail.tooltip_text = "La habilidad se activa automáticamente al cumplir su condición. El turbo conserva su botón."
+	else:
+		detail.text = "Índices: 100 = estándar.\n" + cap.movement_summary(BASE_PHYSICS)
+		detail.tooltip_text = "Estabilidad: amortiguación lateral del agua. Mayor peso reduce la respuesta a fuerzas. Rebote y fricción implican ventajas y desventajas."
+
 func change_cap(step: int) -> void:
 	if step == 0: return
 	index = posmod(index + step, RacingCatalog.caps().size())
 	if transition: transition.kill()
 	busy = true
 	equip.disabled = true
+	upgrade.disabled = true
 	unlock.disabled = true
 	SaveManager.haptic(12)
 	portrait.pivot_offset = portrait.size / 2
@@ -204,6 +252,11 @@ func change_cap(step: int) -> void:
 	transition.parallel().tween_property(name_label, "modulate:a", 1.0, 0.20)
 	transition.parallel().tween_property(detail, "modulate:a", 1.0, 0.20)
 	transition.chain().tween_callback(func() -> void: busy = false)
+
+func upgrade_cap() -> void:
+	if busy: return
+	SaveManager.upgrade_cap(RacingCatalog.caps()[shown_index].id)
+	build()
 
 func equip_cap() -> void:
 	if busy: return

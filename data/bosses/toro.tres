@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="BossRaceDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/boss_race_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "toro"
+description = "Busca su línea, defiende en rectas y protege el cierre."
+phase_starts = PackedFloat32Array(0, 0.3, 0.6)
+phase_names = PackedStringArray("Busca su línea", "Defiende la recta", "Cierre firme")
+phase_preferences = Array[Dictionary]([{"aggression":0.6,"defensive_skill":0.6,"preferred_line":0.12},{"defensive_skill":0.88,"risk_tolerance":0.35,"corner_anticipation":1.12},{"defensive_skill":0.9,"boost_usage":0.55,"overtake_skill":0.5}])
+

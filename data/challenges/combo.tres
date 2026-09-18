@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ChallengeDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/challenge_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "combo"
+title = "Cadena de cuatro"
+description = "Logra un combo x4 y termina la carrera."
+metric = "best_combo"
+target = 4
+coins = 80
+

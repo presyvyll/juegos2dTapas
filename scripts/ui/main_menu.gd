@@ -52,11 +52,15 @@ func _ready() -> void:
 		navigation.add_child(exit_button)
 	SaveManager.changed.connect(update_wallet)
 	SaveManager.save_failed.connect(update_wallet)
-	show_home()
+	if SaveManager.return_to_cups:
+		SaveManager.return_to_cups = false
+		show_championships()
+	else:
+		show_home()
 	AudioManager.set_racing(false)
 
 func update_wallet() -> void:
-	wallet.text = "%d monedas%s" % [SaveManager.coins, "" if SaveManager.last_save_ok else " · Error al guardar"]
+	wallet.text = "Nv. %d · %d XP · %d monedas%s" % [SaveManager.cap_level(SaveManager.selected_cap), SaveManager.cap_xp(SaveManager.selected_cap), SaveManager.coins, "" if SaveManager.last_save_ok else " · Error al guardar"]
 
 func clear() -> void:
 	if transition:
@@ -104,6 +108,7 @@ func show_home() -> void:
 func show_rewards() -> void:
 	clear()
 	heading.text = "PREMIOS"
+	content.add_child(RacingUI.button("DESAFÍOS · progreso y recompensas", show_challenges))
 	content.add_child(RacingUI.label("Premios de las cinco copas", 28))
 	for cup in RacingCatalog.championships():
 		var best := int(SaveManager.championships.completed.get(cup.id, 0))
@@ -112,6 +117,12 @@ func show_rewards() -> void:
 	content.add_child(RacingUI.label("Cada premio se entrega automáticamente una sola vez.", 17))
 	content.add_child(RacingUI.button("Ver copas", show_championships))
 	content.add_child(RacingUI.button("Volver al menú", show_home))
+
+func show_challenges() -> void:
+	clear()
+	heading.text = "DESAFÍOS"
+	content.add_child(ChallengesPage.new())
+	content.add_child(RacingUI.button("Volver a premios", show_rewards))
 
 func show_race_setup() -> void:
 	SaveManager.cup_race_requested = false
@@ -147,5 +158,7 @@ func show_settings() -> void:
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST and is_instance_valid(heading) and heading.text != "TAPA RACING":
+		for child in content.get_children():
+			if child is ChampionshipPage and child.go_back(): return
 		SaveManager.save()
 		show_home()

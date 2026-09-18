@@ -1,7 +1,9 @@
-[gd_resource type="Resource" script_class="ChampionshipDefinition" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="ChampionshipDefinition" load_steps=3 format=3]
 [ext_resource type="Script" path="res://scripts/resources/championship_definition.gd" id="1"]
+[ext_resource type="Resource" path="res://data/bosses/capitan_ola.tres" id="boss"]
 [resource]
 script = ExtResource("1")
+boss_behavior = ExtResource("boss")
 id = "bronce"
 champion_line = "El agua también enseña"
 champion_accent = Color(0.41, 0.91, 0.83, 1)

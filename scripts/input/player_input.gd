@@ -5,6 +5,9 @@ extends Node
 var touches: Dictionary = {}
 var swipe_origins: Dictionary = {}
 var pending_swipe: float = 0.0
+@export var perfect_shot: PerfectShotConfig = preload("res://data/perfect_shot/default.tres")
+var pending_shot_grade: int = -1
+var consumed_shot_grade: int = -1
 var boost_requested := false
 var excluded_rects: Array[Rect2] = []
 var boost_touch_rect := Rect2()
@@ -20,6 +23,8 @@ func clear() -> void:
 	touches.clear()
 	swipe_origins.clear()
 	pending_swipe = 0.0
+	pending_shot_grade = -1
+	consumed_shot_grade = -1
 	boost_requested = false
 
 func _input(event: InputEvent) -> void:
@@ -55,6 +60,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		var distance: float = event.position.x - origin.x
 		if absf(distance) > 65.0 and Time.get_ticks_msec() - origin.z < 300.0:
 			pending_swipe = signf(distance)
+			pending_shot_grade = perfect_shot.classify(event.position - Vector2(origin.x, origin.y), Time.get_ticks_msec() - origin.z)
 			swipe_origins[event.index] = Vector3(event.position.x, event.position.y, -1000)
 
 func consume_boost() -> bool:
@@ -64,7 +70,9 @@ func consume_boost() -> bool:
 
 func consume_swipe() -> float:
 	var result := pending_swipe
+	consumed_shot_grade = pending_shot_grade if result != 0 else -1
 	pending_swipe = 0.0
+	pending_shot_grade = -1
 	return result
 
 func steering_axis() -> float:

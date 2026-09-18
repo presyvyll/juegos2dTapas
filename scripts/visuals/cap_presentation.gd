@@ -25,6 +25,10 @@ func _ready() -> void:
 	cap.impacted.connect(on_impact)
 	cap.boosted.connect(on_boost)
 	cap.landed.connect(on_landing)
+	cap.swiped.connect(on_swipe)
+	cap.ability_activated.connect(func(effect: CapAbilityDefinition) -> void:
+		if is_instance_valid(fx): fx.burst(global_position, Vector2.UP, effect.feedback_color, 0.8)
+	)
 	cap.powerup_received.connect(func(effect: PowerUpDefinition) -> void:
 		if is_instance_valid(fx):
 			fx.burst(global_position, Vector2.UP, effect.color)
@@ -80,6 +84,12 @@ func on_landing() -> void:
 	landing_time = 0.25
 	if is_instance_valid(fx):
 		fx.burst(global_position, Vector2.UP, Color("b2fff4"), 0.7)
+
+func on_swipe(direction: float) -> void:
+	landing_time = 0.18
+	if is_instance_valid(fx):
+		var perfect := cap.controls.consumed_shot_grade == PerfectShotConfig.Grade.PERFECT
+		fx.burst(global_position, Vector2(-direction, 0), Color("ffdc6c") if perfect else Color("b2fff4"), 0.8 if perfect else 0.55)
 
 func _draw() -> void:
 	if is_instance_valid(cap) and cap.shield_time > 0:

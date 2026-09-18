@@ -1,11 +1,14 @@
-[gd_resource type="Resource" script_class="CapDefinition" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="CapDefinition" load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/cap_definition.gd" id="1"]
 
 [ext_resource type="Resource" path="res://data/appearances/menta.tres" id="2"]
 
+[ext_resource type="Resource" path="res://data/abilities/burbuja.tres" id="ability"]
+
 [resource]
 script = ExtResource("1")
+ability = ExtResource("ability")
 id = "menta"
 display_name = "Menta Brisa"
 color = Color(0.61176, 0.89804, 0.67451, 1)

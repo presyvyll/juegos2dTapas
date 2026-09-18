@@ -6,6 +6,7 @@ var completed := 0
 var rounds: Array = []
 var selected_index := 0
 var available := false
+var records: Dictionary = {}
 var markers: Array[Button] = []
 
 func _ready() -> void:
@@ -15,7 +16,8 @@ func _ready() -> void:
 		var title := cup.track_ids[i]
 		for entry in RacingCatalog.circuits():
 			if entry.id == title: title = entry.display_name
-		var marker := RacingUI.button(("FINAL" if i == cup.track_ids.size() - 1 else str(i + 1)) + "\n" + title, func() -> void: selected.emit(i))
+		var stars := int(records.get(str(i), {}).get("stars", 0))
+		var marker := RacingUI.button(("FINAL" if i == cup.track_ids.size() - 1 else str(i + 1)) + " · " + "★".repeat(stars) + "☆".repeat(3 - stars) + "\n" + title, func() -> void: selected.emit(i))
 		marker.add_theme_font_size_override("font_size", 14)
 		marker.custom_minimum_size = Vector2(154, 56)
 		var ratio := float(i) / maxf(1, cup.track_ids.size() - 1)
@@ -38,6 +40,7 @@ func _ready() -> void:
 		if i == completed and available:
 			tween.tween_property(marker, "self_modulate", Color("caffed"), 0.15)
 			tween.tween_property(marker, "self_modulate", Color.WHITE, 0.15)
+	queue_redraw()
 
 func _draw() -> void:
 	for i in range(markers.size() - 1):

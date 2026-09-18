@@ -1,6 +1,92 @@
 # Contexto del proyecto
 
-## Etapa actual: F completada
+## Etapa actual: evolución fases 3–12 implementadas, sin pruebas todavía
+
+Actualización 2026-09-13: menú/Garage y feedback de carrera modernizados; seis perfiles
+de IA activos y dificultad Experto. 64 carreras/256 llegadas validadas en la entrega
+de IA; falta Android físico y estabilizar calidad alta. Auditoría actual:
+docs/AUDITORIA_EVOLUCION.md. Fase 2: señal de swipe aplicado
+reutiliza HUD, audio, haptics y pool VFX sin modificar fuerza/cooldown.
+Actualización 2026-09-14: ondas decorativas acotadas al viewport en WaterSurface;
+248–398 draw calls y 60 FPS observados en PC (antes 1.073–1.236 draw calls).
+Pruebas de límites visuales y carreras pasan; falta medición en Android físico.
+
+Fase 3 implementada (pendiente de pruebas): Perfect Shot clasifica el swipe lateral
+aceptado en Weak/Good/Great/Perfect por duración y alineación horizontal. Configuración
+en data/perfect_shot/default.tres; feedback en HUD/audio/haptics y pool VFX existente.
+No cambia fuerza, cooldown, monedas ni XP. No añade lanzamiento por arrastrar/soltar.
+Por instrucción del usuario, aplazar pruebas y ejecución hasta el final de las fases
+de desarrollo. El APK instalado corresponde todavía a la fase 2.
+
+Fase 4 implementada (pendiente de pruebas): CapDefinition.resolve_physics centraliza
+los cinco multiplicadores existentes y añade rebote, fricción, estabilidad lateral e
+impulso lateral con valores neutros. CapPhysicsConfig sigue siendo la base compartida.
+apply_definition recalcula desde una copia base: corrige la acumulación al sustituir
+la tapa provisional de un rival de copa. Garage muestra cinco índices reales y los
+cuatro valores adicionales; CapRatings 1–10 permanece como dato de diseño del catálogo
+futuro. No se activan las 18 tapas ni se migran IDs/desbloqueos en esta etapa.
+
+Fase 5 implementada (sin pruebas): CapAbilityRuntime mantiene estado por corredor.
+Las seis tapas actuales enlazan las habilidades de sus equivalentes de diseño:
+sol/chispa, coral/coral, menta/burbuja, oceano/rayo, uva/brasa, coco/titan. Activación
+automática por salida, impacto, entrada en corriente, adelantamiento o turbo; timers
+solo avanzan durante conducción activa. Recursos base inmutables, HUD y Garage
+muestran habilidades reales. Las otras doce habilidades siguen sin integración.
+
+Fase 6 (sin pruebas): Garage compara los cinco índices con la tapa equipada y
+permite alternar habilidad/estadísticas sin salir del carrusel. Compra, equipamiento,
+Perla, bloqueos y swipe existentes conservados. MEJORAR sigue deshabilitado hasta
+implementar niveles/economía en fase 7; integrado en la actualización siguiente.
+
+Fase 7 implementada (sin pruebas): progreso por tapa con XP y niveles 1–5, Resource
+data/progression/default.tres. XP por llegada 30/24/18/12; requisitos acumulados
+0/100/250/450/700 XP y costes 100/175/250/350 monedas. Cada nivel añade 1% de la base
+de aceleración/control, hasta 4%; no cambia velocidad máxima, turbo ni habilidades.
+Garage permite comprar mejoras; comparaciones y jugador usan el nivel guardado.
+SaveManager escribe esquema 2 en el mismo archivo y acepta v1 sin progreso previo.
+XP integrada en la transacción de copa y resultado libre; rollback y reintento de
+guardado libre. Nivel/XP visibles en Garage, menú y resultados. Balance, migración,
+regresiones y compilación aplazados al cierre por instrucción del usuario.
+
+Fase 8 implementada (sin pruebas): ChampionshipPage integra CupRoute, tarjeta de
+pista, preparación, swipe en cabecera, campeón final y retorno al mapa entre rondas.
+CupProgress conserva en championships.track_records estrellas/mejor tiempo por copa
+y número de ronda; se actualizan en la misma transacción que resultado/XP. La ruta
+jugable sigue exclusivamente active.rounds y las fases existentes, sin saltar rondas.
+Históricos antiguos sin detalle de rondas no reciben estrellas inventadas. El mapa
+usa entradas ligeras y preview ilustrativa, sin cargar geometría ni escenas de carrera.
+
+Fase 9 implementada el 15 de septiembre (sin pruebas): cinco BossRaceDefinition en
+data/bosses, enlazados a las copas. Solo el campeón de la ronda final cambia de
+preferencias de IA al 0/30/60% de checkpoints completados sobre todas las vueltas.
+Capitán Ola: curvas/turbo; Toro: defensa; Volt: adelantamiento/turbo; Nyx: trazadas;
+Onyx: presión/cierre. Cada fase parte del perfil base copiado, sin acumular ajustes.
+Se mantienen física, energía, recuperación y habilidad de la tapa. HUD anuncia fases
+y ficha de final explica estrategia. No se ejecutó Godot ni se recompiló el APK.
+
+Fase 10 implementada (sin pruebas): RaceCombo por carrera, Resource data/combo/default.tres.
+Ventana 4 s, seis acciones distintas máximo, Mega desde cinco. Perfect Shot, turbo,
+recogida real, ganancia de posición, rebote y golpe a rival resueltos (60–220 de fuerza).
+Repetir una categoría no suma ni renueva el tiempo. HUD propio de combo con Tween,
+tiempo restante y feedback limitado; mejor cadena solo en resultados de esta carrera.
+No otorga monedas/XP ni se persiste. Tiempo detenido al pausar; meta/DNF cierra cadena.
+
+Fase 11 implementada (sin pruebas): RaceGhost graba solo carreras libres a 10 Hz,
+máximo 600 s/6002 muestras, 1,5 MB por archivo y 64 archivos sin borrado automático.
+Mejor grabación por pista/versión/dificultad/vueltas/tapa/nivel, aislada por save_path;
+archivo JSON validado y reemplazo temporal en user://ghosts. Ghost translúcido sin
+colisión y replay visual con pausa/reinicio/volver desde preparación. Repetición
+sin sesión de carrera activa ni recompensas. Preferencia de ghost guardada; récords
+antiguos sin trayectoria no generan replay. Copas y ghost completo de rivales fuera
+de esta etapa. APK y pruebas siguen aplazados.
+
+Fase 12 implementada (sin pruebas): seis desafíos permanentes en data/challenges,
+procesados por ChallengeProgress desde resultados guardados. Cinco llegadas, tres
+victorias, una participación de copa completa, combo x4, diez Perfect Shots y diez
+recogidas. Métricas de acciones solo de carreras terminadas; copa completa incluye
+participaciones sin podio. Premios > Desafíos permite reclamar monedas una vez.
+SaveManager conserva challenges junto a resultados/XP, con rollback y saneamiento;
+reclamación transaccional independiente. Sin crédito retroactivo ni resets diarios.
 
 - F: introducciones de cinco campeones solo en la final de cada copa. ChampionIntro
   reutiliza retrato del corredor activo, frase y color de ChampionshipDefinition.

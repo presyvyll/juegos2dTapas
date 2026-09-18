@@ -31,6 +31,7 @@ func force_at(point: Vector2) -> Vector2:
 func _enter(body: Node2D) -> void:
 	if body is RacingCap:
 		body.currents.append(self)
+		body.trigger_ability("current_enter")
 
 func _exit(body: Node2D) -> void:
 	if body is RacingCap:

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ChallengeDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/challenge_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "cups"
+title = "Primera copa"
+description = "Completa una participación de copa."
+metric = "cups"
+target = 1
+coins = 100
+

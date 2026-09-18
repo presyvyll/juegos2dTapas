@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ChallengeDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/challenge_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "perfect"
+title = "Pulso preciso"
+description = "Acumula diez Perfect Shots en carreras terminadas."
+metric = "perfect_shots"
+target = 10
+coins = 75
+

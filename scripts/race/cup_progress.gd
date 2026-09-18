@@ -58,8 +58,20 @@ static func unlocked(cup: ChampionshipDefinition, completed: Dictionary) -> bool
 	return cup.prerequisite_cup_id.is_empty() or int(completed.get(cup.prerequisite_cup_id, 4)) <= 3
 
 static func sanitize(value: Variant) -> Dictionary:
-	var result := {"active": {}, "completed": {}}
+	var result := {"active": {}, "completed": {}, "track_records": {}}
 	if not value is Dictionary: return result
+	var records: Variant = value.get("track_records", {})
+	if records is Dictionary:
+		for definition in RacingCatalog.championships():
+			var entries: Variant = records.get(definition.id, {})
+			if not entries is Dictionary: continue
+			var clean_records := {}
+			for index in range(definition.track_ids.size()):
+				var record: Variant = entries.get(str(index), {})
+				if not record is Dictionary: continue
+				if numeric(record.get("stars"), 0, 3) and numeric(record.get("best_time"), 0.001, 180 * definition.laps):
+					clean_records[str(index)] = {"stars": int(record.stars), "best_time": float(record.best_time)}
+			result.track_records[definition.id] = clean_records
 	var completed: Variant = value.get("completed", {})
 	if completed is Dictionary:
 		for cup in RacingCatalog.championships():
@@ -83,7 +95,24 @@ static func sanitize(value: Variant) -> Dictionary:
 	if active.phase == "results" and clean.is_empty(): return result
 	if active.phase == "complete" and not result.completed.has(cup.id): return result
 	result.active = {"cup_id": cup.id, "cap_id": active.cap_id, "phase": active.phase, "rounds": clean}
+	# Recover genuine per-track results from an older active participation only.
+	for index in range(clean.size()): record_round(result, cup.id, index, clean[index])
 	return result
+
+static func record_round(state: Dictionary, cup_id: String, index: int, rows: Array) -> void:
+	if not state.has("track_records"): state.track_records = {}
+	if not state.track_records.has(cup_id): state.track_records[cup_id] = {}
+	for place in range(rows.size()):
+		var row: Dictionary = rows[place]
+		if row.id != "player" or not row.finished: continue
+		var previous: Dictionary = state.track_records[cup_id].get(str(index), {})
+		state.track_records[cup_id][str(index)] = {
+			"stars": maxi(int(previous.get("stars", 0)), maxi(0, 3 - place)),
+			"best_time": minf(float(previous.get("best_time", INF)), float(row.time))
+		}
+
+static func track_record(state: Dictionary, cup_id: String, index: int) -> Dictionary:
+	return state.get("track_records", {}).get(cup_id, {}).get(str(index), {})
 
 static func capture(session: RaceSession, cup: ChampionshipDefinition) -> Array:
 	var rows: Array = []

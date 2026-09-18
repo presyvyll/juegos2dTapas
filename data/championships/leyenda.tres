@@ -1,7 +1,9 @@
-[gd_resource type="Resource" script_class="ChampionshipDefinition" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="ChampionshipDefinition" load_steps=3 format=3]
 [ext_resource type="Script" path="res://scripts/resources/championship_definition.gd" id="1"]
+[ext_resource type="Resource" path="res://data/bosses/onyx.tres" id="boss"]
 [resource]
 script = ExtResource("1")
+boss_behavior = ExtResource("boss")
 id = "leyenda"
 champion_line = "Cada vuelta cuenta"
 champion_accent = Color(0.86, 0.56, 0.89, 1)

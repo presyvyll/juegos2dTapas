@@ -3,6 +3,9 @@ extends Node
 signal changed
 signal save_failed
 const SAVE_PATH := "user://tapa_racing_v1.json"
+const PROGRESSION: ProgressionConfig = preload("res://data/progression/default.tres")
+var cap_progress: Dictionary = {}
+var challenges: Dictionary = {}
 var save_path := SAVE_PATH
 var coins: int = 0
 var unlocked_caps: Array = ["sol", "coral"]
@@ -17,6 +20,10 @@ var last_save_ok := true
 var championships: Dictionary = {"active": {}, "completed": {}}
 ## Transient launch intent: free play never advances a saved cup.
 var cup_race_requested := false
+var return_to_cups := false
+var viewed_cup_id := ""
+var ghost_enabled := true
+var ghost_replay_requested := false
 var seen_champion_intros: Array = []
 const DEFAULT_SETTINGS := {"music": 0.35, "effects": 0.65, "vibration": true, "quality": "high", "fps": 60, "difficulty": "normal", "race_laps": 1}
 
@@ -26,7 +33,7 @@ func _ready() -> void:
 	apply_settings()
 
 func snapshot() -> Dictionary:
-	return {"version": 1, "coins": coins, "caps": unlocked_caps, "circuits": unlocked_circuits, "skins": unlocked_skins, "best_times": best_times, "settings": settings, "selected_cap": selected_cap, "selected_circuit": selected_circuit, "selected_skin": selected_skin, "championships": championships, "seen_champion_intros": seen_champion_intros}
+	return {"version": 2, "challenges": challenges, "ghost_enabled": ghost_enabled, "cap_progress": cap_progress, "coins": coins, "caps": unlocked_caps, "circuits": unlocked_circuits, "skins": unlocked_skins, "best_times": best_times, "settings": settings, "selected_cap": selected_cap, "selected_circuit": selected_circuit, "selected_skin": selected_skin, "championships": championships, "seen_champion_intros": seen_champion_intros}
 
 func load_save() -> void:
 	if not read_save(save_path):
@@ -39,7 +46,7 @@ func read_document(path: String) -> Dictionary:
 	if parser.parse(FileAccess.get_file_as_string(path)) != OK:
 		return {}
 	var parsed: Variant = parser.data
-	if not parsed is Dictionary or parsed.get("version") != 1:
+	if not parsed is Dictionary or parsed.get("version") not in [1, 2]:
 		return {}
 	var balance: Variant = parsed.get("coins", 0)
 	if not (balance is float or balance is int) or not is_finite(float(balance)):
@@ -51,9 +58,21 @@ func read_save(path: String) -> bool:
 	if parsed.is_empty():
 		return false
 	coins = clampi(int(parsed.get("coins", 0)), 0, 9999999)
+	ghost_enabled = parsed.get("ghost_enabled", true) != false
+	challenges = ChallengeProgress.sanitize(parsed.get("challenges", {}))
 	unlocked_caps = valid_ids(parsed.get("caps", []), RacingCatalog.cap_ids(), ["sol", "coral"])
 	unlocked_circuits = valid_ids(parsed.get("circuits", []), RacingCatalog.circuit_ids(), ["fuente"])
 	unlocked_skins = valid_ids(parsed.get("skins", []), ["original", "perla"], ["original"])
+	cap_progress = {}
+	var saved_progress: Variant = parsed.get("cap_progress", {})
+	if saved_progress is Dictionary:
+		for id in unlocked_caps:
+			var entry: Variant = saved_progress.get(id, {})
+			if not entry is Dictionary: continue
+			var xp: Variant = entry.get("xp", 0)
+			var level: Variant = entry.get("level", 1)
+			if not CupProgress.numeric(xp, 0, 9999999) or not CupProgress.numeric(level, 1, PROGRESSION.max_level()): continue
+			cap_progress[id] = {"xp": int(xp), "level": mini(int(level), PROGRESSION.eligible_level(int(xp)))}
 	best_times = {}
 	settings = DEFAULT_SETTINGS.duplicate()
 	var times: Variant = parsed.get("best_times", {})
@@ -94,14 +113,21 @@ func read_save(path: String) -> bool:
 		championships.active = {}
 	return true
 
-func cup_transaction(next: Dictionary, reward: int = 0) -> bool:
+func cup_transaction(next: Dictionary, reward: int = 0, xp_cap: String = "", xp: int = 0, metrics: Dictionary = {}) -> bool:
 	var previous := championships
 	var previous_coins := coins
+	var previous_progress := cap_progress.duplicate(true)
+	var previous_challenges := challenges
+	challenges = ChallengeProgress.advance(challenges, metrics)
 	championships = next
 	coins += reward
+	add_cap_xp(xp_cap, xp)
 	if save(): return true
 	championships = previous
 	coins = previous_coins
+	cap_progress = previous_progress
+	challenges = previous_challenges
+	changed.emit()
 	return false
 
 func mark_champion_intro_seen(id: String) -> bool:
@@ -130,7 +156,7 @@ func begin_cup_race() -> bool:
 	cup_race_requested = true
 	return true
 
-func submit_cup_round(round_index: int, rows: Array) -> bool:
+func submit_cup_round(round_index: int, rows: Array, race_metrics: Dictionary = {}) -> bool:
 	var active: Dictionary = championships.active
 	if active.is_empty() or active.phase != "racing" or active.rounds.size() != round_index: return false
 	var cup := RacingCatalog.championship(active.cup_id)
@@ -138,6 +164,7 @@ func submit_cup_round(round_index: int, rows: Array) -> bool:
 	if normalized.is_empty(): return false
 	var next := championships.duplicate(true)
 	next.active.rounds.append(normalized)
+	CupProgress.record_round(next, cup.id, round_index, normalized)
 	next.active.phase = "results"
 	var reward := 0
 	if next.active.rounds.size() == cup.track_ids.size():
@@ -149,7 +176,14 @@ func submit_cup_round(round_index: int, rows: Array) -> bool:
 		var previous_place := int(next.completed.get(cup.id, 4))
 		if place <= 3 and previous_place > 3: reward = cup.coin_reward
 		next.completed[cup.id] = mini(previous_place, place)
-	return cup_transaction(next, reward)
+	var xp := 0
+	var metrics := {}
+	for index in range(normalized.size()):
+		if normalized[index].id == "player" and normalized[index].finished:
+			xp = PROGRESSION.reward(index + 1)
+			metrics = result_metrics(index + 1, race_metrics)
+	metrics["cups"] = int(next.active.phase == "complete")
+	return cup_transaction(next, reward, active.cap_id, xp, metrics)
 
 func continue_cup() -> bool:
 	if championships.active.is_empty() or championships.active.phase not in ["results", "complete"]: return false
@@ -215,12 +249,76 @@ func purchase(kind: String, id: String, price: int) -> bool:
 		return false
 	return true
 
-func record_result(key: String, time: float, place: int) -> int:
+func cap_level(id: String) -> int:
+	return int(cap_progress.get(id, {}).get("level", 1))
+
+func cap_xp(id: String) -> int:
+	return int(cap_progress.get(id, {}).get("xp", 0))
+
+func add_cap_xp(id: String, amount: int) -> void:
+	if id not in unlocked_caps or amount <= 0: return
+	cap_progress[id] = {"xp": mini(9999999, cap_xp(id) + amount), "level": cap_level(id)}
+
+func upgrade_cap(id: String) -> bool:
+	if id not in unlocked_caps: return false
+	var level := cap_level(id)
+	if level >= PROGRESSION.max_level() or cap_xp(id) < PROGRESSION.xp_thresholds[level]: return false
+	var cost := PROGRESSION.upgrade_costs[level - 1]
+	if coins < cost: return false
+	var previous := cap_progress.duplicate(true)
+	var previous_coins := coins
+	coins -= cost
+	cap_progress[id] = {"xp": cap_xp(id), "level": level + 1}
+	if save(): return true
+	coins = previous_coins
+	cap_progress = previous
+	changed.emit()
+	return false
+
+func result_metrics(place: int, race_metrics: Dictionary) -> Dictionary:
+	var result := {"finishes": 1, "wins": int(place == 1)}
+	for key in ["best_combo", "perfect_shots", "pickups"]:
+		var value: Variant = race_metrics.get(key, 0)
+		if CupProgress.numeric(value, 0, 100000): result[key] = int(value)
+	return result
+
+func claim_challenge(id: String) -> bool:
+	for definition in ChallengeProgress.definitions():
+		if definition.id != id: continue
+		var entry: Dictionary = challenges.get(id, {})
+		if int(entry.get("progress", 0)) < definition.target or entry.get("claimed", false): return false
+		var previous := challenges.duplicate(true)
+		var previous_coins := coins
+		challenges[id].claimed = true
+		coins += definition.coins
+		if save(): return true
+		challenges = previous
+		coins = previous_coins
+		changed.emit()
+		return false
+	return false
+
+func record_result(key: String, time: float, place: int, cap_id: String = "", race_metrics: Dictionary = {}) -> int:
+	if not is_finite(time) or time <= 0 or place < 1 or place > 4: return -1
+	if cap_id.is_empty(): cap_id = selected_cap
+	if cap_id not in unlocked_caps: return -1
+	var previous_coins := coins
+	var previous_times := best_times.duplicate(true)
+	var previous_challenges := challenges
+	challenges = ChallengeProgress.advance(challenges, result_metrics(place, race_metrics))
+	var previous_progress := cap_progress.duplicate(true)
 	var reward: int = [80, 45, 25, 15][clampi(place - 1, 0, 3)]
 	coins += reward
+	add_cap_xp(cap_id, PROGRESSION.reward(place))
 	if time < float(best_times.get(key, INF)):
 		best_times[key] = time
-	save()
+	if not save():
+		coins = previous_coins
+		best_times = previous_times
+		challenges = previous_challenges
+		cap_progress = previous_progress
+		changed.emit()
+		return -1
 	return reward
 
 func apply_settings() -> void:

@@ -1,5 +1,6 @@
 class_name CapAIController
 extends Node
+signal boss_phase_changed(phase_name: String, phase: int)
 ## Bounded 3–6.25 Hz decisions. Motion still goes through RacingCap and CapMotion.
 
 var cap: RacingCap
@@ -26,9 +27,13 @@ var recovery_count := 0
 var overtake_count := 0
 var defense_count := 0
 var avoidance_count := 0
+var boss_behavior: BossRaceDefinition
+var boss_base_profile: AIProfile
+var boss_phase := -1
 
 func _ready() -> void:
 	if profile == null: profile = preload("res://data/ai_profiles/equilibrado.tres")
+	if boss_behavior != null: boss_base_profile = profile.duplicate() as AIProfile
 	lane = rng.randf_range(-0.5, 0.5)
 	temperament = rng.randf_range(0.92, 1.08)
 	think_timer = rng.randf_range(0.0, profile.reaction_interval)
@@ -63,6 +68,7 @@ func _physics_process(delta: float) -> void:
 	lane_timer -= delta
 	if think_timer > 0:
 		return
+	update_boss_phase()
 	var difficulty_reaction := 1.15 if difficulty == "easy" else (0.85 if difficulty == "expert" else 1.0)
 	think_timer = clampf(profile.reaction_interval * difficulty_reaction, 0.16, 0.35)
 	decision_count += 1
@@ -137,6 +143,19 @@ func _physics_process(delta: float) -> void:
 	if cap.can_boost() and cap.boost_energy > 0.6 and outside_time <= 0 and (safe_boost and rng.randf() < boost_chance or cap.velocity.length() < 75 and not obstacle_risk):
 		boost_requested = true
 		decision = "turbo"
+
+func update_boss_phase() -> void:
+	if boss_behavior == null or boss_base_profile == null: return
+	if boss_behavior.phase_names.is_empty() or boss_behavior.phase_starts.is_empty(): return
+	var gates := (cap.lap - 1) * track.checkpoint_count + cap.checkpoint_index
+	var progress := float(gates) / maxf(1.0, track.checkpoint_count * track.definition.laps)
+	var next := boss_behavior.phase_at(progress)
+	if next <= boss_phase: return
+	boss_phase = next
+	profile = boss_behavior.profile_for(boss_base_profile, boss_phase)
+	# Choose a new line on the next normal decision; steering remains smoothed.
+	lane_timer = 0.0
+	boss_phase_changed.emit(boss_behavior.phase_names[boss_phase], boss_phase)
 
 func lane_clear(x: float, y: float) -> bool:
 	if absf(x - track.center_at(y)) > track.width_at(y) / 2 - 70: return false
