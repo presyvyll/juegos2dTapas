@@ -29,8 +29,9 @@ func run() -> void:
 	root.add_child(menu)
 	current_scene = menu
 	check(press(menu, "COPAS"), "open cup menu")
-	check(press(menu, "Iniciar copa con tu tapa seleccionada"), "start through UI")
-	check(press(menu, "Correr / reanudar"), "launch through UI")
+	check(press(menu, "INICIAR COPA"), "start through UI")
+	check(press(menu, "PREPARAR CARRERA"), "open race preparation")
+	check(press(menu, "CORRER"), "launch through UI")
 	await settle()
 	var race: Node = current_scene
 	check(race.cup != null and race.track.definition.id == "fuente", "cup launch chooses track")
@@ -56,13 +57,18 @@ func run() -> void:
 	check(save.championships.active.phase == "results", "results saved before continue")
 	check(press(race.hud.root, "Continuar"), "continue through UI")
 	await settle()
+	menu = current_scene
+	check(press(menu, "COPAS"), "return to cup map between rounds")
+	check(press(menu, "PREPARAR CARRERA"), "prepare next cup round")
+	check(press(menu, "CORRER"), "launch next cup round")
+	await settle()
 	race = current_scene
 	check(race.cup_round == 1 and race.track.definition.id == "jardin", "continues once to next track")
 	race.menu()
 	await settle()
 	menu = current_scene
 	check(not save.cup_race_requested and save.read_save(save.save_path), "menu preserves resumable cup")
-	check(press(menu, "COPAS") and press(menu, "Correr / reanudar"), "resume through UI")
+	check(press(menu, "COPAS") and press(menu, "PREPARAR CARRERA") and press(menu, "CORRER"), "resume through UI")
 	await settle()
 	race = current_scene
 	check(race.cup_round == 1 and race.track.definition.id == "jardin", "mid-race resume repeats only pending round")

@@ -1,0 +1,254 @@
+{
+  ".codex/hooks.json": {
+    "mtime": 1789663865.7301865,
+    "seen": 1789873345.6262188,
+    "ast_hash": "5ef724fa4e713853a1b6cfb2ed727c45",
+    "semantic_hash": ""
+  },
+  "docs/course_validation_summary.json": {
+    "mtime": 1788903444.9372349,
+    "seen": 1789873345.6262302,
+    "ast_hash": "45cef4c5f2b7d98d9bc2b382504a76c8",
+    "semantic_hash": ""
+  },
+  "docs/matrix_results.json": {
+    "mtime": 1788795336.9884555,
+    "seen": 1789873345.6262362,
+    "ast_hash": "de9817bf0b208b0f0c632dab0283ed61",
+    "semantic_hash": ""
+  },
+  "docs/stage_d_loading_metrics.json": {
+    "mtime": 1788922592.677205,
+    "seen": 1789873345.626239,
+    "ast_hash": "9dd0dc0b3d5a440200e46276d3e8cd8b",
+    "semantic_hash": ""
+  },
+  "docs/stage_d_validation_summary.json": {
+    "mtime": 1788923242.6559718,
+    "seen": 1789873345.6262417,
+    "ast_hash": "e1377e0ceea76a5f26104a6d7ce8ce8e",
+    "semantic_hash": ""
+  },
+  "tools/build_aab.ps1": {
+    "mtime": 1788885835.635229,
+    "seen": 1789873345.626244,
+    "ast_hash": "e17ef38571afda35527d74c4fd9fe306",
+    "semantic_hash": ""
+  },
+  "tools/build_debug.ps1": {
+    "mtime": 1789876108.5382266,
+    "seen": 1789876152.117711,
+    "ast_hash": "7358b371a7f7de40a9752e0d22ec0977",
+    "semantic_hash": ""
+  },
+  "tools/collect_android_metrics.ps1": {
+    "mtime": 1788885835.6402304,
+    "seen": 1789873345.626249,
+    "ast_hash": "bf621c2740ad0a911968e37869480dcd",
+    "semantic_hash": ""
+  },
+  "tools/fetch_templates.py": {
+    "mtime": 1788794756.6221035,
+    "seen": 1789873345.6262512,
+    "ast_hash": "415daea1242e40e07f8c780cf060328d",
+    "semantic_hash": ""
+  },
+  "tools/setup_aab.py": {
+    "mtime": 1788885835.641232,
+    "seen": 1789873345.6262534,
+    "ast_hash": "e3eab4d6413f50d02411cf74db0c8dbf",
+    "semantic_hash": ""
+  },
+  "tools/setup_android.py": {
+    "mtime": 1788795266.3606563,
+    "seen": 1789873345.6262555,
+    "ast_hash": "02cae5ae896505a5a0c6dd0c2c8d03bb",
+    "semantic_hash": ""
+  },
+  "tools/sign_aab.ps1": {
+    "mtime": 1788885835.6437554,
+    "seen": 1789873345.6262584,
+    "ast_hash": "9d11558f0ce41e4bc6a396d0cc86c8f8",
+    "semantic_hash": ""
+  },
+  "tools/smoke_export.ps1": {
+    "mtime": 1788811584.4958909,
+    "seen": 1789873345.6262608,
+    "ast_hash": "37dec77f6dec4662e73e2263032234ef",
+    "semantic_hash": ""
+  },
+  "tools/test_android.ps1": {
+    "mtime": 1788969009.616561,
+    "seen": 1789873345.6262627,
+    "ast_hash": "5187c173a24446353ba6d3884c34a562",
+    "semantic_hash": ""
+  },
+  "AGENTS.md": {
+    "mtime": 1789663865.7231648,
+    "seen": 1789873345.626265,
+    "ast_hash": "60c832819888176131543c0306fbcf18",
+    "semantic_hash": ""
+  },
+  "ART_ASSET_REQUIREMENTS.md": {
+    "mtime": 1788904635.8871918,
+    "seen": 1789873345.6262674,
+    "ast_hash": "19842d7c613412b54f79a31c09c02a6f",
+    "semantic_hash": ""
+  },
+  "BALANCE_NOTES.md": {
+    "mtime": 1788904632.3838935,
+    "seen": 1789873345.6262696,
+    "ast_hash": "2bf5ab5c5a27d01706e47af39788649a",
+    "semantic_hash": ""
+  },
+  "CONTENT_DESIGN.md": {
+    "mtime": 1788950951.3115442,
+    "seen": 1789873345.626272,
+    "ast_hash": "951c22a54d8761a8d6b56e0b8e332a59",
+    "semantic_hash": ""
+  },
+  "CONTENT_IMPLEMENTATION_REPORT.md": {
+    "mtime": 1788969009.574243,
+    "seen": 1789873345.626274,
+    "ast_hash": "bedf3cf917b522473f200dd61eac163d",
+    "semantic_hash": ""
+  },
+  "PROJECT_CONTEXT.md": {
+    "mtime": 1789471066.308396,
+    "seen": 1789873345.626276,
+    "ast_hash": "b7549945ef9d0f7b07161e3a6cd47809",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1788969009.5800235,
+    "seen": 1789873345.6262782,
+    "ast_hash": "9df20ccdee230f7fec7166a5c6089a04",
+    "semantic_hash": ""
+  },
+  "addons/godot_ai/README.md": {
+    "mtime": 1789318384.4941764,
+    "seen": 1789873345.6262805,
+    "ast_hash": "bc3a76ac0b5db008b3e2f69a64e1137a",
+    "semantic_hash": ""
+  },
+  "audio/README.md": {
+    "mtime": 1788794257.8492444,
+    "seen": 1789873345.6262841,
+    "ast_hash": "2ed4221bae09635d817288359d578942",
+    "semantic_hash": ""
+  },
+  "docs/ANDROID_ARCADE_AVANCE.md": {
+    "mtime": 1788885835.5462508,
+    "seen": 1789873345.626286,
+    "ast_hash": "e48d90fcf57969c287ae90bd6e4f036e",
+    "semantic_hash": ""
+  },
+  "docs/ANDROID_ARCADE_DIAGNOSTICO.md": {
+    "mtime": 1788885835.5482655,
+    "seen": 1789873345.6262882,
+    "ast_hash": "a2b500aab73ddb240e37c9cbdac90462",
+    "semantic_hash": ""
+  },
+  "docs/ANDROID_ENTREGA.md": {
+    "mtime": 1788969009.5955834,
+    "seen": 1789873345.62629,
+    "ast_hash": "01a2292f792ade68dbf3d2dacb7b0a3b",
+    "semantic_hash": ""
+  },
+  "docs/AUDITORIA_EVOLUCION.md": {
+    "mtime": 1789471066.312153,
+    "seen": 1789873345.626293,
+    "ast_hash": "6647f0a13e2df5ffad98712eb21fdf06",
+    "semantic_hash": ""
+  },
+  "docs/ETAPA_D_CIRCUITOS.md": {
+    "mtime": 1788922560.9170668,
+    "seen": 1789873345.6262953,
+    "ast_hash": "4c164171fa94c33c961248f4ccd306cb",
+    "semantic_hash": ""
+  },
+  "docs/ETAPA_E_COPAS.md": {
+    "mtime": 1788950904.2359896,
+    "seen": 1789873345.6262977,
+    "ast_hash": "93abf9c104481eabcd36f50cdbc62cac",
+    "semantic_hash": ""
+  },
+  "docs/ETAPA_F_CAMPEONES.md": {
+    "mtime": 1788969009.5977747,
+    "seen": 1789873345.6262999,
+    "ast_hash": "51e84efddf3cf01a0e8ff5fc01368279",
+    "semantic_hash": ""
+  },
+  "docs/FASES_VISUALES.md": {
+    "mtime": 1788885835.5512638,
+    "seen": 1789873345.626302,
+    "ast_hash": "a90ff300cb9e263660269de2bb389a7f",
+    "semantic_hash": ""
+  },
+  "docs/MOBILE.md": {
+    "mtime": 1788811812.5898428,
+    "seen": 1789873345.626304,
+    "ast_hash": "3e0bc438b457c87955ce931aaf4908eb",
+    "semantic_hash": ""
+  },
+  "docs/NUEVAS_PISTAS.md": {
+    "mtime": 1788922373.6444535,
+    "seen": 1789873345.6263063,
+    "ast_hash": "e3fef1b805b805540e21830349c3f7fa",
+    "semantic_hash": ""
+  },
+  "docs/PREPARACION_CARRERA.md": {
+    "mtime": 1788885835.5527768,
+    "seen": 1789873345.6263084,
+    "ast_hash": "4f8a624ce722edd8209a7fefbdebebc3",
+    "semantic_hash": ""
+  },
+  "docs/VALIDATION.md": {
+    "mtime": 1788811812.591847,
+    "seen": 1789873345.6263106,
+    "ast_hash": "2d5dab9857513b4c603f9f3aa613fa49",
+    "semantic_hash": ""
+  },
+  "assets/icon.svg": {
+    "mtime": 1788792397.2759078,
+    "seen": 1789873345.6263127,
+    "ast_hash": "a6faec257380e3a97a4c7e4ec293fa5f",
+    "semantic_hash": ""
+  },
+  "audio/boost.wav": {
+    "mtime": 1788793431.8898451,
+    "seen": 1789873345.6263146,
+    "ast_hash": "6981749e41dbedb868f1a19511eb5d68",
+    "semantic_hash": ""
+  },
+  "audio/collisions.wav": {
+    "mtime": 1788793431.8668444,
+    "seen": 1789873345.626317,
+    "ast_hash": "4b30820682f225f9a999fbbaa98285cc",
+    "semantic_hash": ""
+  },
+  "audio/music.wav": {
+    "mtime": 1788793431.656279,
+    "seen": 1789873345.6263194,
+    "ast_hash": "f41f4d8f732df2dcce40c5aed5b16d50",
+    "semantic_hash": ""
+  },
+  "audio/ui.wav": {
+    "mtime": 1788793431.897845,
+    "seen": 1789873345.6263213,
+    "ast_hash": "5437756732229261bc839b9288e4a38a",
+    "semantic_hash": ""
+  },
+  "audio/victory.wav": {
+    "mtime": 1788793432.0213914,
+    "seen": 1789873345.6263237,
+    "ast_hash": "347500dc0037c7515e9a589f93f9b9ed",
+    "semantic_hash": ""
+  },
+  "audio/water.wav": {
+    "mtime": 1788793431.856326,
+    "seen": 1789873345.6263258,
+    "ast_hash": "c745cfad9721116ec83135a024232c5f",
+    "semantic_hash": ""
+  }
+}

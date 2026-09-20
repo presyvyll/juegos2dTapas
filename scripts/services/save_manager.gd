@@ -46,7 +46,10 @@ func read_document(path: String) -> Dictionary:
 	if parser.parse(FileAccess.get_file_as_string(path)) != OK:
 		return {}
 	var parsed: Variant = parser.data
-	if not parsed is Dictionary or parsed.get("version") not in [1, 2]:
+	if not parsed is Dictionary:
+		return {}
+	var version: Variant = parsed.get("version")
+	if not (version is float or version is int) or int(version) not in [1, 2] or float(version) != int(version):
 		return {}
 	var balance: Variant = parsed.get("coins", 0)
 	if not (balance is float or balance is int) or not is_finite(float(balance)):
@@ -216,10 +219,15 @@ func save() -> bool:
 	if error != OK:
 		return failure()
 	# Never replace a healthy backup with a corrupt primary after recovery.
-	if not read_document(save_path).is_empty():
+	var had_primary := not read_document(save_path).is_empty()
+	if had_primary:
 		if DirAccess.copy_absolute(save_path, save_path + ".bak") != OK:
 			return failure()
+		if DirAccess.remove_absolute(save_path) != OK:
+			return failure()
 	if DirAccess.rename_absolute(save_path + ".tmp", save_path) != OK:
+		if had_primary:
+			DirAccess.copy_absolute(save_path + ".bak", save_path)
 		return failure()
 	last_save_ok = true
 	changed.emit()
@@ -262,8 +270,8 @@ func add_cap_xp(id: String, amount: int) -> void:
 func upgrade_cap(id: String) -> bool:
 	if id not in unlocked_caps: return false
 	var level := cap_level(id)
-	if level >= PROGRESSION.max_level() or cap_xp(id) < PROGRESSION.xp_thresholds[level]: return false
-	var cost := PROGRESSION.upgrade_costs[level - 1]
+	if level >= PROGRESSION.max_level() or cap_xp(id) < PROGRESSION.threshold(level): return false
+	var cost: int = PROGRESSION.upgrade_cost(level)
 	if coins < cost: return false
 	var previous := cap_progress.duplicate(true)
 	var previous_coins := coins

@@ -165,6 +165,8 @@ func _ready() -> void:
 	notice.add_theme_color_override("font_outline_color", Color("10283b"))
 	notice.add_theme_constant_override("outline_size", 4)
 	notice.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
+	notice.offset_left = 48
+	notice.offset_right = -48
 	notice.offset_top = 125
 	notice.offset_bottom = 170
 	notice.hide()
@@ -333,10 +335,12 @@ func modal(title: String) -> VBoxContainer:
 		overlay.queue_free()
 	overlay = PanelContainer.new()
 	overlay.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
-	overlay.offset_left = -300
-	overlay.offset_right = 300
-	overlay.offset_top = -220
-	overlay.offset_bottom = 220
+	var viewport_size := get_viewport().get_visible_rect().size
+	var panel_size := Vector2(minf(600.0, viewport_size.x - 48.0), minf(660.0, viewport_size.y - 48.0))
+	overlay.offset_left = -panel_size.x * 0.5
+	overlay.offset_right = panel_size.x * 0.5
+	overlay.offset_top = -panel_size.y * 0.5
+	overlay.offset_bottom = panel_size.y * 0.5
 	root.add_child(overlay)
 	var content := VBoxContainer.new()
 	overlay.add_child(content)
@@ -360,7 +364,7 @@ func show_results(place: int, time: float, reward: int, retry_save: Callable = C
 	countdown_label.hide()
 	pause_button.disabled = true
 	var content := modal("¡VICTORIA!" if place == 1 else "RESULTADO · Puesto %d/%d" % [place, session.caps.size()])
-	overlay.pivot_offset = Vector2(300, 220)
+	overlay.pivot_offset = overlay.size * 0.5
 	overlay.scale = Vector2.ONE * 0.92
 	result_tween = create_tween()
 	result_tween.tween_property(overlay, "scale", Vector2.ONE, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)

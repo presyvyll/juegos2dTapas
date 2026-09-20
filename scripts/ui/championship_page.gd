@@ -73,21 +73,31 @@ func build_summary() -> void:
 		add_child(start)
 		return
 	line("Carreras completadas: %d/%d · %d vuelta(s) por carrera" % [active.rounds.size(), cup.track_ids.size(), cup.laps], 18)
+	var round_text := ""
 	if active.phase in ["results", "complete"]:
-		line("Última carrera", 19)
 		var last: Array = active.rounds.back()
 		for place in range(last.size()):
 			if last[place].id == "player":
 				var stars := maxi(0, 3 - place) if last[place].finished else 0
-				line("Esta ronda: " + "★".repeat(stars) + "☆".repeat(3 - stars), 21)
+				round_text = "ÚLTIMA · " + "★".repeat(stars) + "☆".repeat(3 - stars) + "\n"
 		for place in range(last.size()):
 			var row: Dictionary = last[place]
-			line("%d. %s · %s · +%d puntos" % [place + 1, racer_name(cup, row.id), "%.2f s" % row.time if row.finished else "DNF", cup.position_points[place] if row.finished else 0], 16)
+			round_text += "%d. %s · %s · +%d pts\n" % [place + 1, racer_name(cup, row.id), "%.2f s" % row.time if row.finished else "DNF", cup.position_points[place] if row.finished else 0]
 	if not active.rounds.is_empty():
-		line("Clasificación acumulada", 19)
+		var standings_text := "CLASIFICACIÓN\n"
 		var table := CupProgress.standings(cup, active.rounds)
 		for place in range(table.size()):
-			line("%d. %s · %d puntos" % [place + 1, racer_name(cup, table[place].id), table[place].points], 17)
+			standings_text += "%d. %s · %d pts\n" % [place + 1, racer_name(cup, table[place].id), table[place].points]
+		var tables := HBoxContainer.new()
+		tables.add_theme_constant_override("separation", 16)
+		add_child(tables)
+		if not round_text.is_empty():
+			var round_label := RacingUI.label(round_text.strip_edges(), 15)
+			round_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			tables.add_child(round_label)
+		var standings_label := RacingUI.label(standings_text.strip_edges(), 15)
+		standings_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		tables.add_child(standings_label)
 	if active.phase == "complete":
 		line("Copa terminada. Tu mejor puesto queda guardado. El premio por podio se entrega una sola vez.", 16)
 		add_child(RacingUI.button("Cerrar copa", func() -> void:
@@ -130,7 +140,7 @@ func build_map() -> void:
 	SaveManager.viewed_cup_id = cup.id
 	selected_track = clampi(selected_track, 0, cup.track_ids.size() - 1)
 	var active: Dictionary = SaveManager.championships.active
-	var current := not active.is_empty() and active.cup_id == cup.id
+	var current: bool = not active.is_empty() and active.cup_id == cup.id
 	var completed: int = active.rounds.size() if current else 0
 	var available := CupProgress.unlocked(cup, SaveManager.championships.completed)
 	cup_header = HBoxContainer.new()
@@ -201,7 +211,7 @@ func build_map() -> void:
 			details.add_child(strategy)
 		if current and selected_track == completed: line("DESAFÍO FINAL DESBLOQUEADO", 19)
 	if current:
-		var can_run := selected_track == completed and active.phase in ["ready", "racing"]
+		var can_run: bool = selected_track == completed and active.phase in ["ready", "racing"]
 		var run := RacingUI.button("PREPARAR CARRERA" if can_run else ("RONDA YA DISPUTADA" if selected_track < completed else "COMPLETA LA RONDA ANTERIOR"), func() -> void: preparing = true; build())
 		run.disabled = not can_run
 		add_child(run)
@@ -291,7 +301,7 @@ func _input(event: InputEvent) -> void:
 			swipe_start = event.position
 		elif not event.pressed and event.index == swipe_index:
 			swipe_index = -1
-			var distance := event.position - swipe_start
+			var distance: Vector2 = event.position - swipe_start
 			if not event.canceled and absf(distance.x) > 60 and absf(distance.x) > absf(distance.y) * 1.5:
 				AudioManager.play("ui")
 				change_cup(-1 if distance.x > 0 else 1)

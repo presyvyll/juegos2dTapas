@@ -21,6 +21,9 @@ func run() -> void:
 	race.session.set_physics_process(false)
 	for cap in race.session.caps: cap.set_physics_process(false)
 	var player: RacingCap = race.player
+	# This regression covers the swipe impulse itself, independently from the
+	# equipped cap's automatic race-start acceleration modifier.
+	player.ability.configure(null)
 	var events: Array[float] = []
 	player.swiped.connect(func(value: float) -> void: events.append(value))
 	player.controls.pending_swipe = 1

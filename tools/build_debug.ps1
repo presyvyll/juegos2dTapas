@@ -1,14 +1,18 @@
-param([string]$GodotDirectory = (Join-Path $env:TEMP 'tapa-racing-verify'))
+param([string]$GodotDirectory = '')
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path $PSScriptRoot -Parent
 Set-Location -LiteralPath $projectRoot
 $localTools = Join-Path $projectRoot '.tools'
 $engineDir = Join-Path $localTools 'godot'
+$engineSource = if ([string]::IsNullOrWhiteSpace($GodotDirectory)) { $engineDir } else { $GodotDirectory }
 New-Item -ItemType Directory -Path $engineDir -Force | Out-Null
 foreach ($binary in @('Godot_v4.3-stable_win64.exe', 'Godot_v4.3-stable_win64_console.exe')) {
-    $source = Join-Path $GodotDirectory $binary
-    if (-not (Test-Path -LiteralPath $source)) { throw "Godot 4.3 missing: $source" }
-    Copy-Item -LiteralPath $source -Destination (Join-Path $engineDir $binary) -Force
+    $source = Join-Path $engineSource $binary
+	if (-not (Test-Path -LiteralPath $source)) { throw "Godot 4.3 missing: $source" }
+    $destination = Join-Path $engineDir $binary
+    if ((Resolve-Path -LiteralPath $source).Path -ne (Resolve-Path -LiteralPath $destination).Path) {
+        Copy-Item -LiteralPath $source -Destination $destination -Force
+    }
 }
 New-Item -ItemType File -Path (Join-Path $engineDir '_sc_') -Force | Out-Null
 $editorData = Join-Path $engineDir 'editor_data'

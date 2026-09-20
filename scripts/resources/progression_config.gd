@@ -15,6 +15,12 @@ func multiplier(level: int) -> float:
 func reward(place: int) -> int:
 	return finish_xp[clampi(place - 1, 0, finish_xp.size() - 1)]
 
+func threshold(level: int) -> int:
+	return xp_thresholds[clampi(level, 0, xp_thresholds.size() - 1)]
+
+func upgrade_cost(level: int) -> int:
+	return upgrade_costs[clampi(level - 1, 0, upgrade_costs.size() - 1)]
+
 func eligible_level(xp: int) -> int:
 	var result := 1
 	for index in range(1, max_level()):

@@ -2,7 +2,12 @@ class_name ChallengeProgress
 extends RefCounted
 
 static func definitions() -> Array[ChallengeDefinition]:
-	return [preload("res://data/challenges/finishes.tres"), preload("res://data/challenges/wins.tres"), preload("res://data/challenges/cups.tres"), preload("res://data/challenges/combo.tres"), preload("res://data/challenges/perfect.tres"), preload("res://data/challenges/pickups.tres")]
+	var result: Array[ChallengeDefinition] = []
+	for path in ["res://data/challenges/finishes.tres", "res://data/challenges/wins.tres", "res://data/challenges/cups.tres", "res://data/challenges/combo.tres", "res://data/challenges/perfect.tres", "res://data/challenges/pickups.tres"]:
+		var definition := load(path) as ChallengeDefinition
+		if definition != null:
+			result.append(definition)
+	return result
 
 static func sanitize(value: Variant) -> Dictionary:
 	var result := {}
