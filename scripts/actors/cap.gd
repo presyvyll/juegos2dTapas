@@ -4,6 +4,7 @@ extends CharacterBody2D
 signal wall_hit(speed: float)
 signal boosted
 signal impacted(point: Vector2, normal: Vector2, strength: float)
+signal bank_contact(point: Vector2, normal: Vector2, motion: Vector2, strength: float, rebounded: bool)
 signal contact_resolved(rival: bool, strength: float)
 signal landed
 signal swiped(direction: float)
@@ -23,6 +24,7 @@ var boost_energy: float = 1.0
 var boost_time: float = 0.0
 var swipe_cooldown: float = 0.0
 var collision_cooldown: float = 0.0
+var bank_feedback_cooldown: float = 0.0
 var lap: int = 1
 var checkpoint_index: int = 0
 var finish_time: float = 0.0
@@ -69,6 +71,7 @@ func _physics_process(delta: float) -> void:
 	boost_energy = minf(1, boost_energy + delta * turbo.recharge_per_second)
 	swipe_cooldown = maxf(0, swipe_cooldown - delta)
 	collision_cooldown = maxf(0, collision_cooldown - delta)
+	bank_feedback_cooldown = maxf(0, bank_feedback_cooldown - delta)
 	if not is_instance_valid(ai):
 		var swipe := controls.consume_swipe()
 		if swipe != 0 and swipe_cooldown <= 0:
@@ -100,6 +103,13 @@ func _physics_process(delta: float) -> void:
 		var impact := absf(velocity.dot(collision.get_normal()))
 		velocity = velocity.slide(collision.get_normal()) + collision.get_normal() * impact * motion.config.wall_bounce
 		var other := collision.get_collider()
+		var hit_bank := false
+		if other is Node:
+			hit_bank = other.is_in_group("channel_banks")
+		if hit_bank and impact > 8.0 and bank_feedback_cooldown <= 0.0:
+			var rebounded := impact >= 120.0
+			bank_contact.emit(collision.get_position(), collision.get_normal(), velocity, impact, rebounded)
+			bank_feedback_cooldown = 0.18 if rebounded else 0.10
 		if other is RacingCap:
 			other.receive_push(-collision.get_normal() * impact * 0.35 / other.motion.config.weight)
 		if impact > 30.0 and collision_cooldown <= 0:

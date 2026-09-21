@@ -59,6 +59,20 @@ func wake(point: Vector2, velocity: Vector2, color: Color, turbo: bool) -> void:
 	emit_slot(point + Vector2(-18, 0), direction * 25, color, 0.38 if turbo else 0.65, 1 if turbo else 2)
 	emit_slot(point + Vector2(18, 0), direction * 25, color, 0.38 if turbo else 0.65, 1 if turbo else 2)
 
+func edge_scrape(point: Vector2, normal: Vector2, motion: Vector2, strength: float) -> void:
+	if not enabled or not visible_point(point):
+		return
+	var tangent := motion.slide(normal).normalized()
+	if tangent == Vector2.ZERO: tangent = Vector2(-normal.y, normal.x)
+	var speed := clampf(strength, 18.0, 80.0)
+	for offset in [-10.0, 0.0, 10.0]:
+		emit_slot(point + tangent * offset + normal * 18.0, tangent * speed * 0.45, Color("d5fff6"), 0.30, 4)
+
+func edge_rebound(point: Vector2, normal: Vector2, strength: float) -> void:
+	if not enabled or not visible_point(point):
+		return
+	emit_slot(point + normal * 32.0, normal, Color("fff0b8"), 0.38 + clampf(strength / 700.0, 0.0, 0.18), 5)
+
 func _process(delta: float) -> void:
 	var changed := false
 	var alive := false
@@ -95,3 +109,14 @@ func _draw() -> void:
 				var extent := 8 + fraction * 18
 				draw_line(point - Vector2(extent, 0), point + Vector2(extent, 0), color, 3, true)
 				draw_line(point - Vector2(0, extent), point + Vector2(0, extent), color, 3, true)
+			4:
+				var direction := velocities[index].normalized()
+				draw_line(point - direction * 4.0, point + direction * (12.0 + fraction * 14.0), color, 3.0, true)
+				draw_circle(point, 2.0 + fraction * 2.0, color)
+			5:
+				var angle := velocities[index].angle()
+				var radius := 24.0 + (1.0 - fraction) * 44.0
+				draw_arc(point, radius, angle - PI * 0.55, angle + PI * 0.55, 16, color, 3.0 * fraction + 1.0, true)
+				var inner := color.lightened(0.28)
+				inner.a *= 0.62
+				draw_arc(point, maxf(8.0, radius - 8.0), angle - PI * 0.48, angle + PI * 0.48, 14, inner, 2.0, true)

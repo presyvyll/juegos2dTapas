@@ -1,6 +1,9 @@
 class_name RaceHUD
 extends CanvasLayer
 
+const FINISH_CELEBRATION := preload("res://scripts/ui/finish_celebration.gd")
+const RACE_START_SIGNAL := preload("res://scripts/ui/race_start_signal.gd")
+
 signal pause_requested
 signal restart_requested
 signal menu_requested
@@ -11,10 +14,15 @@ var info: Label
 var boost_bar: ProgressBar
 var progress_bar: ProgressBar
 var countdown_label: Label
+var start_signal: Control
+var start_hint: Label
 var overlay: PanelContainer
 var boost_button: Button
 var pause_button: Button
 var result_rows: Label
+var result_place_label: Label
+var result_stats: HBoxContainer
+var finish_celebration: Control
 var tick := 0.0
 var pickup_notice := ""
 var pickup_notice_time := 0.0
@@ -27,6 +35,8 @@ var result_tween: Tween
 var notice: Label
 var notice_tween: Tween
 var position_tween: Tween
+var lap_tween: Tween
+var pickup_tween: Tween
 var turbo_tween: Tween
 var last_place := 0
 var last_lap := 1
@@ -77,7 +87,7 @@ func _ready() -> void:
 	var status_row := HBoxContainer.new()
 	panel.add_child(status_row)
 	position_label = RacingUI.label("4º", 38)
-	position_label.custom_minimum_size.x = 74
+	position_label.custom_minimum_size.x = 104
 	position_label.add_theme_color_override("font_color", Color("ffdc6c"))
 	status_row.add_child(position_label)
 	var column := VBoxContainer.new()
@@ -148,15 +158,33 @@ func _ready() -> void:
 	ability_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	boost_column.add_child(ability_label)
 	bottom.offset_top = -166
-	countdown_label = RacingUI.label("3", 96)
+	start_signal = RACE_START_SIGNAL.new()
+	start_signal.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	start_signal.offset_left = -110
+	start_signal.offset_right = 110
+	start_signal.offset_top = -205
+	start_signal.offset_bottom = -145
+	root.add_child(start_signal)
+	start_hint = RacingUI.label("SIGUE LA TRAZADA · PREPARA EL IMPULSO", 14)
+	start_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	start_hint.add_theme_color_override("font_color", Color("b9fff3"))
+	start_hint.add_theme_color_override("font_outline_color", Color("10283b"))
+	start_hint.add_theme_constant_override("outline_size", 3)
+	start_hint.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	start_hint.offset_left = -260
+	start_hint.offset_right = 260
+	start_hint.offset_top = -138
+	start_hint.offset_bottom = -108
+	root.add_child(start_hint)
+	countdown_label = RacingUI.label("3", 72)
 	countdown_label.add_theme_color_override("font_color", Color("ffdd69"))
 	countdown_label.add_theme_color_override("font_outline_color", Color("10283b"))
 	countdown_label.add_theme_constant_override("outline_size", 12)
 	countdown_label.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
 	countdown_label.offset_left = -360
 	countdown_label.offset_right = 360
-	countdown_label.offset_top = -90
-	countdown_label.offset_bottom = 90
+	countdown_label.offset_top = -125
+	countdown_label.offset_bottom = -45
 	countdown_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	root.add_child(countdown_label)
 	notice = RacingUI.label("", 28)
@@ -179,8 +207,9 @@ func _ready() -> void:
 		turbo_tween.tween_property(turbo_label, "modulate", Color.WHITE, 0.30)
 	)
 	player.powerup_received.connect(func(effect: PowerUpDefinition) -> void:
-		pickup_notice = effect.display_name
-		pickup_notice_time = 2.0
+		pickup_notice = "+ " + effect.display_name
+		pickup_notice_time = 1.5
+		animate_pickup(effect)
 	)
 	player.controls.boost_hit_test = func(point: Vector2) -> bool: return boost_button.get_global_rect().has_point(point)
 	player.controls.blocked_touch = func(point: Vector2) -> bool: return boost_button.get_global_rect().has_point(point) or pause_button.get_global_rect().has_point(point)
@@ -211,6 +240,12 @@ func animate_countdown(value: int) -> void:
 	if countdown_tween:
 		countdown_tween.kill()
 	countdown_label.text = str(value) if value > 0 else "¡YA!"
+	start_signal.set_value(value)
+	start_signal.show()
+	start_signal.modulate.a = 1.0
+	start_hint.text = "SIGUE LA TRAZADA · PREPARA EL IMPULSO" if value > 0 else "¡SALIDA LIMPIA!"
+	start_hint.show()
+	start_hint.modulate.a = 1.0
 	countdown_label.show()
 	countdown_label.pivot_offset = countdown_label.size / 2
 	countdown_label.scale = Vector2.ONE * 1.35
@@ -220,7 +255,13 @@ func animate_countdown(value: int) -> void:
 	if value == 0:
 		countdown_tween.tween_interval(0.45)
 		countdown_tween.tween_property(countdown_label, "modulate:a", 0.0, 0.2)
-		countdown_tween.tween_callback(countdown_label.hide)
+		countdown_tween.parallel().tween_property(start_signal, "modulate:a", 0.0, 0.2)
+		countdown_tween.parallel().tween_property(start_hint, "modulate:a", 0.0, 0.2)
+		countdown_tween.tween_callback(func() -> void:
+			countdown_label.hide()
+			start_signal.hide()
+			start_hint.hide()
+		)
 
 func set_mouse_passthrough(node: Node) -> void:
 	if node is Control and not node is BaseButton:
@@ -256,10 +297,10 @@ func _process(delta: float) -> void:
 		ability_label.tooltip_text = player.ability.definition.description
 	boost_button.disabled = not player.can_boost()
 	turbo_label.text = "¡A TODA AGUA!" if player.boost_time > 0 else ("CARGANDO…" if player.boost_energy < player.turbo.energy_cost else "TURBO LISTO")
-	if player.shield_time > 0:
-		turbo_label.text = "BURBUJA · %.1f s" % player.shield_time
-	elif pickup_notice_time > 0:
+	if pickup_notice_time > 0:
 		turbo_label.text = pickup_notice
+	elif player.shield_time > 0:
+		turbo_label.text = "BURBUJA · %.1f s" % player.shield_time
 	if player.finished: turbo_label.text = "CARRERA TERMINADA"
 	player.controls.boost_touch_rect = boost_button.get_global_rect()
 	player.controls.boost_touch_enabled = not boost_button.disabled
@@ -278,6 +319,38 @@ func show_combo(animate: bool = true) -> void:
 	combo_label.scale = Vector2.ONE * 0.94
 	combo_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_STOP)
 	combo_tween.tween_property(combo_label, "scale", Vector2.ONE, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+func animate_pickup(effect: PowerUpDefinition) -> void:
+	if pickup_tween: pickup_tween.kill()
+	turbo_label.text = pickup_notice
+	turbo_label.pivot_offset = turbo_label.size / 2
+	turbo_label.scale = Vector2.ONE * 0.82
+	turbo_label.modulate = effect.color.lightened(0.18)
+	boost_bar.modulate = effect.color
+	pickup_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_STOP).set_parallel(true)
+	pickup_tween.tween_property(turbo_label, "scale", Vector2.ONE, 0.30).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	pickup_tween.tween_property(turbo_label, "modulate", Color.WHITE, 0.42)
+	pickup_tween.tween_property(boost_bar, "modulate", Color.WHITE, 0.42)
+
+func animate_position_change(improved: bool) -> void:
+	if position_tween: position_tween.kill()
+	position_label.pivot_offset = position_label.size / 2
+	position_label.scale = Vector2.ONE * (1.16 if improved else 0.92)
+	position_label.rotation = -0.035 if improved else 0.035
+	position_label.modulate = Color("82fff0") if improved else Color("ff907d")
+	position_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_STOP).set_parallel(true)
+	position_tween.tween_property(position_label, "scale", Vector2.ONE, 0.32).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	position_tween.tween_property(position_label, "rotation", 0.0, 0.26).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	position_tween.tween_property(position_label, "modulate", Color.WHITE, 0.38)
+
+func animate_lap_change() -> void:
+	if lap_tween: lap_tween.kill()
+	info.pivot_offset = info.size / 2
+	info.scale = Vector2.ONE * 1.12
+	info.modulate = Color("ffe27a")
+	lap_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_STOP).set_parallel(true)
+	lap_tween.tween_property(info, "scale", Vector2.ONE, 0.38).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	lap_tween.tween_property(info, "modulate", Color.WHITE, 0.48)
 
 func announce(text: String, priority: int = 1) -> void:
 	if priority < notice_priority or get_tree().paused: return
@@ -300,16 +373,13 @@ func update_race_feedback(place: int) -> void:
 	var progress := session.progress(player)
 	if session.running and not player.finished:
 		if place != last_place and last_place > 0:
-			if position_tween: position_tween.kill()
-			position_label.pivot_offset = position_label.size / 2
-			position_label.scale = Vector2.ONE * 1.08
-			position_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_STOP)
-			position_tween.tween_property(position_label, "scale", Vector2.ONE, 0.25)
+			animate_position_change(place < last_place)
 			if place < last_place and session.elapsed > 3 and pass_cooldown <= 0 and absf(progress - last_progress) < 120:
 				announce("¡ADELANTAMIENTO!")
 				AudioManager.play("ui")
 				pass_cooldown = 3.5
 		if player.lap > last_lap:
+			animate_lap_change()
 			announce("ÚLTIMA VUELTA" if player.lap == session.circuit.laps else "VUELTA %d/%d" % [player.lap, session.circuit.laps], 2)
 			AudioManager.play("boost")
 		if player.lap == session.circuit.laps and player.checkpoint_index == session.checkpoint_count - 1 and not near_finish_shown:
@@ -360,49 +430,117 @@ func hide_pause() -> void:
 	if is_instance_valid(overlay):
 		overlay.queue_free()
 
+func celebrate_finish(place: int) -> void:
+	if is_instance_valid(finish_celebration): finish_celebration.queue_free()
+	finish_celebration = FINISH_CELEBRATION.new()
+	finish_celebration.configure(place)
+	root.add_child(finish_celebration)
+	root.move_child(finish_celebration, notice.get_index())
+
+func result_stat(title: String, value: String, color: Color) -> PanelContainer:
+	var card := PanelContainer.new()
+	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var style := RacingUI.box(Color("102f3a"), 9)
+	style.content_margin_left = 10
+	style.content_margin_right = 10
+	style.content_margin_top = 7
+	style.content_margin_bottom = 7
+	style.shadow_size = 0
+	card.add_theme_stylebox_override("panel", style)
+	var column := VBoxContainer.new()
+	column.add_theme_constant_override("separation", 1)
+	card.add_child(column)
+	var caption := RacingUI.label(title, 12)
+	caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	caption.modulate = Color("b9d5d2")
+	column.add_child(caption)
+	var amount := RacingUI.label(value, 20)
+	amount.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	amount.add_theme_color_override("font_color", color)
+	column.add_child(amount)
+	return card
+
 func show_results(place: int, time: float, reward: int, retry_save: Callable = Callable()) -> void:
 	countdown_label.hide()
 	pause_button.disabled = true
-	var content := modal("¡VICTORIA!" if place == 1 else "RESULTADO · Puesto %d/%d" % [place, session.caps.size()])
+	var content := modal("¡VICTORIA!" if place == 1 else "CARRERA COMPLETADA")
+	content.add_theme_constant_override("separation", 8)
+	var result_height := minf(540.0, get_viewport().get_visible_rect().size.y - 48.0)
+	overlay.offset_top = -result_height * 0.5
+	overlay.offset_bottom = result_height * 0.5
+	var heading := content.get_child(0) as Label
+	heading.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	heading.add_theme_color_override("font_color", Color("ffdc6c") if place == 1 else Color("78f4e5"))
 	overlay.pivot_offset = overlay.size * 0.5
 	overlay.scale = Vector2.ONE * 0.92
-	result_tween = create_tween()
+	overlay.modulate.a = 0.0
+	result_tween = create_tween().set_parallel(true)
 	result_tween.tween_property(overlay, "scale", Vector2.ONE, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	content.add_child(RacingUI.label("Tiempo: %.2f s  ·  +%d monedas" % [time, maxi(0, reward)]))
-	if is_instance_valid(ghost): content.add_child(RacingUI.label(ghost.status, 15))
-	if combo != null: content.add_child(RacingUI.label("Mejor combo: x%d" % combo.best, 16))
+	result_tween.tween_property(overlay, "modulate:a", 1.0, 0.18)
+	var hero := HBoxContainer.new()
+	hero.alignment = BoxContainer.ALIGNMENT_CENTER
+	content.add_child(hero)
+	var portrait := preload("res://scripts/ui/cap_preview.gd").new()
+	portrait.appearance = player.get_node("Visual").appearance
+	portrait.tint = player.get_node("Visual").tint
+	portrait.custom_minimum_size = Vector2(112, 78)
+	portrait.art_scale = 1.12
+	hero.add_child(portrait)
+	var summary := VBoxContainer.new()
+	summary.add_theme_constant_override("separation", 0)
+	hero.add_child(summary)
+	var eyebrow := RacingUI.label("TU RESULTADO", 13)
+	eyebrow.modulate = Color("b9d5d2")
+	summary.add_child(eyebrow)
+	result_place_label = RacingUI.label("%d.º DE %d" % [place, session.caps.size()], 34)
+	result_place_label.add_theme_color_override("font_color", Color("ffdc6c") if place <= 3 else Color("eefaf1"))
+	summary.add_child(result_place_label)
+	var stars := "★".repeat(maxi(0, 4 - place)) + "☆".repeat(mini(3, place - 1))
+	summary.add_child(RacingUI.label(stars, 19))
+	result_stats = HBoxContainer.new()
+	result_stats.add_theme_constant_override("separation", 8)
+	content.add_child(result_stats)
+	result_stats.add_child(result_stat("TIEMPO", "%.2f s" % time, Color("eefaf1")))
+	result_stats.add_child(result_stat("MONEDAS", "+%d" % maxi(0, reward) if reward >= 0 else "ERROR", Color("ffdc6c") if reward >= 0 else Color("ff907d")))
+	result_stats.add_child(result_stat("XP", "+%d" % SaveManager.PROGRESSION.reward(place) if reward >= 0 else "—", Color("78f4e5")))
+	var detail_lines: Array[String] = []
+	var best := float(SaveManager.best_times.get(session.circuit.record_key(SaveManager.settings.difficulty, session.circuit.laps), time))
+	detail_lines.append("Récord local %.2f s" % best)
+	if combo != null: detail_lines.append("Mejor combo x%d" % combo.best)
 	if reward >= 0:
 		var ready := ChallengeProgress.ready_count(SaveManager.challenges)
-		if ready > 0: content.add_child(RacingUI.label("%d desafío(s) para reclamar en Premios" % ready, 16))
-		content.add_child(RacingUI.label("+%d XP · Total de tapa: %d XP · Nivel %d" % [SaveManager.PROGRESSION.reward(place), SaveManager.cap_xp(player.definition_id), SaveManager.cap_level(player.definition_id)], 16))
-	var best := float(SaveManager.best_times.get(session.circuit.record_key(SaveManager.settings.difficulty, session.circuit.laps), time))
-	content.add_child(RacingUI.label("Récord local: %.2f s · %s" % [best, "★".repeat(maxi(0, 4 - place)) + "☆".repeat(mini(3, place - 1))], 17))
-	var podium := HBoxContainer.new()
-	content.add_child(podium)
-	var winner: RacingCap = session.standings()[0]
-	var portrait := preload("res://scripts/ui/cap_preview.gd").new()
-	portrait.appearance = winner.get_node("Visual").appearance
-	portrait.tint = winner.get_node("Visual").tint
-	podium.add_child(portrait)
-	portrait.custom_minimum_size = Vector2(150, 90)
-	portrait.art_scale = 1.25
-	var winner_text := RacingUI.label("¡GANADOR!\n" + winner.racer_name, 24)
-	winner_text.add_theme_color_override("font_color", Color("ffdc6c"))
-	podium.add_child(winner_text)
+		detail_lines.append("Nivel %d · %d XP totales%s" % [SaveManager.cap_level(player.definition_id), SaveManager.cap_xp(player.definition_id), " · %d premio(s) listos" % ready if ready > 0 else ""])
+	var detail_text := "  ·  ".join(detail_lines)
+	if is_instance_valid(ghost): detail_text += "\n" + ghost.status
+	var details := RacingUI.label(detail_text, 14)
+	details.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	details.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	content.add_child(details)
+	var standings_title := RacingUI.label("CLASIFICACIÓN", 14)
+	standings_title.add_theme_color_override("font_color", Color("78f4e5"))
+	content.add_child(standings_title)
 	result_rows = RacingUI.label("")
-	result_rows.add_theme_font_size_override("font_size", 18)
+	result_rows.add_theme_font_size_override("font_size", 16)
 	content.add_child(result_rows)
 	update_results()
 	if reward < 0:
 		content.add_child(RacingUI.label("Resultado sin guardar. Reintenta antes de salir.", 16))
 		if retry_save.is_valid(): content.add_child(RacingUI.button("Reintentar guardado", retry_save))
-	content.add_child(RacingUI.button("Volver a correr", func() -> void: restart_requested.emit()))
-	content.add_child(RacingUI.button("Volver al menú", func() -> void: menu_requested.emit()))
+	var actions := HBoxContainer.new()
+	actions.add_theme_constant_override("separation", 8)
+	content.add_child(actions)
+	var retry := RacingUI.button("Volver a correr", func() -> void: restart_requested.emit())
+	retry.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	actions.add_child(retry)
+	var exit := RacingUI.button("Volver al menú", func() -> void: menu_requested.emit())
+	exit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	actions.add_child(exit)
 
 func update_results() -> void:
 	var rows := ""
 	var place := 1
 	for cap in session.standings():
-		rows += "%d. %s   %s\n" % [place, cap.racer_name, "%.2f s" % cap.finish_time if cap.finished else "en carrera"]
+		var marker := "▶ " if cap == player else "   "
+		rows += "%s%d. %s  ·  %s\n" % [marker, place, cap.racer_name, "%.2f s" % cap.finish_time if cap.finished else "en carrera"]
 		place += 1
 	result_rows.text = rows.strip_edges()

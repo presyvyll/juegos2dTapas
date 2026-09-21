@@ -19,6 +19,9 @@ func width_at(y: float) -> float:
 func flow_at(y: float) -> Vector2:
 	return Vector2(center_at(y - 80) - center_at(y), -80).normalized()
 
+func starting_slot(index: int) -> Vector2:
+	return Vector2((index - 1.5) * 85.0, 40.0)
+
 func pickup_clear(point: Vector2) -> bool:
 	if absf(point.x - center_at(point.y)) + 60 >= width_at(point.y) / 2:
 		return false
@@ -42,11 +45,21 @@ func pickup_position(y: float, preferred_offset: float) -> Vector2:
 
 func _ready() -> void:
 	build_banks()
+	var start_grid := preload("res://scripts/visuals/race_start_grid.gd").new()
+	start_grid.track = self
+	add_child(start_grid)
 	populate()
+	if definition.id == "fuente":
+		var environment := preload("res://scripts/visuals/fountain_environment.gd").new()
+		environment.track = self
+		environment.z_index = -1
+		add_child(environment)
 	queue_redraw()
 
 func build_banks() -> void:
 	var walls := StaticBody2D.new()
+	walls.name = "Banks"
+	walls.add_to_group("channel_banks")
 	walls.collision_layer = 2
 	walls.collision_mask = 1
 	add_child(walls)
@@ -171,7 +184,6 @@ func _draw() -> void:
 			for side in [-1, 1]:
 				var spot := Vector2(center + side * (width_at(y) / 2 + 65), y)
 				draw_bank_detail(spot, index)
-	draw_line(Vector2(-300, 90), Vector2(300, 90), Color("fff2c6"), 7)
 	for index in range(mini(definition.section_distances.size(), definition.section_labels.size())):
 		var y := -definition.section_distances[index]
 		var spot := Vector2(center_at(y) + width_at(y) / 2 - 132, y)

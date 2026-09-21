@@ -1229,18 +1229,6 @@
       "source_location": "L95"
     },
     {
-      "id": "docs_visual_slice_fuente_arranque_y_trazada_inicial_iteraci\u00f3n_10",
-      "label": "Arranque y trazada inicial, iteraci\u00f3n 10",
-      "_origin": "ast",
-      "community": 26,
-      "community_name": "Fuente Central: entorno, iteraci\u00f3n 1 (20 septiembre 2026)",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "arranque y trazada inicial, iteracion 10",
-      "source_file": "docs/VISUAL_SLICE_FUENTE.md",
-      "source_location": "L141"
-    },
-    {
       "id": "docs_visual_slice_fuente_contacto_con_orillas_iteraci\u00f3n_8",
       "label": "Contacto con orillas, iteraci\u00f3n 8",
       "_origin": "ast",
@@ -3758,17 +3746,6 @@
       "confidence_score": 1.0,
       "source_file": "docs/VISUAL_SLICE_FUENTE.md",
       "source_location": "L126",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_visual_slice_fuente_fuente_central_entorno_iteraci\u00f3n_1_20_septiembre_2026",
-      "target": "docs_visual_slice_fuente_arranque_y_trazada_inicial_iteraci\u00f3n_10",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/VISUAL_SLICE_FUENTE.md",
-      "source_location": "L141",
       "weight": 1.0
     },
     {

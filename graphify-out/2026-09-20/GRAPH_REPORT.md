@@ -1,12 +1,12 @@
 # Graph Report - Juego2D  (2026-09-20)
 
 ## Corpus Check
-- 36 files · ~26,661 words
+- 36 files · ~26,475 words
 - Verdict: corpus is large enough that graph structure adds value.
-- Unclassified: 520 file(s) not represented in the graph (top: .gd 223, .tres 147, .uid 112)
+- Unclassified: 518 file(s) not represented in the graph (top: .gd 221, .tres 147, .uid 112)
 
 ## Summary
-- 188 nodes · 182 edges · 27 communities (19 shown, 8 thin omitted)
+- 187 nodes · 181 edges · 27 communities (19 shown, 8 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
@@ -41,10 +41,10 @@
 ## God Nodes (most connected - your core abstractions)
 1. `Auditoría de evolución — 13 septiembre 2026` - 19 edges
 2. `CONTENT_DESIGN — Liga de la Fuente` - 12 edges
-3. `Fuente Central: entorno, iteración 1 (20 septiembre 2026)` - 10 edges
-4. `Reporte de contenido — etapa F` - 9 edges
-5. `Tapa Racing · prototipo jugable 0.1` - 9 edges
-6. `Diagnóstico técnico y visual · Android arcade` - 9 edges
+3. `Reporte de contenido — etapa F` - 9 edges
+4. `Tapa Racing · prototipo jugable 0.1` - 9 edges
+5. `Diagnóstico técnico y visual · Android arcade` - 9 edges
+6. `Fuente Central: entorno, iteración 1 (20 septiembre 2026)` - 9 edges
 7. `Entrega arcade Android` - 8 edges
 8. `RemoteZip` - 7 edges
 9. `BALANCE_NOTES` - 6 edges
@@ -127,16 +127,16 @@ Cohesion: 0.50
 Nodes (3): Base jugable, Contexto del proyecto, Etapa actual: evolución fases 3–12 implementadas, sin pruebas todavía
 
 ### Community 26 - "Fuente Central: entorno, iteración 1 (20 septiembre 2026)"
-Cohesion: 0.18
-Nodes (10): Agua, iteración 2, Anticipación de agua, iteración 9, Anticipación de obstáculos, iteración 7, Arranque y trazada inicial, iteración 10, Contacto con orillas, iteración 8, Estela de turbo, iteración 3, Fuente Central: entorno, iteración 1 (20 septiembre 2026), Hit flash, iteración 4 (+2 more)
+Cohesion: 0.20
+Nodes (9): Agua, iteración 2, Anticipación de agua, iteración 9, Anticipación de obstáculos, iteración 7, Contacto con orillas, iteración 8, Estela de turbo, iteración 3, Fuente Central: entorno, iteración 1 (20 septiembre 2026), Hit flash, iteración 4, Meta y resultados, iteración 6 (+1 more)
 
 ### Community 27 - "Desarrollo arcade Android — primer bloque"
 Cohesion: 0.40
 Nodes (4): Desarrollo arcade Android — primer bloque, Etapas siguientes, Implementado, Verificación
 
 ## Knowledge Gaps
-- **119 isolated node(s):** `graphify`, `Tapas`, `Circuitos`, `Campeones, copas y UI`, `Audio seguro` (+114 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 146 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **118 isolated node(s):** `graphify`, `Tapas`, `Circuitos`, `Campeones, copas y UI`, `Audio seguro` (+113 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 145 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
@@ -147,7 +147,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `Tapa Racing · prototipo jugable 0.1` connect `Tapa Racing · prototipo jugable 0.1` to `README.md`?**
   _High betweenness centrality (0.041) - this node is a cross-community bridge._
 - **What connects `graphify`, `Tapas`, `Circuitos` to the rest of the system?**
-  _119 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _118 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Auditoría de evolución — 13 septiembre 2026` be split into smaller, more focused modules?**
   _Cohesion score 0.1 - nodes in this community are weakly interconnected._
 - **Should `fetch_templates.py` be split into smaller, more focused modules?**
