@@ -17,3 +17,6 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	elapsed += delta
 	position.x = origin.x + sin(elapsed * frequency) * travel
+
+func telegraph_state() -> Vector3:
+	return Vector3(origin.x, travel, cos(elapsed * frequency))

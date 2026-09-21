@@ -32,6 +32,16 @@ func force_at(point: Vector2) -> Vector2:
 func _draw() -> void:
 	draw_circle(Vector2.ZERO, radius, Color(0.01, 0.28, 0.45, 0.3))
 	var phase := visual_motion.phase if is_instance_valid(visual_motion) else 0.0
+	var warning := Color("ffcf70")
+	warning.a = 0.62
+	for segment in range(8):
+		if segment % 2 == 0:
+			var start := segment * TAU / 8.0 + phase * 0.08
+			draw_arc(Vector2.ZERO, radius + 12.0, start, start + TAU / 10.0, 8, warning, 4.0, true)
+	for row in range(2):
+		var y := radius + 38.0 + row * 22.0
+		draw_polyline(PackedVector2Array([Vector2(-14.0, y + 7.0), Vector2(0.0, y - 5.0), Vector2(14.0, y + 7.0)]), warning, 4.0, true)
 	for ring in range(1, 5):
 		var angle := ring * 0.7 + phase * (0.45 + ring * 0.08)
 		draw_arc(Vector2.ZERO, ring * radius / 5 * (0.75 + 0.25 * pulse_multiplier()), angle, PI * 1.6 + angle, 24, Color(0.6, 1, 1, 0.35 + 0.3 * pulse_multiplier()), 3, true)
+	draw_circle(Vector2.ZERO, radius * 0.13, Color(0.01, 0.12, 0.22, 0.72))

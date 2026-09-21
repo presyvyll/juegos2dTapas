@@ -35,14 +35,23 @@ func run() -> void:
 			await process_frame
 			var track: RaceTrack = race.track
 			check(track.definition.id == definition.id, "selected resource: " + definition.id)
+			check(track.get_node("Banks").is_in_group("channel_banks"), "channel banks expose visual contact group: " + definition.id)
 			check(track.obstacles.size() <= 12 and track.definition.features.size() <= 32, "mobile content budget: " + definition.id)
 			check(race.vfx.capacity == (48 if quality == "low" else 96), "VFX budget")
-			for cap in race.session.caps:
+			for index in range(race.session.caps.size()):
+				var cap: RacingCap = race.session.caps[index]
+				check(cap.position == track.starting_slot(index), "spawn matches starting grid: " + definition.id)
 				check(absf(cap.position.x - track.center_at(cap.position.y)) + 40 < track.width_at(cap.position.y) / 2, "spawn clearance: " + definition.id)
 			for obstacle in track.obstacles:
 				var lateral := absf(obstacle.position.x - track.center_at(obstacle.position.y))
 				var travel: float = obstacle.travel if obstacle is MovingObstacle else 0.0
 				check(track.width_at(obstacle.position.y) / 2 - lateral - obstacle.radius - travel > 75, "passage at maximum obstacle travel: " + definition.id)
+				check(obstacle.has_node("Telegraph"), "solid obstacle has anticipation signal: " + definition.id)
+				check(obstacle.get_node("Telegraph").moving == (obstacle is MovingObstacle), "telegraph matches obstacle motion: " + definition.id)
+			for feature in track.get_children():
+				if feature is WaterCurrentArea:
+					var cue: Color = feature.visual_color()
+					check(cue.a > 0.0 and feature.size.x > 0.0 and feature.size.y > 0.0, "water feature has anticipation cue: " + definition.id)
 			var ordered: Array[RaceCheckpoint] = []
 			var finishes := 0
 			var pickups := 0

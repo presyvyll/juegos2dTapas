@@ -81,6 +81,8 @@ func _ready() -> void:
 		AudioManager.play("boost" if value == 0 else "ui")
 		if value == 0:
 			vfx.burst(player.global_position, Vector2.UP, Color("ffdc6c"), 1.3)
+			for rival in session.caps:
+				if rival != player: vfx.burst(rival.global_position, Vector2.DOWN, rival.get_node("Visual").appearance.trail_color, 0.55)
 			SaveManager.haptic(20)
 	)
 	player.powerup_received.connect(func(_effect: PowerUpDefinition) -> void:
@@ -263,7 +265,7 @@ func spawn_racers() -> void:
 		var cap: RacingCap = CAP_SCENE.instantiate()
 		cap.active = false
 		cap.track = track
-		cap.position = Vector2((index - 1.5) * 85, 40)
+		cap.position = track.starting_slot(index)
 		add_child(cap)
 		cap.get_node("Visual").fx = vfx
 		session.caps.append(cap)
@@ -372,6 +374,7 @@ func on_finish(place: int, time: float) -> void:
 	finish_presented = true
 	player.get_node("Camera2D").celebrate_finish()
 	player.get_node("Visual").victory = place == 1
+	hud.celebrate_finish(place)
 	hud.announce("¡VICTORIA!" if place == 1 else "¡META! · %d.º/%d" % [place, session.caps.size()], 3)
 	AudioManager.play("victory" if place == 1 else "ui")
 	SaveManager.haptic(45 if place == 1 else 15)

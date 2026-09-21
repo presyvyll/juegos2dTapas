@@ -1,6 +1,8 @@
 class_name RockObstacle
 extends AnimatableBody2D
 
+const OBSTACLE_TELEGRAPH := preload("res://scripts/obstacles/obstacle_telegraph.gd")
+
 @export var radius: float = 43.0
 @export var tint: Color = Color("778e85")
 
@@ -14,6 +16,10 @@ func _ready() -> void:
 	var collider := CollisionShape2D.new()
 	collider.shape = shape
 	add_child(collider)
+	var telegraph := OBSTACLE_TELEGRAPH.new()
+	telegraph.name = "Telegraph"
+	add_child(telegraph)
+	telegraph.configure(self, radius, has_method("telegraph_state"))
 	queue_redraw()
 
 func _draw() -> void:
