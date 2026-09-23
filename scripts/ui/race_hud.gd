@@ -49,6 +49,8 @@ var combo: RaceCombo
 var combo_label: Label
 var combo_tween: Tween
 var ghost: RaceGhost
+var coins_label: Label
+var ranking_labels: Array[Label] = []
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -79,7 +81,9 @@ func _ready() -> void:
 	var panel := PanelContainer.new()
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var compact_style := RacingUI.box(Color("153e47"), 10)
+	var compact_style := RacingUI.box(Color("103843"), 18)
+	compact_style.border_color = Color("368a8d")
+	compact_style.border_width_bottom = 3
 	compact_style.content_margin_top = 6
 	compact_style.content_margin_bottom = 6
 	panel.add_theme_stylebox_override("panel", compact_style)
@@ -87,9 +91,10 @@ func _ready() -> void:
 	var status_row := HBoxContainer.new()
 	panel.add_child(status_row)
 	position_label = RacingUI.label("4º", 38)
-	position_label.custom_minimum_size.x = 104
+	position_label.custom_minimum_size.x = 116
 	position_label.add_theme_color_override("font_color", Color("ffdc6c"))
 	status_row.add_child(position_label)
+	position_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	var column := VBoxContainer.new()
 	column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -102,10 +107,23 @@ func _ready() -> void:
 	summary.add_child(info)
 	speed_label = RacingUI.label("", 22)
 	summary.add_child(speed_label)
+	coins_label = RacingUI.label("", 17)
+	coins_label.add_theme_color_override("font_color", Color("ffdc6c"))
+	summary.add_child(coins_label)
 	progress_bar = ProgressBar.new()
-	progress_bar.custom_minimum_size.y = 8
+	progress_bar.custom_minimum_size.y = 10
 	progress_bar.show_percentage = false
 	column.add_child(progress_bar)
+	var ranking := HBoxContainer.new()
+	ranking.add_theme_constant_override("separation", 12)
+	column.add_child(ranking)
+	for index in range(3):
+		var racer := RacingUI.label("", 13)
+		racer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		racer.custom_minimum_size.x = 48
+		racer.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		ranking.add_child(racer)
+		ranking_labels.append(racer)
 	pause_button = RacingUI.button("Ⅱ Pausa", func() -> void: pause_requested.emit())
 	top.add_child(pause_button)
 	var bottom := HBoxContainer.new()
@@ -150,6 +168,10 @@ func _ready() -> void:
 	boost_bar.custom_minimum_size.y = 14
 	boost_bar.show_percentage = false
 	boost_column.add_child(boost_bar)
+	var energy_fill := RacingUI.box(Color("ffdc6c"), 6)
+	energy_fill.set_content_margin_all(0)
+	energy_fill.shadow_size = 0
+	boost_bar.add_theme_stylebox_override("fill", energy_fill)
 	turbo_label = RacingUI.label("TURBO LISTO", 14)
 	turbo_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	boost_column.add_child(turbo_label)
@@ -285,7 +307,17 @@ func _process(delta: float) -> void:
 			combo_label.text = combo.caption() + " · %.1f s" % combo.remaining
 			combo_label.modulate.a = clampf(combo.remaining / 0.3, 0.0, 1.0)
 	player.controls.excluded_rects = [boost_button.get_global_rect(), pause_button.get_global_rect()]
-	var place := session.standings().find(player) + 1
+	var standings := session.standings()
+	var place := standings.find(player) + 1
+	coins_label.text = "MONEDAS %d" % SaveManager.coins
+	# A read-only podium; the player's own position always stays in the large badge.
+	for index in range(ranking_labels.size()):
+		var label := ranking_labels[index]
+		label.visible = index < standings.size()
+		if not label.visible: continue
+		var racer: RacingCap = standings[index]
+		label.text = "%d  %s" % [index + 1, "TÚ" if racer == player else racer.racer_name]
+		label.add_theme_color_override("font_color", Color("ffdc6c") if racer == player else Color("a4d8d7"))
 	var shown_time := player.finish_time if player.finished else session.elapsed
 	position_label.text = "%d.º/%d" % [place, session.caps.size()]
 	update_race_feedback(place)

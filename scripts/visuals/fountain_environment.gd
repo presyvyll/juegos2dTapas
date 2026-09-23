@@ -46,6 +46,8 @@ func _draw() -> void:
 			var y := row * 240.0
 			var edge: float = track.center_at(y) + side * track.width_at(y) * 0.5
 			var spot := Vector2(edge + side * 120.0, y)
+			if posmod(row, 5) == 2:
+				draw_festival_banner(spot, side)
 			if posmod(row, 3) == 0:
 				draw_garden(spot, side, row)
 			elif track.high_quality and posmod(row, 3) == 1:
@@ -61,6 +63,18 @@ func _draw() -> void:
 				draw_circle(crown + Vector2(15, 24), 76.0, Color("123e3d"))
 				draw_circle(crown, 72.0, Color("256254"))
 				draw_circle(crown + Vector2(-22, -20), 46.0, Color("34765a"))
+
+func draw_festival_banner(spot: Vector2, side: float) -> void:
+	# Dominican colours on promenade pennants, always outside the racing surface.
+	var base := spot + Vector2(side * 25, 0)
+	draw_line(base + Vector2(4, 6), base + Vector2(4, 77), Color(0.03, 0.18, 0.22, 0.25), 6)
+	draw_line(base, base + Vector2(0, 72), Color("e8d4a0"), 4)
+	var flag := Rect2(base, Vector2(46, 28))
+	draw_rect(flag, Color("f5f4dd"))
+	draw_rect(Rect2(base, Vector2(20, 11)), Color("225eaa"))
+	draw_rect(Rect2(base + Vector2(26, 0), Vector2(20, 11)), Color("ed6358"))
+	draw_rect(Rect2(base + Vector2(0, 17), Vector2(20, 11)), Color("ed6358"))
+	draw_rect(Rect2(base + Vector2(26, 17), Vector2(20, 11)), Color("225eaa"))
 
 func draw_garden(spot: Vector2, side: float, row: int) -> void:
 	draw_style_box(planter_shadow, Rect2(spot + Vector2(-43, -40), Vector2(102, 122)))

@@ -8,6 +8,7 @@ var clock := 0.0
 var entrance := 1.0
 var impact_scale := 1.0
 var finish_focus := false
+var look_ahead := Vector2.ZERO
 
 func celebrate_finish() -> void:
 	finish_focus = true
@@ -29,8 +30,10 @@ func _process(delta: float) -> void:
 	shake_time = maxf(0, shake_time - delta)
 	offset = Vector2(sin(clock * 72), cos(clock * 87)) * shake_strength * impact_scale * (shake_time / 0.15)
 	if is_instance_valid(target):
-		var destination := target.global_position + (target.velocity * anticipation).limit_length(180)
+		var desired_ahead := (target.velocity * anticipation).limit_length(180) if target.active and not finish_focus else Vector2.ZERO
+		look_ahead = look_ahead.lerp(desired_ahead, 1.0 - exp(-3.5 * delta))
+		var destination := target.global_position + look_ahead
 		global_position = global_position.lerp(destination, 1.0 - exp(-5.0 * delta))
 		var speed_zoom := lerpf(1.0, 0.96, clampf((target.velocity.length() - 280) / 200, 0, 1))
-		var desired_zoom := Vector2.ONE * (1.06 if finish_focus else (0.86 if target.boost_time > 0 else speed_zoom + entrance * 0.12))
+		var desired_zoom := Vector2.ONE * (1.06 if finish_focus else (0.90 if target.boost_time > 0 else speed_zoom + entrance * 0.12))
 		zoom = zoom.lerp(desired_zoom, 1.0 - exp(-2.5 * delta))
