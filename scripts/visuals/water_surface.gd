@@ -86,6 +86,23 @@ func draw_depth(rows: Vector2i) -> void:
 	draw_colored_polygon(deep_polygon, deep_color)
 	draw_polyline(shallow_left, Color(0.75, 1.0, 0.92, 0.09), 54.0, true)
 	draw_polyline(shallow_right, Color(0.75, 1.0, 0.92, 0.09), 54.0, true)
+	var shore := track.definition.water_color.darkened(0.55)
+	shore.a = 0.28 if track.high_quality else 0.16
+	draw_polyline(shallow_left, shore, 22.0, true)
+	draw_polyline(shallow_right, shore, 22.0, true)
 	var flow_color := Color(0.78, 1.0, 0.96, 0.13 if track.high_quality else 0.09)
 	draw_polyline(flow_left, flow_color, 3.0, true)
 	draw_polyline(flow_right, flow_color, 3.0, true)
+	if track.high_quality:
+		draw_caustic_flecks(rows)
+
+func draw_caustic_flecks(rows: Vector2i) -> void:
+	# A handful of moving highlights stand in for a noise shader on mobile.
+	for index in range(rows.x, rows.y):
+		var world_y := -index * 180.0
+		var center := track.center_at(world_y)
+		var half_width := track.width_at(world_y) * 0.5
+		var lane := sin(index * 12.9898 + clock * 0.35) * 0.62
+		var local := to_local(track.to_global(Vector2(center + lane * half_width, world_y)))
+		var fleck := Color(0.85, 1.0, 0.96, 0.07 + 0.05 * absf(sin(clock * 1.3 + index)))
+		draw_circle(local, 10.0 + 4.0 * absf(sin(index * 1.7)), fleck)

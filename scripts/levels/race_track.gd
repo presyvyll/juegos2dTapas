@@ -2,6 +2,7 @@ class_name RaceTrack
 extends Node2D
 
 const STEP: float = 120.0
+const WATER_SHADER := preload("res://shaders/water_surface.gdshader")
 @export var definition: CircuitDefinition
 @export var high_quality := true
 var obstacles: Array[Node2D] = []
@@ -45,16 +46,34 @@ func pickup_position(y: float, preferred_offset: float) -> Vector2:
 
 func _ready() -> void:
 	build_banks()
+	create_water_plane()
 	var start_grid := preload("res://scripts/visuals/race_start_grid.gd").new()
 	start_grid.track = self
 	add_child(start_grid)
 	populate()
+	var course_moment := preload("res://scripts/visuals/course_moment.gd").new()
+	course_moment.track = self
+	course_moment.z_index = -1
+	add_child(course_moment)
 	if definition.id == "fuente":
 		var environment := preload("res://scripts/visuals/fountain_environment.gd").new()
 		environment.track = self
 		environment.z_index = -1
 		add_child(environment)
 	queue_redraw()
+
+func create_water_plane() -> void:
+	var plane := Polygon2D.new()
+	plane.name = "AnimatedWater"
+	plane.polygon = water_polygon
+	plane.uv = water_polygon
+	plane.z_index = -5
+	var water_material := ShaderMaterial.new()
+	water_material.shader = WATER_SHADER
+	water_material.set_shader_parameter("water_color", definition.water_color)
+	water_material.set_shader_parameter("shimmer_strength", 1.0 if high_quality else 0.58)
+	plane.material = water_material
+	add_child(plane)
 
 func build_banks() -> void:
 	var walls := StaticBody2D.new()
@@ -167,7 +186,6 @@ func populate_features() -> void:
 
 func _draw() -> void:
 	# Static layers follow the existing banks; collision geometry is unchanged.
-	draw_colored_polygon(water_polygon, definition.water_color)
 	for edge in [left_edge, right_edge]:
 		# Dark shallow-water band and a narrow outline give the rim depth.
 		draw_polyline(edge, Color("168594"), 65, true)

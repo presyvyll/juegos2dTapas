@@ -16,8 +16,15 @@ static func draw_cap(canvas: CanvasItem, appearance: CapAppearance, tint: Color,
 	canvas.draw_colored_polygon(rim, INK)
 	canvas.draw_circle(Vector2.ZERO, 25.5, tint.darkened(0.3))
 	canvas.draw_circle(Vector2(0, -2), 23, tint)
-	canvas.draw_arc(Vector2(0, -2), 20, 3.3, 5.9, 24, tint.lightened(0.6), 3, true)
+	canvas.draw_circle(Vector2(0, -3), 19.5, tint.darkened(0.08))
+	canvas.draw_circle(Vector2(0, -4), 17.5, tint.lightened(0.12))
+	canvas.draw_arc(Vector2(0, -2), 22, 3.35, 5.85, 28, tint.lightened(0.72), 2.5, true)
+	canvas.draw_arc(Vector2(0, -2), 25, 3.45, 5.72, 28, appearance.accent.lightened(0.18), 1.4, true)
+	canvas.draw_set_transform(Vector2(-9, -15), -0.55, Vector2(1.35, 0.38))
+	canvas.draw_circle(Vector2.ZERO, 8.5, Color(1.0, 0.98, 0.83, 0.58))
+	canvas.draw_set_transform(Vector2.ZERO)
 	var accent := appearance.accent
+	draw_material_finish(canvas, appearance, tint)
 	match appearance.style:
 		CapAppearance.Style.BALANCED:
 			for ray in range(7):
@@ -61,3 +68,22 @@ static func draw_cap(canvas: CanvasItem, appearance: CapAppearance, tint: Color,
 	else:
 		canvas.draw_arc(Vector2(0, 6), 9, 0.15, PI - 0.15, 12, INK, 4, true)
 		canvas.draw_line(Vector2(-5, 10), Vector2(5, 10), PAPER, 2, true)
+
+static func draw_material_finish(canvas: CanvasItem, appearance: CapAppearance, tint: Color) -> void:
+	match appearance.style:
+		CapAppearance.Style.BALANCED:
+			canvas.draw_arc(Vector2.ZERO, 18.5, 3.7, 5.65, 18, tint.lightened(0.5), 1.4, true)
+		CapAppearance.Style.BOLD:
+			canvas.draw_line(Vector2(-17, 15), Vector2(17, 15), tint.lightened(0.35), 2.0, true)
+		CapAppearance.Style.SWIFT:
+			canvas.draw_arc(Vector2(-2, -1), 16.0, 3.85, 5.35, 16, Color(1.0, 0.98, 0.88, 0.72), 2.0, true)
+		CapAppearance.Style.TECH:
+			for point in [Vector2(-19, -2), Vector2(19, -2), Vector2(-14, 16), Vector2(14, 16)]:
+				canvas.draw_circle(point, 1.8, appearance.accent.lightened(0.25))
+		CapAppearance.Style.ELEGANT:
+			canvas.draw_arc(Vector2.ZERO, 24.0, 3.55, 5.8, 24, Color(0.94, 0.98, 1.0, 0.8), 1.8, true)
+			canvas.draw_arc(Vector2.ZERO, 21.0, 3.72, 5.62, 20, Color(0.8, 0.92, 1.0, 0.45), 1.0, true)
+		CapAppearance.Style.WILD:
+			var glow := appearance.accent
+			glow.a = 0.52
+			canvas.draw_arc(Vector2.ZERO, 26.5, 3.45, 5.95, 24, glow, 2.0, true)

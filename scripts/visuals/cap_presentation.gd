@@ -25,6 +25,7 @@ var trail_limit := 12
 var hit_flash := HIT_FLASH_EFFECT.new()
 var bank_scrape_time := 0.0
 var bank_scrape_strength := 0.0
+var turbo_ring := 0.0
 
 func _ready() -> void:
 	cap = get_parent() as RacingCap
@@ -67,13 +68,17 @@ func _process(delta: float) -> void:
 	hit_flash.update(delta)
 	var lift := sin(PI * cap.jump_time / maxf(0.01, cap.jump_duration))
 	var squash := sin(impact_time / 0.25 * PI) * 0.23 * impact_strength + sin(landing_time / 0.25 * PI) * 0.16
-	visual_stretch = lerpf(visual_stretch, 0.10 if cap.boost_time > 0 else 0.0, 1 - exp(-12 * delta))
+	var stretch_rate := 14.0 if cap.boost_time > 0 else 5.0
+	visual_stretch = lerpf(visual_stretch, 0.10 if cap.boost_time > 0 else 0.0, 1 - exp(-stretch_rate * delta))
 	var stretch := visual_stretch
 	body.scale = Vector2(1 + squash - stretch, 1 - squash + stretch) * (1 + lift * 0.2)
 	var edge_jitter := sin(clock * 62.0) * 1.6 * bank_scrape_strength * clampf(bank_scrape_time / 0.14, 0.0, 1.0)
 	body.position = Vector2(edge_jitter, -lift * 14 + sin(clock * 3) * 1.2)
-	var tilt := clampf(cap.velocity.x / 600, -0.22, 0.22)
+	var tilt := clampf(cap.velocity.x * 0.00045, -0.14, 0.14)
 	body.rotation = lerp_angle(body.rotation, tilt, 1 - exp(-9 * delta))
+	if turbo_ring > 0.0:
+		turbo_ring = maxf(0.0, turbo_ring - delta)
+		queue_redraw()
 	if victory:
 		body.position.y -= absf(sin(clock * 5)) * 10
 		body.rotation = sin(clock * 5) * 0.12
@@ -132,6 +137,8 @@ func on_bank_contact(point: Vector2, normal: Vector2, motion: Vector2, strength:
 	if is_instance_valid(fx): fx.edge_scrape(point, normal, motion, strength)
 
 func on_boost() -> void:
+	turbo_ring = 0.2
+	queue_redraw()
 	if is_instance_valid(fx):
 		fx.burst(global_position, Vector2.DOWN, appearance.trail_color, 1.0)
 
@@ -160,5 +167,11 @@ func _draw() -> void:
 	if is_instance_valid(cap) and cap.shield_time > 0:
 		draw_circle(Vector2.ZERO, 36, Color(0.5, 0.9, 1, 0.18))
 		draw_arc(Vector2.ZERO, 36, 0, TAU, 32, Color(0.7, 1, 1, 0.8), 2, true)
-	draw_set_transform(Vector2(2, 7), 0, Vector2(1.1, 0.8))
-	draw_circle(Vector2.ZERO, 27, Color(0.01, 0.2, 0.3, 0.3))
+	draw_set_transform(Vector2(3, 16), 0, Vector2(1.2, 0.4))
+	draw_circle(Vector2.ZERO, 30, Color(0.01, 0.16, 0.22, 0.32))
+	draw_set_transform(Vector2.ZERO)
+	if turbo_ring > 0.0:
+		var life := turbo_ring / 0.2
+		var ring := appearance.trail_color
+		ring.a = 0.85 * life
+		draw_arc(Vector2.ZERO, 34.0 + (1.0 - life) * 18.0, 0.0, TAU, 28, ring, 3.0, true)
