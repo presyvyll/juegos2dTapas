@@ -53,11 +53,19 @@ func burst(point: Vector2, normal: Vector2, color: Color, strength: float = 1.0)
 		emit_slot(point, direction * rng.randf_range(55, 150) * strength, color if index % 2 == 0 else Color("d6fff9"), rng.randf_range(0.25, 0.55), 0)
 
 func wake(point: Vector2, velocity: Vector2, color: Color, turbo: bool) -> void:
-	if not enabled or not visible_point(point):
+	if not enabled or not visible_point(point) or velocity.length_squared() < 1.0:
 		return
 	var direction := -velocity.normalized()
-	emit_slot(point + Vector2(-18, 0), direction * 25, color, 0.38 if turbo else 0.65, 1 if turbo else 2)
-	emit_slot(point + Vector2(18, 0), direction * 25, color, 0.38 if turbo else 0.65, 1 if turbo else 2)
+	var speed := velocity.length()
+	var span := lerpf(12.0, 22.0, clampf((speed - 90.0) / 320.0, 0.0, 1.0))
+	emit_slot(point + direction.orthogonal() * span, direction * 25, color, 0.38 if turbo else 0.65, 1 if turbo else 2)
+	emit_slot(point - direction.orthogonal() * span, direction * 25, color, 0.38 if turbo else 0.65, 1 if turbo else 2)
+	if speed > 220.0:
+		var foam := color
+		foam.a *= 0.7
+		emit_slot(point + direction * 10.0, direction * 18, foam, 0.32 if turbo else 0.5, 2)
+	if turbo and capacity > 48:
+		emit_slot(point, direction * 40, color, 0.28, 1)
 
 func edge_scrape(point: Vector2, normal: Vector2, motion: Vector2, strength: float) -> void:
 	if not enabled or not visible_point(point):

@@ -6,7 +6,7 @@ extends Camera2D
 var shake_time := 0.0
 var clock := 0.0
 var entrance := 1.0
-var impact_scale := 1.0
+var shake_amount := 0.0
 var finish_focus := false
 var look_ahead := Vector2.ZERO
 
@@ -19,7 +19,12 @@ func _ready() -> void:
 		target.impacted.connect(func(_point: Vector2, _normal: Vector2, force: float) -> void:
 			if force > 120 and enabled:
 				shake_time = 0.15
-				impact_scale = clampf(force / 350, 0.35, 1.0)
+				shake_amount = clampf(force / 350, 0.35, 1.0)
+		)
+		target.boosted.connect(func() -> void:
+			if not enabled: return
+			shake_time = 0.11
+			shake_amount = 0.24
 		)
 
 func _process(delta: float) -> void:
@@ -28,9 +33,10 @@ func _process(delta: float) -> void:
 	clock += delta
 	entrance = maxf(0, entrance - delta / 2.5)
 	shake_time = maxf(0, shake_time - delta)
-	offset = Vector2(sin(clock * 72), cos(clock * 87)) * shake_strength * impact_scale * (shake_time / 0.15)
+	offset = Vector2(sin(clock * 72), cos(clock * 87)) * shake_strength * shake_amount * (shake_time / 0.15)
 	if is_instance_valid(target):
-		var desired_ahead := (target.velocity * anticipation).limit_length(180) if target.active and not finish_focus else Vector2.ZERO
+		var lead_limit := clampf(target.motion.config.current_speed * 0.75, 180.0, 675.0)
+		var desired_ahead := (target.velocity * anticipation).limit_length(lead_limit) if target.active and not finish_focus else Vector2.ZERO
 		look_ahead = look_ahead.lerp(desired_ahead, 1.0 - exp(-3.5 * delta))
 		var destination := target.global_position + look_ahead
 		global_position = global_position.lerp(destination, 1.0 - exp(-5.0 * delta))

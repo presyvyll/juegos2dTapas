@@ -45,6 +45,7 @@ func _ready() -> void:
 	track = RaceTrack.new()
 	track.definition = circuit
 	track.high_quality = SaveManager.settings.quality == "high"
+	track.modulate = course_mood(circuit.theme_id)
 	add_child(track)
 	vfx = WaterVFXPool.new()
 	vfx.capacity = 96 if SaveManager.settings.quality == "high" else 48
@@ -244,6 +245,17 @@ func save_cup_results() -> void:
 		content.add_child(RacingUI.label("No se guardó el resultado. Reintenta antes de continuar.", 17))
 		content.add_child(RacingUI.button("Reintentar guardado", save_cup_results))
 	content.add_child(RacingUI.button("Volver al menú", menu))
+
+func course_mood(theme_id: String) -> Color:
+	# Slight canvas tint on the track only. Racers and the HUD stay on the race root.
+	match theme_id:
+		"neon", "eclipse": return Color("d9e4ff")
+		"tormenta": return Color("c5d0de")
+		"fuente", "cascada", "tropical": return Color("fff3df")
+		"jardin", "plaza": return Color("e7f6df")
+		"templo", "titan": return Color("f0e6d4")
+		"canal_turbo", "express": return Color("ffe8c8")
+		_: return Color.WHITE
 
 func spawn_pickups() -> void:
 	var effects: Array[PowerUpDefinition] = [preload("res://data/powerups/shield.tres"), preload("res://data/powerups/recharge.tres")]

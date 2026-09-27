@@ -13,7 +13,8 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	if not is_instance_valid(player) or not is_visible_in_tree(): return
-	var target := clampf((player.velocity.length() - 250) / 280, 0, 1) if player.active and not player.finished else 0.0
+	var reference_speed := maxf(1.0, player.motion.config.current_speed)
+	var target := clampf((player.velocity.length() / reference_speed - 0.72) / 0.9, 0, 1) if player.active and not player.finished else 0.0
 	strength = lerpf(strength, target, 1 - exp(-7 * delta))
 	turbo = lerpf(turbo, 1.0 if player.boost_time > 0 and player.active and not player.finished else 0.0, 1 - exp(-8 * delta))
 	if player.velocity.length_squared() > 1:
