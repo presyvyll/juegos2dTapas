@@ -3,9 +3,13 @@ extends Node2D
 
 const STEP: float = 120.0
 const WATER_SHADER := preload("res://shaders/water_surface.gdshader")
+const TRASH_CAN_OBSTACLE := preload("res://scripts/obstacles/trash_can_obstacle.gd")
+const TIRE_OBSTACLE := preload("res://scripts/obstacles/tire_obstacle.gd")
+const SHOPPING_BAG_OBSTACLE := preload("res://scripts/obstacles/shopping_bag_obstacle.gd")
 @export var definition: CircuitDefinition
 @export var high_quality := true
 var obstacles: Array[Node2D] = []
+var soft_obstacles: Array[Node2D] = []
 var power_pickups: Array[RacingPickup] = []
 var checkpoint_count := 12
 var water_polygon := PackedVector2Array()
@@ -31,6 +35,9 @@ func pickup_clear(point: Vector2) -> bool:
 		var travel: float = obstacle.travel if obstacle is MovingObstacle else 0.0
 		var closest := Vector2(clampf(point.x, obstacle.position.x - travel, obstacle.position.x + travel), obstacle.position.y)
 		if point.distance_to(closest) < obstacle.radius + 60:
+			return false
+	for obstacle in soft_obstacles:
+		if is_instance_valid(obstacle) and point.distance_to(obstacle.position) < obstacle.radius + 60:
 			return false
 	return true
 
@@ -104,6 +111,7 @@ func build_banks() -> void:
 func populate() -> void:
 	if definition.authored_layout:
 		populate_features()
+		populate_debris()
 		return
 	var rng := RandomNumberGenerator.new()
 	rng.seed = definition.seed_value
@@ -148,6 +156,54 @@ func populate() -> void:
 			current.direction = Vector2(0.4 if index % 2 == 0 else -0.4, -1)
 			current.max_speed_modifier = 1.15
 			add_child(current)
+	populate_debris()
+
+func populate_debris() -> void:
+	# Add recognizable everyday debris without allowing solid hazards to seal the channel.
+	var hard_specs: Array = [
+		[TRASH_CAN_OBSTACLE, 0.33, -0.42],
+		[BranchObstacle, 0.61, 0.38],
+		[TIRE_OBSTACLE, 0.82, -0.24],
+	]
+	var hard_budget := maxi(0, 12 - obstacles.size())
+	for index in range(mini(hard_budget, hard_specs.size())):
+		var spec: Array = hard_specs[index]
+		var obstacle := spec[0].new() as Node2D
+		var radius_value: float = obstacle.radius
+		obstacle.position = debris_position(definition.length * float(spec[1]), float(spec[2]), radius_value)
+		add_child(obstacle)
+		obstacles.append(obstacle)
+	for spec in [[0.47, 0.18], [0.73, -0.52]]:
+		var bag := SHOPPING_BAG_OBSTACLE.new() as Node2D
+		bag.position = debris_position(definition.length * float(spec[0]), float(spec[1]), bag.radius)
+		add_child(bag)
+		soft_obstacles.append(bag)
+
+func debris_position(distance: float, preferred_lane: float, radius_value: float) -> Vector2:
+	for shift in [0.0, -130.0, 130.0, -260.0, 260.0]:
+		var y := clampf(-distance + shift, -definition.length + 260.0, -340.0)
+		for lane in [preferred_lane, -preferred_lane, 0.55, -0.55, 0.0]:
+			var usable_half := width_at(y) * 0.5 - radius_value - 90.0
+			var point := Vector2(center_at(y) + float(lane) * usable_half, y)
+			if debris_clear(point, radius_value):
+				return point
+	var fallback_y := clampf(-distance, -definition.length + 260.0, -340.0)
+	return Vector2(center_at(fallback_y), fallback_y)
+
+func debris_clear(point: Vector2, radius_value: float) -> bool:
+	if absf(point.x - center_at(point.y)) + radius_value + 80.0 >= width_at(point.y) * 0.5:
+		return false
+	for obstacle in obstacles:
+		if not is_instance_valid(obstacle):
+			continue
+		var travel: float = obstacle.travel if obstacle is MovingObstacle else 0.0
+		var closest := Vector2(clampf(point.x, obstacle.position.x - travel, obstacle.position.x + travel), obstacle.position.y)
+		if point.distance_to(closest) < radius_value + obstacle.radius + 150.0:
+			return false
+	for obstacle in soft_obstacles:
+		if is_instance_valid(obstacle) and point.distance_to(obstacle.position) < radius_value + obstacle.radius + 120.0:
+			return false
+	return true
 
 func populate_features() -> void:
 	for feature in definition.features:

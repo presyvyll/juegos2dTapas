@@ -7,6 +7,8 @@ var stage: Control
 var name_label: Label
 var rarity_label: Label
 var state_label: Label
+var xp_bar: ProgressBar
+var xp_label: Label
 var requirement: Label
 var detail: Label
 var ability_name: Label
@@ -41,8 +43,8 @@ func construct() -> void:
 	var columns := HBoxContainer.new()
 	add_child(columns)
 	var hero := VBoxContainer.new()
-	hero.add_theme_constant_override("separation", 6)
-	hero.custom_minimum_size.x = 370
+	hero.add_theme_constant_override("separation", 5)
+	hero.custom_minimum_size.x = 390
 	columns.add_child(hero)
 	name_label = RacingUI.label("", 30)
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -57,14 +59,15 @@ func construct() -> void:
 	left.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	carousel.add_child(left)
 	stage = Control.new()
-	stage.custom_minimum_size = Vector2(230, 180)
+	stage.custom_minimum_size = Vector2(250, 190)
 	stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	stage.clip_contents = true
 	carousel.add_child(stage)
 	portrait = preload("res://scripts/ui/cap_preview.gd").new()
 	portrait.animated = true
 	portrait.hero_effects = true
-	portrait.art_scale = 3.0
+	# Mantiene coronas, antenas y otros adornos altos dentro del retrato.
+	portrait.art_scale = 2.55
 	portrait.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	stage.add_child(portrait)
 	lock_overlay = Control.new()
@@ -82,9 +85,30 @@ func construct() -> void:
 	right.custom_minimum_size.x = 52
 	right.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	carousel.add_child(right)
-	state_label = RacingUI.label("", 20)
+	var progress_card := VBoxContainer.new()
+	progress_card.custom_minimum_size = Vector2(270, 56)
+	progress_card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	progress_card.add_theme_constant_override("separation", 2)
+	hero.add_child(progress_card)
+	state_label = RacingUI.label("", 18)
 	state_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	hero.add_child(state_label)
+	state_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	progress_card.add_child(state_label)
+	var xp_row := Control.new()
+	xp_row.custom_minimum_size.y = 24
+	xp_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	progress_card.add_child(xp_row)
+	xp_bar = ProgressBar.new()
+	xp_bar.show_percentage = false
+	xp_bar.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT, Control.PRESET_MODE_MINSIZE, 8)
+	xp_row.add_child(xp_bar)
+	xp_label = RacingUI.label("", 14)
+	xp_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	xp_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	xp_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	xp_label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT, Control.PRESET_MODE_MINSIZE, 8)
+	xp_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	xp_row.add_child(xp_label)
 	var stats := VBoxContainer.new()
 	stats.add_theme_constant_override("separation", 6)
 	stats.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -121,6 +145,10 @@ func construct() -> void:
 	stats.add_child(detail)
 	requirement = RacingUI.label("", 17)
 	requirement.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	requirement.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	requirement.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	requirement.custom_minimum_size.y = 42
+	requirement.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	add_child(requirement)
 	var actions := HBoxContainer.new()
 	add_child(actions)
@@ -163,12 +191,27 @@ func apply_cap() -> void:
 	state_label.text = "EQUIPADA" if SaveManager.selected_cap == cap.id else ("DISPONIBLE" if owned else "BLOQUEADA")
 	var level := SaveManager.cap_level(cap.id)
 	var xp := SaveManager.cap_xp(cap.id)
-	state_label.text += " · Nivel %d\n%d XP" % [level, xp]
+	state_label.text += " · Nivel %d" % level
 	state_label.add_theme_color_override("font_color", Color("69e7d4") if owned else Color("ffce58"))
 	equip.text = "EQUIPADA" if SaveManager.selected_cap == cap.id else ("EQUIPAR" if owned else "BLOQUEADA")
 	equip.disabled = not owned or SaveManager.selected_cap == cap.id
 	requirement.text = "Lista para correr" if owned else "Requisito: desbloquea esta tapa por %d monedas" % cap.price
 	var progression: ProgressionConfig = SaveManager.PROGRESSION
+	var current_threshold := progression.threshold(level - 1)
+	var next_threshold := progression.threshold(level)
+	if level >= progression.max_level():
+		current_threshold = progression.threshold(progression.max_level() - 1)
+		next_threshold = current_threshold
+		xp_bar.min_value = 0
+		xp_bar.max_value = 1
+		xp_bar.value = 1
+		xp_label.text = "%d XP · NIVEL MÁXIMO" % xp
+	else:
+		xp_bar.min_value = current_threshold
+		xp_bar.max_value = maxi(next_threshold, current_threshold + 1)
+		xp_bar.value = clampi(xp, current_threshold, next_threshold)
+		xp_label.text = "%d / %d XP" % [xp, next_threshold]
+	xp_label.tooltip_text = xp_label.text
 	upgrade.disabled = true
 	upgrade.text = "MEJORAR"
 	if level >= progression.max_level():

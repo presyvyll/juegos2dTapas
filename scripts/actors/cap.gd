@@ -116,6 +116,8 @@ func _physics_process(delta: float) -> void:
 		var resistance := 0.0 if protected else race_power.resistance()
 		velocity = velocity.slide(collision.get_normal()) + collision.get_normal() * impact * motion.config.wall_bounce * resistance
 		var other := collision.get_collider()
+		if not protected and other != null and other.has_method("on_cap_collision"):
+			other.call("on_cap_collision", self, collision.get_normal(), impact)
 		var hit_bank := false
 		if other is Node:
 			hit_bank = other.is_in_group("channel_banks")
