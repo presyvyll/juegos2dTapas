@@ -42,6 +42,7 @@ func _ready() -> void:
 		return
 	circuit.laps = int(SaveManager.settings.get("race_laps", 1))
 	if cup: circuit.laps = cup.laps
+	circuit = circuit.sprint_layout()
 	track = RaceTrack.new()
 	track.definition = circuit
 	track.high_quality = SaveManager.settings.quality == "high"
@@ -258,13 +259,41 @@ func course_mood(theme_id: String) -> Color:
 		_: return Color.WHITE
 
 func spawn_pickups() -> void:
-	var effects: Array[PowerUpDefinition] = [preload("res://data/powerups/shield.tres"), preload("res://data/powerups/recharge.tres")]
-	for index in range(8):
+	var effects: Array[PowerUpDefinition] = [preload("res://data/powerups/recharge.tres")]
+	for index in range(3):
 		var pickup := RacingPickup.new()
 		pickup.definition = effects[index % effects.size()]
-		var y := (-1500.0 - index * 1900) * track.definition.length / 18000.0
+		var y := -(0.28 + index * 0.25) * track.definition.length
 		pickup.position = track.pickup_position(y, -100 if index % 2 == 0 else 100)
 		add_child(pickup)
+	var total := session.checkpoint_count * track.definition.laps
+	var rows := [["turbo", "shield", "wave"], ["magnet", "dash", "whirlpool"], ["super", "ghost", "heavy"]]
+	if track.definition.seed_value % 2 == 0: rows[1][1] = "recovery"
+	for index in range(3):
+		var fraction: float = [0.20, 0.47, 0.73][index]
+		var gate := roundi(total * fraction)
+		var y := -track.definition.length * ((gate - 1) % session.checkpoint_count + 1) / session.checkpoint_count
+		# Keep all three silhouettes on a readable, obstacle-free cross-section.
+		for shift in [0.0, -120.0, 120.0, -240.0, 240.0]:
+			var candidate := clampf(y + shift, -track.definition.length + 250, -250)
+			var clear := true
+			for lane in range(3):
+				var point := Vector2(track.center_at(candidate) + (lane - 1) * minf(145, track.width_at(candidate) * 0.25), candidate)
+				if not track.pickup_clear(point): clear = false
+			if clear:
+				y = candidate
+				break
+		for lane in range(3):
+			var pickup := RacingPickup.new()
+			pickup.definition = PowerUpDefinition.new()
+			pickup.definition.id = rows[index][lane]
+			pickup.definition.color = Color(RacePower.POWERS[pickup.definition.id][3])
+			pickup.power_gate = index
+			pickup.required_lap = (gate - 1) / session.checkpoint_count + 1
+			pickup.observer = player
+			pickup.position = track.pickup_position(y, (lane - 1) * minf(145, track.width_at(y) * 0.25))
+			track.power_pickups.append(pickup)
+			add_child(pickup)
 
 func spawn_racers() -> void:
 	var definitions := RacingCatalog.caps()
@@ -277,8 +306,18 @@ func spawn_racers() -> void:
 		var cap: RacingCap = CAP_SCENE.instantiate()
 		cap.active = false
 		cap.track = track
+		cap.race_power.rivals = session.caps
 		cap.position = track.starting_slot(index)
 		add_child(cap)
+		cap.race_power.collected.connect(func(id: String, point: Vector2) -> void:
+			vfx.burst(point, Vector2.UP, Color(RacePower.POWERS[id][3]), 0.55)
+		)
+		cap.race_power.activated.connect(func(id: String) -> void:
+			vfx.burst(cap.global_position, Vector2.UP, Color(RacePower.POWERS[id][3]), 0.7)
+			if cap == player:
+				AudioManager.play("boost")
+				SaveManager.haptic(20)
+		)
 		cap.get_node("Visual").fx = vfx
 		session.caps.append(cap)
 		if index == 0:

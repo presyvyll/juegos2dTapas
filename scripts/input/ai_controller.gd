@@ -83,6 +83,15 @@ func _physics_process(delta: float) -> void:
 	var look_y := cap.position.y - look_ahead
 	var curvature := absf(track.center_at(look_y - 180) - track.center_at(look_y)) / 180.0
 	var target_x := track.center_at(look_y) + lane * track.width_at(look_y) * 0.5 + error
+	# Approach a visible physical choice; collision pickup rules stay shared.
+	var power_score := -INF
+	for pickup in track.power_pickups:
+		var distance := cap.position.y - pickup.position.y
+		if pickup.required_lap != cap.lap or pickup.power_gate in cap.race_power.collected_gates or distance < 0 or distance > 600: continue
+		var score := cap.race_power.ai_score(pickup.definition.id) - absf(pickup.position.x - cap.position.x) / 180.0
+		if score > power_score:
+			power_score = score
+			target_x = pickup.position.x
 	var tactical_target := 0.0
 	var ahead: RacingCap
 	var behind: RacingCap

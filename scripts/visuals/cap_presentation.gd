@@ -59,6 +59,8 @@ func configure(value: CapAppearance, color: Color) -> void:
 
 func _process(delta: float) -> void:
 	clock += delta
+	var phasing := cap.active and cap.race_power.current == "ghost"
+	body.modulate.a = lerpf(body.modulate.a, 0.48 if phasing else 1.0, 1.0 - exp(-12.0 * delta))
 	if (cap.shield_time > 0) != had_shield:
 		queue_redraw()
 	had_shield = cap.shield_time > 0
@@ -68,10 +70,12 @@ func _process(delta: float) -> void:
 	hit_flash.update(delta)
 	var lift := sin(PI * cap.jump_time / maxf(0.01, cap.jump_duration))
 	var squash := sin(impact_time / 0.25 * PI) * 0.23 * impact_strength + sin(landing_time / 0.25 * PI) * 0.16
-	var stretch_rate := 14.0 if cap.boost_time > 0 else 5.0
-	visual_stretch = lerpf(visual_stretch, 0.10 if cap.boost_time > 0 else 0.0, 1 - exp(-stretch_rate * delta))
+	var boosting := cap.active and (cap.boost_time > 0 or cap.race_power.current in ["turbo", "super", "dash", "recovery"])
+	var stretch_rate := 14.0 if boosting else 5.0
+	visual_stretch = lerpf(visual_stretch, 0.10 if boosting else 0.0, 1 - exp(-stretch_rate * delta))
 	var stretch := visual_stretch
 	body.scale = Vector2(1 + squash - stretch, 1 - squash + stretch) * (1 + lift * 0.2)
+	if phasing: body.scale.x *= 1.0 + sin(clock * 9) * 0.035
 	var edge_jitter := sin(clock * 62.0) * 1.6 * bank_scrape_strength * clampf(bank_scrape_time / 0.14, 0.0, 1.0)
 	body.position = Vector2(edge_jitter, -lift * 14 + sin(clock * 3) * 1.2)
 	var tilt := clampf(cap.velocity.x * 0.00045, -0.14, 0.14)
@@ -86,8 +90,8 @@ func _process(delta: float) -> void:
 	update_boost_trail(delta)
 	wake_timer -= delta
 	if cap.active and cap.velocity.length() > 90 and wake_timer <= 0 and is_instance_valid(fx):
-		wake_timer = 0.09 if cap.boost_time > 0 else lerpf(0.27, 0.14, clampf((cap.velocity.length() - 90) / 400, 0, 1))
-		fx.wake(global_position + Vector2(0, 22), cap.velocity, appearance.trail_color if cap.boost_time > 0 else Color("b2fff4"), cap.boost_time > 0)
+		wake_timer = 0.09 if boosting else lerpf(0.27, 0.14, clampf((cap.velocity.length() - 90) / 400, 0, 1))
+		fx.wake(global_position + Vector2(0, 22), cap.velocity, appearance.trail_color if boosting else Color("b2fff4"), boosting)
 
 func update_boost_trail(delta: float) -> void:
 	var changed := false
@@ -98,7 +102,7 @@ func update_boost_trail(delta: float) -> void:
 		trail_points.pop_front()
 		changed = true
 	trail_sample_time -= delta
-	var boosting := cap.active and not cap.finished and cap.boost_time > 0 and cap.velocity.length() > 150.0
+	var boosting := cap.active and not cap.finished and (cap.boost_time > 0 or cap.race_power.current in ["turbo", "super", "dash", "recovery"]) and cap.velocity.length() > 150.0
 	if boosting:
 		trail_opacity = minf(1.0, trail_opacity + delta * 9.0)
 		if trail_sample_time <= 0.0:

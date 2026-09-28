@@ -51,6 +51,7 @@ var combo_tween: Tween
 var ghost: RaceGhost
 var coins_label: Label
 var ranking_labels: Array[Label] = []
+var power_hud: RacePowerHUD
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -234,12 +235,50 @@ func _ready() -> void:
 		animate_pickup(effect)
 	)
 	player.controls.boost_hit_test = func(point: Vector2) -> bool: return boost_button.get_global_rect().has_point(point)
-	player.controls.blocked_touch = func(point: Vector2) -> bool: return boost_button.get_global_rect().has_point(point) or pause_button.get_global_rect().has_point(point)
+	power_hud = RacePowerHUD.new()
+	power_hud.power = player.race_power
+	root.add_child(power_hud)
+	player.controls.blocked_touch = func(point: Vector2) -> bool: return boost_button.get_global_rect().has_point(point) or pause_button.get_global_rect().has_point(point) or power_hud.hit(point)
 	if OS.get_name() == "Android":
 		pause_button.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	get_viewport().size_changed.connect(update_touch_rects)
 	call_deferred("update_touch_rects")
 	set_mouse_passthrough(root)
+	# Keep the result/pause hierarchy intact; racing has only three small controls.
+	top.hide()
+	bottom.hide()
+	pause_button.reparent(root)
+	boost_button.reparent(root)
+	pause_button.text = "Ⅱ"
+	boost_button.text = "»"
+	pause_button.tooltip_text = "Pausa"
+	boost_button.tooltip_text = "Turbo"
+	for button in [pause_button, boost_button]:
+		var style := RacingUI.box(Color(0.04, 0.16, 0.20, 0.68), 32)
+		style.set_content_margin_all(6)
+		for state in ["normal", "hover", "pressed", "disabled"]: button.add_theme_stylebox_override(state, style)
+		button.add_theme_color_override("font_color", Color("b9fff3"))
+		button.add_theme_color_override("font_disabled_color", Color(0.7, 0.9, 0.9, 0.3))
+	pause_button.custom_minimum_size = Vector2(56, 56)
+	boost_button.custom_minimum_size = Vector2(64, 64)
+	pause_button.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	boost_button.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
+	get_viewport().size_changed.connect(place_compact_controls)
+	place_compact_controls()
+	player.race_power.activated.connect(func(id: String) -> void: announce(str(RacePower.POWERS[id][0]), 1))
+	player.race_power.collected.connect(func(_id: String, _point: Vector2) -> void: announce("¡PODER!", 1))
+
+func place_compact_controls() -> void:
+	var safe := RacingUI.safe_insets(get_viewport())
+	pause_button.offset_left = -safe.z - 56
+	pause_button.offset_right = -safe.z
+	pause_button.offset_top = safe.y
+	pause_button.offset_bottom = safe.y + 56
+	boost_button.offset_left = -safe.z - 64
+	boost_button.offset_right = -safe.z
+	boost_button.offset_top = -safe.w - 64
+	boost_button.offset_bottom = -safe.w
+	call_deferred("apply_touch_rects")
 
 func _input(event: InputEvent) -> void:
 	if OS.get_name() == "Android" and handle_pause_touch(event):
@@ -302,7 +341,7 @@ func _process(delta: float) -> void:
 		return
 	tick = 0
 	if combo != null:
-		combo_label.visible = session.running and player.active and not player.finished and combo.actions.size() >= 2 and combo.remaining > 0
+		combo_label.visible = false
 		if combo_label.visible:
 			combo_label.text = combo.caption() + " · %.1f s" % combo.remaining
 			combo_label.modulate.a = clampf(combo.remaining / 0.3, 0.0, 1.0)
@@ -340,19 +379,11 @@ func _process(delta: float) -> void:
 	if is_instance_valid(result_rows):
 		update_results()
 
-func show_combo(animate: bool = true) -> void:
-	if combo == null or combo.actions.size() < 2: return
-	combo_label.text = combo.caption()
-	combo_label.show()
-	combo_label.modulate.a = 1.0
-	if not animate: return
-	if combo_tween: combo_tween.kill()
-	combo_label.pivot_offset = combo_label.size / 2
-	combo_label.scale = Vector2.ONE * 0.94
-	combo_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_STOP)
-	combo_tween.tween_property(combo_label, "scale", Vector2.ONE, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+func show_combo(_animate: bool = true) -> void:
+	combo_label.hide()
 
 func animate_pickup(effect: PowerUpDefinition) -> void:
+	if not boost_bar.is_visible_in_tree(): return
 	if pickup_tween: pickup_tween.kill()
 	turbo_label.text = pickup_notice
 	turbo_label.pivot_offset = turbo_label.size / 2
@@ -365,6 +396,7 @@ func animate_pickup(effect: PowerUpDefinition) -> void:
 	pickup_tween.tween_property(boost_bar, "modulate", Color.WHITE, 0.42)
 
 func animate_position_change(improved: bool) -> void:
+	if not position_label.is_visible_in_tree(): return
 	if position_tween: position_tween.kill()
 	position_label.pivot_offset = position_label.size / 2
 	position_label.scale = Vector2.ONE * (1.16 if improved else 0.92)
@@ -376,6 +408,7 @@ func animate_position_change(improved: bool) -> void:
 	position_tween.tween_property(position_label, "modulate", Color.WHITE, 0.38)
 
 func animate_lap_change() -> void:
+	if not info.is_visible_in_tree(): return
 	if lap_tween: lap_tween.kill()
 	info.pivot_offset = info.size / 2
 	info.scale = Vector2.ONE * 1.12

@@ -81,7 +81,8 @@ func simulate(save: Node, laps: int) -> void:
 	await process_frame
 
 func disable_presentation(node: Node) -> void:
-	if node is CapPresentation or node is AmbientMotion or node is WaterSurface or node is WaterVFXPool:
+	# Avoid compiling presentation/autoload dependencies before SceneTree startup.
+	if node.get_script() != null and node.get_script().resource_path in ["res://scripts/visuals/cap_presentation.gd", "res://scripts/visuals/ambient_motion.gd", "res://scripts/visuals/water_surface.gd", "res://scripts/vfx/water_vfx_pool.gd"]:
 		node.set_process(false)
 	for child in node.get_children():
 		disable_presentation(child)

@@ -34,9 +34,14 @@ var base_physics: CapPhysicsConfig
 var definition_id := ""
 var ability := CapAbilityRuntime.new()
 var burst_speed_multiplier := 1.6
+var race_power := RacePower.new()
 
 @onready var motion: CapMotion = $Motion
 @onready var controls: CapPlayerInput = $PlayerInput
+
+func _init() -> void:
+	race_power.cap = self
+	add_child(race_power)
 
 func _ready() -> void:
 	controls.boost_available = can_boost
@@ -49,12 +54,13 @@ func trigger_ability(event: String) -> bool:
 	return ability.trigger(event)
 
 func can_boost() -> bool:
-	return active and not finished and not get_tree().paused and boost_time <= 0 and boost_energy >= turbo.energy_cost
+	return active and not finished and not get_tree().paused and race_power.remaining <= 0 and boost_time <= 0 and boost_energy >= turbo.energy_cost
 
 func _physics_process(delta: float) -> void:
 	if not active or finished:
 		return
 	var first_active_frame := not ability.started
+	race_power.advance(delta)
 	ability.advance(delta)
 	if first_active_frame and not currents.is_empty(): trigger_ability("current_enter")
 	shield_time = maxf(0, shield_time - delta)
@@ -64,6 +70,7 @@ func _physics_process(delta: float) -> void:
 		landed.emit()
 	var flow: Vector2 = track.flow_at(global_position.y) if is_instance_valid(track) else Vector2.UP
 	var steering: float = ai.steering_axis() if is_instance_valid(ai) else controls.steering_axis()
+	if race_power.disruption > 0: steering = clampf(steering + sin(race_power.disruption * 12) * 0.35, -1, 1)
 	var wants_boost: bool = ai.consume_boost() if is_instance_valid(ai) else controls.consume_boost()
 	if wants_boost:
 		try_boost(flow)
@@ -92,16 +99,22 @@ func _physics_process(delta: float) -> void:
 		modifier /= count
 	else:
 		modifier = 1.0
+	if race_power.current == "ghost":
+		external *= 0.2
+		if modifier < 1.0: modifier = lerpf(1.0, modifier, 0.2)
 	if boost_time > 0:
 		modifier *= burst_speed_multiplier
 	modifier *= ability.value("speed")
+	modifier *= race_power.speed_factor()
 	var lateral := Vector2(-flow.y, flow.x).normalized()
 	external += lateral * external.dot(lateral) * (ability.value("current_lateral") - 1.0)
-	velocity = motion.integrate(velocity, steering, delta, flow, external, modifier, ability.value("acceleration"))
+	velocity = motion.integrate(velocity, steering, delta, flow, external, modifier, ability.value("acceleration") * (2.0 if race_power.current == "recovery" else 1.0))
 	var collision := move_and_collide(velocity * delta)
 	if collision:
 		var impact := absf(velocity.dot(collision.get_normal()))
-		velocity = velocity.slide(collision.get_normal()) + collision.get_normal() * impact * motion.config.wall_bounce
+		var protected := race_power.block_attack() if impact > 30 else false
+		var resistance := 0.0 if protected else race_power.resistance()
+		velocity = velocity.slide(collision.get_normal()) + collision.get_normal() * impact * motion.config.wall_bounce * resistance
 		var other := collision.get_collider()
 		var hit_bank := false
 		if other is Node:
@@ -112,7 +125,7 @@ func _physics_process(delta: float) -> void:
 			bank_feedback_cooldown = 0.18 if rebounded else 0.10
 		if other is RacingCap:
 			other.receive_push(-collision.get_normal() * impact * 0.35 / other.motion.config.weight)
-		if impact > 30.0 and collision_cooldown <= 0:
+		if impact > 30.0 and collision_cooldown <= 0 and not protected:
 			contact_resolved.emit(other is RacingCap, impact)
 			wall_hit.emit(impact)
 			impacted.emit(collision.get_position(), collision.get_normal(), impact)
@@ -121,8 +134,9 @@ func _physics_process(delta: float) -> void:
 			collision_cooldown = 0.25
 
 func receive_push(impulse: Vector2) -> void:
+	if race_power.block_attack(): return
 	if shield_time <= 0:
-		velocity += impulse * ability.value("received_push")
+		velocity += impulse * ability.value("received_push") * race_power.resistance()
 
 func try_boost(flow: Vector2) -> void:
 	if not can_boost():

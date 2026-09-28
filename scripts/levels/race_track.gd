@@ -6,6 +6,7 @@ const WATER_SHADER := preload("res://shaders/water_surface.gdshader")
 @export var definition: CircuitDefinition
 @export var high_quality := true
 var obstacles: Array[Node2D] = []
+var power_pickups: Array[RacingPickup] = []
 var checkpoint_count := 12
 var water_polygon := PackedVector2Array()
 var left_edge := PackedVector2Array()
@@ -106,7 +107,8 @@ func populate() -> void:
 		return
 	var rng := RandomNumberGenerator.new()
 	rng.seed = definition.seed_value
-	for y in [-4200.0, -10800.0, -15700.0]:
+	for fraction in [0.23, 0.60, 0.87]:
+		var y: float = -definition.length * fraction
 		var drop := WaterDrop.new()
 		drop.position = Vector2(center_at(y), y)
 		add_child(drop)

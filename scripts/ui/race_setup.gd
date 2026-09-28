@@ -39,7 +39,7 @@ func _ready() -> void:
 				if child is OptionButton:
 					child.item_selected.connect(func(_index: int) -> void: update_record.call())
 	update_record.call()
-	add_child(RacingUI.label("Una vuelta: 60–90 s aproximadamente.\nMantén pulsado a izquierda o derecha para girar.\nDesliza rápido y horizontal para un Perfect Shot.\nToca TURBO con energía; recoge burbujas y recargas.", 17))
+	add_child(RacingUI.label("Sprint: ~25 s incluida la salida. Tres grupos de poderes.\nMantén pulsado a izquierda o derecha para girar.\nDesliza rápido y horizontal para un Perfect Shot.\nConduce hacia un poder y toca su símbolo para activarlo.", 17))
 	add_child(RacingUI.button("¡A CORRER!", func() -> void:
 		SaveManager.ghost_replay_requested = false
 		SaveManager.save()

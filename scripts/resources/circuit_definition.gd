@@ -40,4 +40,25 @@ extends Resource
 
 func record_key(difficulty: String, lap_count: int) -> String:
 	var course_key := id if record_version == 1 else "%s_v%d" % [id, record_version]
-	return "%s_%s_%d" % [course_key, difficulty, lap_count]
+	return "%s_sprint25_%s_%d" % [course_key, difficulty, lap_count]
+
+func sprint_layout() -> CircuitDefinition:
+	var result := duplicate(true) as CircuitDefinition
+	var distance := 5500.0
+	# Compensate the repeated tight hazards and the fastest jet corridor.
+	if id == "laberinto" and laps > 1: distance = 5200.0
+	if id == "plaza" and laps == 1: distance = 5650.0
+	result.length = distance / maxi(1, laps)
+	var ratio := result.length / length
+	# Retain the themed layout, with enough space between hazards to react.
+	result.features.clear()
+	var last_distance := 0.0
+	for original in features:
+		var feature := original.duplicate() as CircuitFeature
+		feature.distance *= ratio
+		if feature.distance < 400 or feature.distance > result.length - 250 or feature.distance - last_distance < 340: continue
+		feature.current_size.y = minf(feature.current_size.y, 200)
+		result.features.append(feature)
+		last_distance = feature.distance
+	for index in range(result.section_distances.size()): result.section_distances[index] *= ratio
+	return result

@@ -10,7 +10,7 @@ var refresh := 0.0
 func _ready() -> void:
 	var sections := track.definition.section_distances
 	moment_distance = sections[1] if sections.size() > 1 else track.definition.length * 0.62
-	moment_distance = clampf(moment_distance, 2500.0, track.definition.length - 1800.0)
+	moment_distance = clampf(moment_distance, track.definition.length * 0.3, track.definition.length * 0.75)
 	match track.definition.theme_id:
 		"cascada":
 			title = "CORTINA DE AGUA"

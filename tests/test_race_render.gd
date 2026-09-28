@@ -31,6 +31,23 @@ func run() -> void:
 			print("MOVING RACE ", quality, " fps=", Engine.get_frames_per_second(), " draws=", Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME), " pool=", race.vfx.capacity, " memory=", Performance.get_monitor(Performance.MEMORY_STATIC))
 		await RenderingServer.frame_post_draw
 		root.get_texture().get_image().save_png("user://moving_race_%s.png" % quality)
+		# Static visual fixture after the FPS samples: inspect all three lane choices.
+		race.session.set_physics_process(false)
+		var row_y: float = race.track.power_pickups[0].position.y
+		for index in range(race.session.caps.size()):
+			var cap: RacingCap = race.session.caps[index]
+			cap.set_physics_process(false)
+			cap.ai.set_physics_process(false)
+			cap.race_power.collected_gates.clear()
+			cap.position = Vector2(race.track.center_at(row_y) + (index - 1.5) * 65, row_y + 180 + index * 35)
+		var camera: Camera2D = race.player.get_node("Camera2D")
+		camera.set_process(false)
+		camera.global_position = Vector2(race.track.center_at(row_y), row_y + 110)
+		camera.zoom = Vector2.ONE
+		await process_frame
+		await process_frame
+		await RenderingServer.frame_post_draw
+		root.get_texture().get_image().save_png("user://power_lanes_%s.png" % quality)
 		race.queue_free()
 		await process_frame
 	for player in root.get_node("AudioManager").players.values(): player.stop()

@@ -20,9 +20,12 @@ static func draw_cap(canvas: CanvasItem, appearance: CapAppearance, tint: Color,
 	canvas.draw_circle(Vector2(0, -4), 17.5, tint.lightened(0.12))
 	canvas.draw_arc(Vector2(0, -2), 22, 3.35, 5.85, 28, tint.lightened(0.72), 2.5, true)
 	canvas.draw_arc(Vector2(0, -2), 25, 3.45, 5.72, 28, appearance.accent.lightened(0.18), 1.4, true)
-	canvas.draw_set_transform(Vector2(-9, -15), -0.55, Vector2(1.35, 0.38))
-	canvas.draw_circle(Vector2.ZERO, 8.5, Color(1.0, 0.98, 0.83, 0.58))
-	canvas.draw_set_transform(Vector2.ZERO)
+	# Keep the caller's portrait/race transform for every part of the cap.
+	var highlight := PackedVector2Array()
+	for point in range(32):
+		var offset := Vector2.from_angle(TAU * point / 32) * 8.5 * Vector2(1.35, 0.38)
+		highlight.append(Vector2(-9, -15) + offset.rotated(-0.55))
+	canvas.draw_colored_polygon(highlight, Color(1.0, 0.98, 0.83, 0.58))
 	var accent := appearance.accent
 	draw_material_finish(canvas, appearance, tint)
 	match appearance.style:

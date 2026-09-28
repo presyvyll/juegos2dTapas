@@ -57,6 +57,7 @@ func cross_checkpoint(cap: RacingCap, index: int) -> void:
 		cap.get_node("Camera2D").global_position = cap.global_position
 		return
 	cap.finished = true
+	cap.race_power.queue_redraw()
 	cap.active = false
 	cap.finish_time = elapsed
 	cap.velocity = Vector2.ZERO
