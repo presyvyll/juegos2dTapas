@@ -63,6 +63,7 @@ func construct() -> void:
 	carousel.add_child(stage)
 	portrait = preload("res://scripts/ui/cap_preview.gd").new()
 	portrait.animated = true
+	portrait.hero_effects = true
 	portrait.art_scale = 3.0
 	portrait.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	stage.add_child(portrait)

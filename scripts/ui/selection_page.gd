@@ -48,6 +48,7 @@ func build() -> void:
 	if kind == "caps":
 		var preview := preload("res://scripts/ui/cap_preview.gd").new()
 		preview.animated = true
+		preview.hero_effects = true
 		preview.tint = item.color.lightened(0.25) if SaveManager.selected_skin == "perla" else item.color
 		preview.appearance = item.appearance if item.appearance else CapAppearance.new()
 		add_child(preview)

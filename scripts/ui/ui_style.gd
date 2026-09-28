@@ -41,6 +41,56 @@ static func theme() -> Theme:
 		result.set_stylebox(state, "ProgressBar", bar)
 	return result
 
+static func tropical_box(color: Color = Color("512812"), radius: int = 12, border: Color = Color("2a1208")) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = color
+	style.border_color = border
+	style.set_border_width_all(4)
+	style.set_corner_radius_all(radius)
+	style.shadow_color = Color(0.05, 0.015, 0.0, 0.62)
+	style.shadow_offset = Vector2(0, 6)
+	style.shadow_size = 5
+	style.content_margin_left = 18
+	style.content_margin_right = 18
+	style.content_margin_top = 11
+	style.content_margin_bottom = 11
+	return style
+
+static func menu_theme() -> Theme:
+	var result := Theme.new()
+	result.default_font_size = 20
+	result.set_color("font_color", "Label", Color("fff4d7"))
+	result.set_color("font_shadow_color", "Label", Color(0.08, 0.02, 0.0, 0.75))
+	result.set_constant("shadow_offset_x", "Label", 2)
+	result.set_constant("shadow_offset_y", "Label", 3)
+	result.set_stylebox("panel", "PanelContainer", tropical_box(Color(0.20, 0.075, 0.022, 0.91), 12))
+	result.set_stylebox("normal", "Button", tropical_box(Color("f3aa21"), 10, Color("54240d")))
+	result.set_stylebox("hover", "Button", tropical_box(Color("ffd35a"), 10, Color("6c310f")))
+	result.set_stylebox("pressed", "Button", tropical_box(Color("cf7914"), 10, Color("3b1708")))
+	result.set_stylebox("disabled", "Button", tropical_box(Color("777f80"), 10, Color("343b3d")))
+	result.set_stylebox("focus", "Button", StyleBoxEmpty.new())
+	for state in ["font_color", "font_hover_color", "font_pressed_color"]:
+		result.set_color(state, "Button", Color("351506"))
+	result.set_color("font_disabled_color", "Button", Color("d1d0c6"))
+	result.set_color("font_color", "CheckButton", Color("fff4d7"))
+	result.set_color("font_color", "OptionButton", Color("351506"))
+	result.set_constant("separation", "VBoxContainer", 12)
+	result.set_constant("separation", "HBoxContainer", 14)
+	var bar_background := tropical_box(Color("28150f"), 7)
+	var bar_fill := tropical_box(Color("39d9d0"), 7, Color("0c5d64"))
+	for bar in [bar_background, bar_fill]:
+		bar.content_margin_left = 0
+		bar.content_margin_right = 0
+		bar.content_margin_top = 0
+		bar.content_margin_bottom = 0
+		bar.shadow_size = 0
+	result.set_stylebox("background", "ProgressBar", bar_background)
+	result.set_stylebox("fill", "ProgressBar", bar_fill)
+	result.set_stylebox("slider", "HSlider", tropical_box(Color("2a1710"), 5))
+	result.set_stylebox("grabber_area", "HSlider", tropical_box(Color("2bbfc4"), 5, Color("0b565d")))
+	result.set_stylebox("grabber_area_highlight", "HSlider", tropical_box(Color("70eee1"), 5, Color("0b565d")))
+	return result
+
 static func label(text: String, size: int = 20) -> Label:
 	var node := Label.new()
 	node.text = text

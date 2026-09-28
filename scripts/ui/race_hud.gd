@@ -469,6 +469,8 @@ func modal(title: String) -> VBoxContainer:
 	if is_instance_valid(overlay):
 		overlay.queue_free()
 	overlay = PanelContainer.new()
+	overlay.theme = RacingUI.menu_theme()
+	overlay.add_theme_stylebox_override("panel", RacingUI.tropical_box(Color(0.16, 0.05, 0.018, 0.96), 16))
 	overlay.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
 	var viewport_size := get_viewport().get_visible_rect().size
 	var panel_size := Vector2(minf(600.0, viewport_size.x - 48.0), minf(660.0, viewport_size.y - 48.0))
@@ -505,7 +507,7 @@ func celebrate_finish(place: int) -> void:
 func result_stat(title: String, value: String, color: Color) -> PanelContainer:
 	var card := PanelContainer.new()
 	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var style := RacingUI.box(Color("102f3a"), 9)
+	var style := RacingUI.tropical_box(Color("4a2413"), 9)
 	style.content_margin_left = 10
 	style.content_margin_right = 10
 	style.content_margin_top = 7
@@ -548,6 +550,8 @@ func show_results(place: int, time: float, reward: int, retry_save: Callable = C
 	var portrait := preload("res://scripts/ui/cap_preview.gd").new()
 	portrait.appearance = player.get_node("Visual").appearance
 	portrait.tint = player.get_node("Visual").tint
+	portrait.animated = true
+	portrait.hero_effects = true
 	portrait.custom_minimum_size = Vector2(112, 78)
 	portrait.art_scale = 1.12
 	hero.add_child(portrait)

@@ -12,7 +12,7 @@ func _draw() -> void:
 	if circuit.thumbnail:
 		draw_texture_rect(circuit.thumbnail, Rect2(Vector2.ZERO, size), false)
 		return
-	draw_style_box(RacingUI.box(Color("102e39"), 12), Rect2(Vector2.ZERO, size))
+	draw_style_box(RacingUI.tropical_box(Color("4a2413"), 12), Rect2(Vector2.ZERO, size))
 	var points := PackedVector2Array()
 	for i in range(49):
 		var t := float(i) / 48

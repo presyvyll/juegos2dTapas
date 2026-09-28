@@ -14,19 +14,19 @@ var portrait: Control
 var skip_button: Button
 
 func _ready() -> void:
-	theme = RacingUI.theme()
+	theme = RacingUI.menu_theme()
 	process_mode = Node.PROCESS_MODE_PAUSABLE
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	var shade := ColorRect.new()
-	shade.color = Color(0.02, 0.08, 0.14, 0.72)
+	shade.color = Color(0.04, 0.015, 0.005, 0.78)
 	shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(shade)
 	var center := CenterContainer.new()
 	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(center)
 	panel = PanelContainer.new()
-	var frame := RacingUI.box(Color("153e47"), 18)
+	var frame := RacingUI.tropical_box(Color("4a2413"), 18)
 	frame.border_color = cup.champion_accent
 	panel.add_theme_stylebox_override("panel", frame)
 	panel.custom_minimum_size = Vector2(640, 380)
@@ -44,6 +44,8 @@ func _ready() -> void:
 	portrait = preload("res://scripts/ui/cap_preview.gd").new()
 	portrait.appearance = appearance
 	portrait.tint = tint
+	portrait.animated = true
+	portrait.hero_effects = true
 	box.add_child(portrait)
 	var quote := RacingUI.label("«" + cup.champion_line + "»", 23)
 	quote.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
