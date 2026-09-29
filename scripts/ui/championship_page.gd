@@ -139,6 +139,7 @@ func build_map() -> void:
 	var cup := cups[index]
 	SaveManager.viewed_cup_id = cup.id
 	selected_track = clampi(selected_track, 0, cup.track_ids.size() - 1)
+	add_theme_constant_override("separation", 2 if selected_track == cup.track_ids.size() - 1 else 4)
 	var active: Dictionary = SaveManager.championships.active
 	var current: bool = not active.is_empty() and active.cup_id == cup.id
 	var completed: int = active.rounds.size() if current else 0
@@ -189,8 +190,13 @@ func build_map() -> void:
 	add_child(route)
 	var track := track_entry(cup.track_ids[selected_track])
 	var card := HBoxContainer.new()
+	card.name = "TrackDetailCard"
+	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	card.add_theme_constant_override("separation", 16)
 	add_child(card)
 	var preview := preload("res://scripts/ui/circuit_preview.gd").new()
+	preview.name = "CircuitPreview"
+	preview.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	preview.circuit = track
 	card.add_child(preview)
 	var details := VBoxContainer.new()
@@ -204,7 +210,7 @@ func build_map() -> void:
 	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	details.add_child(description)
 	if selected_track == cup.track_ids.size() - 1:
-		build_champion(cup, details)
+		build_champion(cup, card)
 		if cup.boss_behavior:
 			var strategy := RacingUI.label(cup.boss_behavior.description, 15)
 			strategy.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -244,20 +250,28 @@ func track_entry(id: String) -> CircuitDefinition:
 		if entry.id == id: return entry
 	return null
 
-func build_champion(cup: ChampionshipDefinition, parent: VBoxContainer) -> void:
+func build_champion(cup: ChampionshipDefinition, parent: Container) -> void:
 	var slot := cup.rival_ids.find(cup.champion_id)
 	if slot < 0: return
 	var row := HBoxContainer.new()
+	row.name = "ChampionSummary"
+	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_theme_constant_override("separation", 10)
 	parent.add_child(row)
 	var portrait := preload("res://scripts/ui/cap_preview.gd").new()
 	portrait.custom_minimum_size = Vector2(72, 65)
 	portrait.art_scale = 0.8
+	portrait.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	row.add_child(portrait)
 	for cap in RacingCatalog.caps():
 		if cap.id != cup.legacy_rival_cap_ids[slot]: continue
 		portrait.appearance = cap.appearance
 		portrait.tint = cap.color
 		var text := RacingUI.label("FINAL · " + cup.rival_names[slot] + "\n" + (cap.ability.display_name if cap.ability else "Turbo de corriente"), 17)
+		text.name = "ChampionText"
+		text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		text.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		text.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		row.add_child(text)
 

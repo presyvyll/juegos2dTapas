@@ -22,9 +22,18 @@ func run() -> void:
 		var page: Control = menu.content.get_child(0)
 		for index in range(5):
 			page.index = index
+			page.selected_track = cups[index].track_ids.size() - 1
 			page.build()
 			await settle()
-			check_controls(menu, root.get_visible_rect(), "cup selection " + str(index))
+			check_controls(menu, root.get_visible_rect(), "cup final selection " + str(index))
+			var preview: Control = page.find_child("CircuitPreview", true, false)
+			var champion_text: Label = page.find_child("ChampionText", true, false)
+			if preview == null or preview.size.y > 120:
+				print("FAIL: cup final preview stretched ", index, " ", preview.size if preview else "missing")
+				failures += 1
+			if champion_text == null or champion_text.size.x < 120 or champion_text.get_line_count() > 4:
+				print("FAIL: cup final label collapsed ", index, " ", champion_text.size if champion_text else "missing")
+				failures += 1
 		var cup := cups[0]
 		for phase in ["ready", "racing", "results", "complete"]:
 			var rounds: Array = []

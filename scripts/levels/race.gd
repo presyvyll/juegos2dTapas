@@ -123,7 +123,7 @@ func _ready() -> void:
 			if count >= combo.config.mega_threshold:
 				vfx.burst(player.global_position, Vector2.UP, Color("ffdc6c"), 0.7)
 	)
-	AudioManager.set_racing(true)
+	AudioManager.set_racing(true, track.definition)
 	get_window().focus_exited.connect(pause_on_focus_loss)
 	if cup == null:
 		ghost = RaceGhost.new()
