@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AmbientProfile" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/ambient_profile.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "cascada_sendero"
+people_pool = PackedStringArray("excursionista", "guia", "fotografo", "pescador", "vendedor")
+animal_pool = PackedStringArray("ave", "perro", "gallina")
+commerce_pool = PackedStringArray("Parada La Cascada", "Frutas del Sendero", "Café Rocío")
+spectator_density = 1
+animal_density = 2
+commerce_density = 0
+commerce_color = Color(0.25, 0.39, 0.27, 1)
+accent_color = Color(0.48, 0.84, 0.72, 1)
+

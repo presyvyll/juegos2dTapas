@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AmbientProfile" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/ambient_profile.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "jardin_familias"
+people_pool = PackedStringArray("familia", "joven", "jardinero", "vendedor_flores", "fotografo")
+animal_pool = PackedStringArray("perro", "ave", "gallina")
+commerce_pool = PackedStringArray("Flores Yara", "Jugos El Jardín", "Café Mariposa")
+spectator_density = 2
+animal_density = 1
+commerce_density = 0
+commerce_color = Color(0.25, 0.48, 0.27, 1)
+accent_color = Color(1, 0.65, 0.78, 1)
+

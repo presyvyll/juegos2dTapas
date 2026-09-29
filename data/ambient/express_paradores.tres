@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AmbientProfile" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/ambient_profile.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "express_paradores"
+people_pool = PackedStringArray("viajero", "vendedor", "fotografo", "joven", "familia")
+animal_pool = PackedStringArray("ave", "perro", "gato")
+commerce_pool = PackedStringArray("Parador Veloz", "Empanadas El Salto", "Jugos Expreso")
+spectator_density = 1
+animal_density = 0
+commerce_density = 2
+commerce_color = Color(0.39, 0.24, 0.15, 1)
+accent_color = Color(1, 0.55, 0.18, 1)
+

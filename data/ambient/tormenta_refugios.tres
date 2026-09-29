@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AmbientProfile" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/ambient_profile.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "tormenta_refugios"
+people_pool = PackedStringArray("guardia", "vendedor", "fotografo", "fan", "pescador")
+animal_pool = PackedStringArray("ave", "perro", "gato")
+commerce_pool = PackedStringArray("Refugio La Brisa", "Café Relámpago", "Provisiones Nube")
+spectator_density = 0
+animal_density = 0
+commerce_density = 1
+commerce_color = Color(0.18, 0.23, 0.29, 1)
+accent_color = Color(0.94, 0.74, 0.28, 1)
+

@@ -1,6 +1,7 @@
-[gd_resource type="Resource" script_class="CircuitDefinition" load_steps=19 format=3]
+[gd_resource type="Resource" script_class="CircuitDefinition" load_steps=20 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/circuit_definition.gd" id="definition"]
+[ext_resource type="Resource" path="res://data/ambient/laberinto_exploradores.tres" id="ambient"]
 [ext_resource type="Script" path="res://scripts/resources/circuit_feature.gd" id="feature"]
 [ext_resource type="PackedScene" path="res://scenes/obstacles/rock_obstacle.tscn" id="rock"]
 [ext_resource type="PackedScene" path="res://scenes/water/water_current_area.tscn" id="current"]
@@ -120,5 +121,6 @@ water_color = Color(0.12, 0.47, 0.62, 1)
 difficulty_rating = 7
 recommended_level = 8
 theme_id = "laberinto"
+ambient_profile = ExtResource("ambient")
 authored_layout = true
 features = Array[ExtResource("feature")]([SubResource("F0"), SubResource("F1"), SubResource("F2"), SubResource("F3"), SubResource("F4"), SubResource("F5"), SubResource("F6"), SubResource("F7"), SubResource("F8"), SubResource("F9"), SubResource("F10"), SubResource("F11"), SubResource("F12")])

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AmbientProfile" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/ambient_profile.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "canal_talleres"
+people_pool = PackedStringArray("mecanico", "joven", "vendedor", "fotografo", "fan")
+animal_pool = PackedStringArray("perro", "gato", "ave")
+commerce_pool = PackedStringArray("Taller Tuerca Feliz", "Repuestos El Rayo", "Café Turbo")
+spectator_density = 2
+animal_density = 0
+commerce_density = 2
+commerce_color = Color(0.18, 0.25, 0.34, 1)
+accent_color = Color(0.22, 0.92, 0.85, 1)
+

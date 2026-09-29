@@ -68,6 +68,13 @@ func _ready() -> void:
 		environment.track = self
 		environment.z_index = -1
 		add_child(environment)
+	if definition.ambient_profile:
+		var ambient := preload("res://scripts/visuals/track_ambient_spawner.gd").new()
+		ambient.name = "TrackAmbientSpawner"
+		ambient.track = self
+		ambient.profile = definition.ambient_profile
+		ambient.z_index = -1
+		add_child(ambient)
 	queue_redraw()
 
 func create_water_plane() -> void:

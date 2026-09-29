@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AmbientProfile" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/ambient_profile.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "ojo_pescadores"
+people_pool = PackedStringArray("pescador", "observador", "fotografo", "vendedor", "turista")
+animal_pool = PackedStringArray("ave", "gato", "perro")
+commerce_pool = PackedStringArray("Pescadería El Ojo", "Botes Remolino", "Café Marea")
+spectator_density = 0
+animal_density = 2
+commerce_density = 0
+commerce_color = Color(0.14, 0.36, 0.43, 1)
+accent_color = Color(0.42, 0.85, 0.88, 1)
+

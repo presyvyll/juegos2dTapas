@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AmbientProfile" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/ambient_profile.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "eclipse_festival"
+people_pool = PackedStringArray("fan", "turista", "fotografo", "vendedor", "joven")
+animal_pool = PackedStringArray("ave", "gato")
+commerce_pool = PackedStringArray("Luna Café", "Souvenirs Eclipse", "Dulces Estrella")
+spectator_density = 2
+animal_density = 0
+commerce_density = 1
+commerce_color = Color(0.18, 0.12, 0.29, 1)
+accent_color = Color(0.92, 0.48, 1, 1)
+

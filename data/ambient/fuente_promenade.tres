@@ -1,0 +1,58 @@
+[gd_resource type="Resource" script_class="AmbientProfile" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/ambient_profile.gd" id="1_profile"]
+[ext_resource type="Script" path="res://scripts/resources/ambient_spawn_zone.gd" id="2_zone"]
+
+[sub_resource type="Resource" id="SpectatorsStart"]
+script = ExtResource("2_zone")
+kind = 0
+distance_start = 650.0
+distance_end = 4300.0
+offset_min = 125.0
+offset_max = 170.0
+density = 1
+
+[sub_resource type="Resource" id="Commerce"]
+script = ExtResource("2_zone")
+kind = 2
+distance_start = 4550.0
+distance_end = 8300.0
+side = -1
+offset_min = 120.0
+offset_max = 140.0
+density = 1
+
+[sub_resource type="Resource" id="Animals"]
+script = ExtResource("2_zone")
+kind = 1
+distance_start = 8600.0
+distance_end = 12600.0
+offset_min = 120.0
+offset_max = 180.0
+density = 0
+
+[sub_resource type="Resource" id="FinishCrowd"]
+script = ExtResource("2_zone")
+kind = 0
+distance_start = 13200.0
+distance_end = 17600.0
+offset_min = 120.0
+offset_max = 170.0
+density = 2
+
+[resource]
+script = ExtResource("1_profile")
+id = "fuente_promenade"
+people_pool = PackedStringArray("adulto", "joven", "familia", "vendedor", "turista", "fotografo", "sentado")
+animal_pool = PackedStringArray("perro", "gato", "ave", "gallina")
+commerce_pool = PackedStringArray("Colmado La Curva", "Frutas del Malecón", "Café La Tapa", "Kiosco Brisa")
+prop_pool = PackedStringArray("palmera", "banco", "bandera", "cajas_fruta")
+special_events = PackedStringArray("cheer", "wave", "photo", "birds", "leaves")
+spawn_probability = 0.8
+animation_probability = 0.72
+base_spacing = 500.0
+track_safe_margin = 120.0
+max_low = 16
+max_medium = 28
+max_high = 44
+zones = Array[ExtResource("2_zone")]([SubResource("SpectatorsStart"), SubResource("Commerce"), SubResource("Animals"), SubResource("FinishCrowd")])

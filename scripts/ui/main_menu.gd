@@ -12,6 +12,8 @@ const ICON_EXIT := preload("res://assets/ui/icon_exit.svg")
 var content: VBoxContainer
 var wallet: Label
 var heading: Label
+var heading_area: MarginContainer
+var wallet_area: MarginContainer
 var transition: Tween
 var navigation: HBoxContainer
 var backdrop: Control
@@ -57,12 +59,32 @@ func _ready() -> void:
 	var layout := VBoxContainer.new()
 	main_margin.add_child(layout)
 	var top := HBoxContainer.new()
+	top.custom_minimum_size.y = 44
 	layout.add_child(top)
+	heading_area = MarginContainer.new()
+	heading_area.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	top.add_child(heading_area)
 	heading = RacingUI.label("TAPA RACING", 28)
 	heading.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	top.add_child(heading)
+	heading.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	heading.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	heading.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	heading_area.add_child(heading)
+	var top_spacer := Control.new()
+	top_spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	top.add_child(top_spacer)
+	wallet_area = MarginContainer.new()
+	wallet_area.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	wallet_area.add_theme_constant_override("margin_left", 4)
+	wallet_area.add_theme_constant_override("margin_right", 4)
+	top.add_child(wallet_area)
 	wallet = RacingUI.label("")
-	top.add_child(wallet)
+	wallet.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	wallet.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	wallet.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	wallet.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	wallet.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	wallet_area.add_child(wallet)
 	var center := CenterContainer.new()
 	RacingUI.expand(center)
 	layout.add_child(center)
@@ -242,6 +264,10 @@ func update_home_layout() -> void:
 	if not is_instance_valid(main_panel):
 		return
 	main_panel.custom_minimum_size.x = clampf(size.x * (0.53 if home_mode else 0.76), 620.0, 980.0)
+	if is_instance_valid(heading_area) and is_instance_valid(wallet_area):
+		# Coincide con el área interior de los tablones dibujados, sin incluir sus bordes.
+		heading_area.custom_minimum_size.x = clampf(size.x * 0.30, 300.0, 470.0) - 20.0
+		wallet_area.custom_minimum_size.x = clampf(size.x * 0.29, 320.0, 470.0) - 12.0
 
 func name_plank_style() -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AmbientProfile" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/ambient_profile.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "laberinto_exploradores"
+people_pool = PackedStringArray("explorador", "guia", "cartografo", "fotografo", "vendedor")
+animal_pool = PackedStringArray("gato", "ave", "perro")
+commerce_pool = PackedStringArray("Mapas La Salida", "Linternas Minerva", "Kiosco Enigma")
+spectator_density = 0
+animal_density = 1
+commerce_density = 1
+commerce_color = Color(0.25, 0.30, 0.31, 1)
+accent_color = Color(0.55, 0.82, 0.68, 1)
+

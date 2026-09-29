@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AmbientProfile" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/ambient_profile.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "remolino_ribera"
+people_pool = PackedStringArray("pescador", "familia", "vendedor", "joven", "fotografo")
+animal_pool = PackedStringArray("ave", "perro", "gallina")
+commerce_pool = PackedStringArray("Fritura La Ribera", "Jugos Remolino", "Carnadas Azul")
+spectator_density = 1
+animal_density = 2
+commerce_density = 1
+commerce_color = Color(0.15, 0.43, 0.49, 1)
+accent_color = Color(0.40, 0.78, 1, 1)
+

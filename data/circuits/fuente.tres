@@ -1,6 +1,7 @@
-[gd_resource type="Resource" script_class="CircuitDefinition" load_steps=15 format=3]
+[gd_resource type="Resource" script_class="CircuitDefinition" load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/circuit_definition.gd" id="definition"]
+[ext_resource type="Resource" path="res://data/ambient/fuente_promenade.tres" id="ambient"]
 [ext_resource type="Script" path="res://scripts/resources/circuit_feature.gd" id="feature"]
 [ext_resource type="PackedScene" path="res://scenes/obstacles/rock_obstacle.tscn" id="rock"]
 [ext_resource type="PackedScene" path="res://scenes/water/water_current_area.tscn" id="current"]
@@ -109,5 +110,6 @@ authored_layout = true
 difficulty_rating = 1
 recommended_level = 1
 theme_id = "fuente"
+ambient_profile = ExtResource("ambient")
 record_version = 2
 features = Array[ExtResource("feature")]([SubResource("F0"), SubResource("F1"), SubResource("F2"), SubResource("F3"), SubResource("F4"), SubResource("F5"), SubResource("F6"), SubResource("F7"), SubResource("F8"), SubResource("F9")])

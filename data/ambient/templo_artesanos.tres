@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AmbientProfile" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/ambient_profile.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "templo_artesanos"
+people_pool = PackedStringArray("guia", "artesano", "turista", "fotografo", "explorador")
+animal_pool = PackedStringArray("ave", "gato")
+commerce_pool = PackedStringArray("Artesanías Coral", "Reliquias del Agua", "Té del Templo")
+spectator_density = 1
+animal_density = 0
+commerce_density = 1
+commerce_color = Color(0.27, 0.37, 0.35, 1)
+accent_color = Color(0.75, 0.72, 0.47, 1)
+

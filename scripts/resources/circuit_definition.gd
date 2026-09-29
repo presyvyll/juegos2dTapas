@@ -36,6 +36,7 @@ extends Resource
 @export_range(-1, 1) var ai_difficulty_modifier: int = 0
 @export_range(1, 1.15) var reward_multiplier: float = 1.0
 @export var thumbnail: Texture2D
+@export var ambient_profile: AmbientProfile
 @export_file("*.tscn") var scene_reference := "res://levels/race.tscn"
 
 func record_key(difficulty: String, lap_count: int) -> String:

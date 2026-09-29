@@ -1,6 +1,7 @@
-[gd_resource type="Resource" script_class="CircuitDefinition" load_steps=24 format=3]
+[gd_resource type="Resource" script_class="CircuitDefinition" load_steps=25 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/circuit_definition.gd" id="definition"]
+[ext_resource type="Resource" path="res://data/ambient/eclipse_festival.tres" id="ambient"]
 [ext_resource type="Script" path="res://scripts/resources/circuit_feature.gd" id="feature"]
 [ext_resource type="PackedScene" path="res://scenes/obstacles/rock_obstacle.tscn" id="rock"]
 [ext_resource type="PackedScene" path="res://scenes/obstacles/branch_obstacle.tscn" id="branch"]
@@ -148,6 +149,7 @@ water_color = Color(0.19, 0.14, 0.36, 1)
 difficulty_rating = 10
 recommended_level = 12
 theme_id = "eclipse"
+ambient_profile = ExtResource("ambient")
 authored_layout = true
 section_distances = PackedFloat32Array(1000, 4200, 8100, 12200)
 section_labels = PackedStringArray("PRECISIÓN", "TURBO", "GIRO", "SALTO")

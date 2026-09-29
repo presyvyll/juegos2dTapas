@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AmbientProfile" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/resources/ambient_profile.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "titan_miradores"
+people_pool = PackedStringArray("montanista", "guia", "fotografo", "turista", "vendedor")
+animal_pool = PackedStringArray("ave", "perro")
+commerce_pool = PackedStringArray("Mirador Titán", "Chocolate La Cumbre", "Recuerdos del Salto")
+spectator_density = 2
+animal_density = 1
+commerce_density = 0
+commerce_color = Color(0.28, 0.31, 0.26, 1)
+accent_color = Color(0.83, 0.72, 0.42, 1)
+
