@@ -35,6 +35,7 @@ func run() -> void:
 		await process_frame
 		generation_usec += Time.get_ticks_usec() - started
 		check(spawner.instances.size() > 8, "race %d has insufficient ambience" % race_index)
+		check(spawner.events.size() >= 2 and spawner.events.size() <= 3, "race %d must contain two or three visible ambient events" % race_index)
 		check(spawner.instances.size() <= profile.max_high, "race %d exceeds the high-quality budget" % race_index)
 		check(spawner.all_instances_clear_of_track(), "race %d placed ambience inside the safety margin" % race_index)
 		check(spawner.find_children("*", "CollisionObject2D", true, false).is_empty(), "ambient nodes must not collide")
@@ -42,6 +43,10 @@ func run() -> void:
 		signatures[signature] = true
 		for item in spawner.instances:
 			seen_kinds[item.kind] = true
+		spawner.react_to_overtake()
+		check(spawner.overtake_pulse > 0.0, "overtake reaches ambient crowd")
+		spawner.celebrate_finish()
+		check(spawner.finish_pulse > 0.0, "finish reaches ambient crowd")
 		spawner.queue_free()
 		await process_frame
 	check(signatures.size() == 6, "six consecutive races must produce six controlled variations")
@@ -56,6 +61,7 @@ func run() -> void:
 	await process_frame
 	check(low_spawner.quality == AmbientProfile.AmbientQuality.LOW, "low quality must select the LOW ambient budget")
 	check(low_spawner.instances.size() <= profile.max_low, "low quality exceeds its population budget")
+	check(low_spawner.events.size() == 1, "low quality keeps one visible ambient event")
 	check(low_spawner.all_instances_clear_of_track(), "low quality placed ambience inside the safety margin")
 	low_spawner.queue_free()
 	await process_frame

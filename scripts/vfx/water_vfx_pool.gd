@@ -52,6 +52,16 @@ func burst(point: Vector2, normal: Vector2, color: Color, strength: float = 1.0)
 		var direction := normal.rotated(rng.randf_range(-1.8, 1.8))
 		emit_slot(point, direction * rng.randf_range(55, 150) * strength, color if index % 2 == 0 else Color("d6fff9"), rng.randf_range(0.25, 0.55), 0)
 
+func energy_transfer(from: Vector2, to: Vector2, color: Color) -> void:
+	if not enabled or not visible_point(to): return
+	var delta := to - from
+	var count := 7 if capacity > 48 else 4
+	for index in range(count):
+		var fraction := float(index) / float(maxi(1, count - 1))
+		var point := from.lerp(to, fraction)
+		emit_slot(point, delta.normalized() * (80.0 + index * 12.0), color.lightened(fraction * 0.25), 0.30 + fraction * 0.12, 6)
+	spark(to)
+
 func wake(point: Vector2, velocity: Vector2, color: Color, turbo: bool) -> void:
 	if not enabled or not visible_point(point) or velocity.length_squared() < 1.0:
 		return
@@ -128,3 +138,7 @@ func _draw() -> void:
 				var inner := color.lightened(0.28)
 				inner.a *= 0.62
 				draw_arc(point, maxf(8.0, radius - 8.0), angle - PI * 0.48, angle + PI * 0.48, 14, inner, 2.0, true)
+			6:
+				var direction := velocities[index].normalized()
+				draw_line(point - direction * 13.0, point + direction * 5.0, color, 3.0 * fraction + 1.0, true)
+				draw_circle(point, 2.0 + fraction * 3.0, color)

@@ -87,6 +87,7 @@ func build() -> void:
 		rebuild_callback.call()
 	)
 	action.disabled = (owned and selected == item.id) or (not owned and SaveManager.coins < item.price)
+	RacingUI.set_primary(action, not action.disabled)
 	add_child(action)
 	if kind == "caps":
 		var has_skin: bool = "perla" in SaveManager.unlocked_skins

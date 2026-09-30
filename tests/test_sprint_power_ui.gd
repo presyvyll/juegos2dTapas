@@ -12,7 +12,9 @@ func run() -> void:
 	var save := root.get_node("SaveManager")
 	save.save_path = "user://sprint_ui_test.json"
 	save.settings.race_laps = 1
+	save.settings.race_help = false
 	for resolution in [Vector2i(1280, 720), Vector2i(2340, 1080)]:
+		save.race_help_seen = false
 		root.size = resolution
 		var race: Node2D = load("res://levels/race.tscn").instantiate()
 		root.add_child(race)
@@ -25,7 +27,15 @@ func run() -> void:
 		await process_frame
 		await process_frame
 		check(ui.get_global_rect().encloses(ui.activate_button.get_global_rect()), "Small activation target stays onscreen")
-		check(not race.hud.info.is_visible_in_tree() and not race.hud.progress_bar.is_visible_in_tree() and not race.hud.speed_label.is_visible_in_tree(), "Permanent race statistics are hidden")
+		check(race.hud.compact_status.is_visible_in_tree() and race.hud.info.is_visible_in_tree() and race.hud.position_label.is_visible_in_tree(), "Position and lap stay visible in compact status")
+		check(not race.hud.progress_bar.is_visible_in_tree() and not race.hud.speed_label.is_visible_in_tree(), "Secondary race statistics stay hidden")
+		check(race.hud.root.get_global_rect().encloses(race.hud.compact_status.get_global_rect()), "Compact status stays onscreen")
+		check(not race.hud.compact_status.get_global_rect().intersects(race.hud.pause_button.get_global_rect()), "Status and pause do not overlap")
+		check(race.hud.pause_button.text == "PAUSA" and race.hud.boost_button.text in ["TURBO", "CARGA"], "Compact controls use readable labels")
+		check(race.hud.pause_button.size.x >= 78 and race.hud.boost_button.size.x >= 86, "Primary touch targets are enlarged")
+		check(race.hud.steering_aids.size() == 2 and race.hud.steering_aids[0].is_visible_in_tree(), "First race shows both steering zones")
+		check(not race.hud.steering_aids[1].get_global_rect().intersects(race.hud.boost_button.get_global_rect()), "Steering help leaves turbo clear")
+		check(race.player.controls.blocked_touch.call(race.hud.compact_status.get_global_rect().get_center()), "Status touch cannot steer accidentally")
 		check(ui.get_child_count() == 1, "No selection menu exists")
 		var area: float = ui.activate_button.size.x * ui.activate_button.size.y + race.hud.boost_button.size.x * race.hud.boost_button.size.y + race.hud.pause_button.size.x * race.hud.pause_button.size.y
 		check(area / (ui.size.x * ui.size.y) <= 0.05, "Controls occupy at most five percent of screen")

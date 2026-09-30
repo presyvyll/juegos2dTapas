@@ -27,6 +27,9 @@ var recovery_count := 0
 var overtake_count := 0
 var defense_count := 0
 var avoidance_count := 0
+var impact_count := 0
+var stalled_time := 0.0
+var progress_anchor_y := 0.0
 var boss_behavior: BossRaceDefinition
 var boss_base_profile: AIProfile
 var boss_phase := -1
@@ -38,23 +41,29 @@ func _ready() -> void:
 	temperament = rng.randf_range(0.92, 1.08)
 	think_timer = rng.randf_range(0.0, profile.reaction_interval)
 	last_safe_position = cap.position
+	progress_anchor_y = cap.position.y
+	cap.impacted.connect(func(_point: Vector2, _normal: Vector2, _strength: float) -> void: impact_count += 1)
 
 func _physics_process(delta: float) -> void:
 	if not cap.active or cap.finished:
 		boost_requested = false
 		return
 	axis = move_toward(axis, desired_axis, delta * 7.0)
+	update_stall_recovery(delta)
 	var bank_distance := absf(cap.position.x - track.center_at(cap.position.y))
 	var bank_half := track.width_at(cap.position.y) / 2
 	var next_checkpoint_y := -track.definition.length * (cap.checkpoint_index + 1) / track.checkpoint_count
 	# Retain a point before the pending gate; re-entry downstream cannot skip it.
-	if bank_distance < bank_half - 55 and cap.position.y >= next_checkpoint_y + 60 and cap.position.y <= 600:
+	if bank_distance < bank_half - 55 and cap.position.y >= next_checkpoint_y + 60 and cap.position.y <= 600 and recovery_point_clear(cap.position):
 		last_safe_position = cap.position
 	if bank_distance > bank_half + 80 or cap.position.y < next_checkpoint_y - 150 or cap.position.y > 600:
 		outside_time += delta
 		if outside_time >= 1.0:
-			cap.position = last_safe_position
-			cap.velocity = Vector2.ZERO
+			# Resume from a clear point with forward momentum. A zero-speed reset near
+			# dense layouts could make the same racer collide and recover repeatedly.
+			var recovery_flow := track.flow_at(last_safe_position.y)
+			cap.position = last_safe_position + recovery_flow * 32.0
+			cap.velocity = recovery_flow * cap.motion.config.current_speed * 0.62
 			cap.currents.clear()
 			outside_time = 0.0
 			recovery_count += 1
@@ -174,6 +183,36 @@ func lane_clear(x: float, y: float) -> bool:
 		if rival == cap or not is_instance_valid(rival) or rival.finished or rival.lap != cap.lap: continue
 		if absf(rival.position.y - y) < 65 and absf(rival.position.x - x) < 54: return false
 	return true
+
+func recovery_point_clear(point: Vector2) -> bool:
+	for obstacle in track.obstacles:
+		var travel: float = obstacle.travel if obstacle is MovingObstacle else 0.0
+		var closest_x := clampf(point.x, obstacle.position.x - travel, obstacle.position.x + travel)
+		if point.distance_to(Vector2(closest_x, obstacle.position.y)) < obstacle.radius + 95.0:
+			return false
+	return true
+
+func update_stall_recovery(delta: float) -> void:
+	if cap.position.y <= progress_anchor_y - 70.0:
+		progress_anchor_y = cap.position.y
+		stalled_time = 0.0
+		return
+	stalled_time += delta
+	if stalled_time < 1.6:
+		return
+	var flow := track.flow_at(cap.position.y)
+	var forward_speed := cap.velocity.dot(flow)
+	if forward_speed < cap.motion.config.current_speed * 0.72:
+		cap.velocity = cap.velocity.lerp(flow * cap.motion.config.current_speed * 0.78, 0.72)
+		lane = 0.0
+		error = 0.0
+		tactical_offset = 0.0
+		var look_y := cap.position.y - 170.0
+		desired_axis = clampf((track.center_at(look_y) - cap.position.x) / 100.0, -1.0, 1.0)
+		boost_requested = cap.can_boost() and cap.boost_energy > 0.6
+		recovery_count += 1
+	progress_anchor_y = cap.position.y
+	stalled_time = 0.0
 
 func steering_axis() -> float:
 	return axis

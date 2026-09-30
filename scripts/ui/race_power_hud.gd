@@ -9,7 +9,7 @@ func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	activate_button = RacingUI.button("", func() -> void: power.use_prepared())
-	activate_button.custom_minimum_size = Vector2(64, 64)
+	activate_button.custom_minimum_size = Vector2(72, 68)
 	activate_button.focus_mode = Control.FOCUS_NONE
 	activate_button.action_mode = BaseButton.ACTION_MODE_BUTTON_PRESS
 	activate_button.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
@@ -24,9 +24,9 @@ func _ready() -> void:
 
 func update_margins() -> void:
 	var safe := RacingUI.safe_insets(get_viewport())
-	activate_button.offset_right = -safe.z - 78
-	activate_button.offset_left = -safe.z - 142
-	activate_button.offset_top = -safe.w - 64
+	activate_button.offset_right = -safe.z - 100
+	activate_button.offset_left = -safe.z - 172
+	activate_button.offset_top = -safe.w - 68
 	activate_button.offset_bottom = -safe.w
 
 func hit(point: Vector2) -> bool:

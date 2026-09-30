@@ -36,7 +36,8 @@ func run() -> void:
 	ai.last_safe_position = safe
 	cap.position = Vector2(9000, -100)
 	for i in range(70): ai._physics_process(1.0 / 60)
-	check(cap.position == safe and ai.recovery_count == 1, "outside recovery uses existing safe point")
+	var recovery_flow: Vector2 = race.track.flow_at(safe.y)
+	check(cap.position.is_equal_approx(safe + recovery_flow * 32.0) and cap.velocity.dot(recovery_flow) > 0.0 and ai.recovery_count == 1, "outside recovery uses clear safe point and preserves forward momentum")
 	check(cap.checkpoint_index == gate and cap.lap == lap, "recovery never grants progress")
 	var snapshots: Array = []
 	for repeat in range(2):

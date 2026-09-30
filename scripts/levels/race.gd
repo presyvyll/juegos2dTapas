@@ -19,6 +19,10 @@ var combo := RaceCombo.new()
 var ghost: RaceGhost
 var replay_mode := false
 var challenge_metrics := {"perfect_shots": 0, "pickups": 0}
+var ambient: TrackAmbientSpawner
+var final_sprint_started := false
+var photo_finish_detected := false
+var freeze_generation := 0
 ## Set a positive seed for reproducible QA; zero varies decisions between races.
 @export var ai_seed := 0
 
@@ -56,6 +60,8 @@ func _ready() -> void:
 	add_child(session)
 	track.checkpoint_count = session.checkpoint_count
 	spawn_racers()
+	ambient = track.get_node_or_null("TrackAmbientSpawner") as TrackAmbientSpawner
+	if is_instance_valid(ambient): ambient.bind_target(player)
 	var water := WaterSurface.new()
 	water.track = track
 	water.target = player
@@ -116,7 +122,10 @@ func _ready() -> void:
 			register_combo("rival_hit" if rival else "rebound")
 	)
 	session.position_gained.connect(func(racer: RacingCap) -> void:
-		if racer == player: register_combo("overtake")
+		if racer == player:
+			register_combo("overtake")
+			player.get_node("Camera2D").celebrate_overtake()
+			if is_instance_valid(ambient): ambient.react_to_overtake()
 	)
 	combo.advanced.connect(func(count: int, feedback_allowed: bool) -> void:
 		if count < 2: return
@@ -216,6 +225,13 @@ func start_ghost_replay() -> void:
 func _physics_process(_delta: float) -> void:
 	if is_instance_valid(player) and player.active and not player.finished and session.running:
 		combo.advance(_delta)
+		if not final_sprint_started:
+			var total_distance := session.circuit.length * session.circuit.laps
+			if total_distance > 0 and session.progress(player) / total_distance >= 0.82:
+				final_sprint_started = true
+				player.get_node("Camera2D").enter_final_sprint()
+				if is_instance_valid(ambient): ambient.start_final_sprint()
+				hud.announce("¡SPRINT FINAL!", 2)
 	if is_instance_valid(champion_intro) and not champion_intro.finished: return
 	if cup == null or cup_closed or not is_instance_valid(session) or not session.running: return
 	if session.finish_order.size() < 4 and session.elapsed < 180.0 * cup.laps: return
@@ -314,7 +330,9 @@ func spawn_racers() -> void:
 		cap.position = track.starting_slot(index)
 		add_child(cap)
 		cap.race_power.collected.connect(func(id: String, point: Vector2) -> void:
-			vfx.burst(point, Vector2.UP, Color(RacePower.POWERS[id][3]), 0.55)
+			var power_color := Color(RacePower.POWERS[id][3])
+			vfx.burst(point, Vector2.UP, power_color, 0.55)
+			vfx.energy_transfer(point, cap.global_position, power_color)
 		)
 		cap.race_power.activated.connect(func(id: String) -> void:
 			vfx.burst(cap.global_position, Vector2.UP, Color(RacePower.POWERS[id][3]), 0.7)
@@ -428,6 +446,7 @@ func on_finish(place: int, time: float) -> void:
 	if is_instance_valid(ghost): ghost.finish(time)
 	combo.end_chain()
 	finish_presented = true
+	micro_freeze()
 	player.get_node("Camera2D").celebrate_finish()
 	player.get_node("Visual").victory = place == 1
 	hud.celebrate_finish(place)
@@ -435,6 +454,10 @@ func on_finish(place: int, time: float) -> void:
 	AudioManager.play("victory" if place == 1 else "ui")
 	SaveManager.haptic(45 if place == 1 else 15)
 	vfx.burst(player.global_position, Vector2.UP, Color("ffdc6c") if place == 1 else Color("b2fff4"), 1.2)
+	if is_instance_valid(ambient): ambient.celebrate_finish()
+	var photo_check := create_tween()
+	photo_check.tween_interval(0.20)
+	photo_check.tween_callback(func() -> void: detect_photo_finish(time))
 	if cup:
 		player.controls.clear()
 		player.controls.set_process_unhandled_input(false)
@@ -460,12 +483,32 @@ func on_finish(place: int, time: float) -> void:
 	finish_transition.tween_callback(func() -> void: show_free_result(place, time))
 
 func show_free_result(place: int, time: float) -> void:
-	hud.show_results(place, time, saved_free_reward, func() -> void:
+	var retry_save := func() -> void:
 		if saved_free_reward < 0:
 			var key := track.definition.record_key(SaveManager.settings.difficulty, track.definition.laps)
 			saved_free_reward = SaveManager.record_result(key, time, place, player.definition_id, result_challenge_metrics())
 		show_free_result(place, time)
-	)
+	hud.show_results(place, time, saved_free_reward, retry_save, photo_finish_detected)
+
+func detect_photo_finish(player_time: float) -> void:
+	if photo_finish_detected: return
+	for racer in session.caps:
+		if racer == player or not racer.finished: continue
+		if absf(racer.finish_time - player_time) <= 0.22:
+			photo_finish_detected = true
+			player.get_node("Camera2D").photo_finish()
+			hud.announce("¡FOTO FINISH!", 4)
+			vfx.burst(player.global_position, Vector2.UP, Color("ffffff"), 1.45)
+			return
+
+func micro_freeze() -> void:
+	freeze_generation += 1
+	var generation := freeze_generation
+	var previous_scale := Engine.time_scale
+	Engine.time_scale = minf(previous_scale, 0.08)
+	await get_tree().create_timer(0.10, true, false, true).timeout
+	if generation == freeze_generation:
+		Engine.time_scale = previous_scale
 
 func restart() -> void:
 	if cup_closed: return
@@ -495,5 +538,7 @@ func menu() -> void:
 	get_tree().change_scene_to_file("res://ui/main_menu.tscn")
 
 func _exit_tree() -> void:
+	freeze_generation += 1
+	Engine.time_scale = 1.0
 	get_tree().paused = false
 	AudioManager.set_racing(false)

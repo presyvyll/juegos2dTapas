@@ -11,6 +11,7 @@ const SHOPPING_BAG_OBSTACLE := preload("res://scripts/obstacles/shopping_bag_obs
 var obstacles: Array[Node2D] = []
 var soft_obstacles: Array[Node2D] = []
 var power_pickups: Array[RacingPickup] = []
+var landmark_routes: Array[WaterCurrentArea] = []
 var checkpoint_count := 12
 var water_polygon := PackedVector2Array()
 var left_edge := PackedVector2Array()
@@ -59,6 +60,7 @@ func _ready() -> void:
 	start_grid.track = self
 	add_child(start_grid)
 	populate()
+	create_landmark_routes()
 	var course_moment := preload("res://scripts/visuals/course_moment.gd").new()
 	course_moment.track = self
 	course_moment.z_index = -1
@@ -76,6 +78,30 @@ func _ready() -> void:
 		ambient.z_index = -1
 		add_child(ambient)
 	queue_redraw()
+
+func create_landmark_routes() -> void:
+	if definition.id not in ["cascada", "plaza", "templo"]:
+		return
+	var sections := definition.section_distances
+	var distance: float = sections[1] if sections.size() > 1 else definition.length * 0.62
+	distance = clampf(distance, definition.length * 0.3, definition.length * 0.75)
+	var y := -distance
+	var lane_width := width_at(y) * 0.36
+	var lane_offset := width_at(y) * 0.24
+	var fast_side := -1.0 if definition.id != "plaza" else 1.0
+	for route_spec in [["fast", fast_side, 1.28, 155.0, 38.0], ["safe", -fast_side, 1.04, 92.0, 2.0]]:
+		var route := WaterCurrentArea.new()
+		route.name = "LandmarkRoute%s" % str(route_spec[0]).capitalize()
+		route.position = Vector2(center_at(y) + float(route_spec[1]) * lane_offset, y)
+		route.size = Vector2(lane_width, 430.0)
+		route.direction = flow_at(y)
+		route.max_speed_modifier = float(route_spec[2])
+		route.strength = float(route_spec[3])
+		route.turbulence = float(route_spec[4])
+		route.set_meta("route_role", route_spec[0])
+		route.add_to_group("landmark_routes")
+		add_child(route)
+		landmark_routes.append(route)
 
 func create_water_plane() -> void:
 	var plane := Polygon2D.new()

@@ -14,6 +14,11 @@ var visible_count := 0
 var clock := 0.0
 var refresh_left := 0.0
 var camera_y := 0.0
+var target: RacingCap
+var events: Array[Dictionary] = []
+var boost_pulse := 0.0
+var overtake_pulse := 0.0
+var finish_pulse := 0.0
 
 func _ready() -> void:
 	if not track or not profile:
@@ -30,16 +35,36 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	clock += delta
+	boost_pulse = maxf(0.0, boost_pulse - delta * 1.4)
+	overtake_pulse = maxf(0.0, overtake_pulse - delta * 1.8)
+	finish_pulse = maxf(0.0, finish_pulse - delta * 0.45)
+	_update_events(delta)
 	refresh_left -= delta
 	if refresh_left > 0.0:
 		return
 	refresh_left = 0.08 if quality == AmbientProfile.AmbientQuality.HIGH else 0.16
 	var inverse := get_viewport().get_canvas_transform().affine_inverse()
-	camera_y = (inverse * (get_viewport_rect().size * 0.5)).y
+	camera_y = target.global_position.y if is_instance_valid(target) else (inverse * (get_viewport_rect().size * 0.5)).y
 	queue_redraw()
+
+func bind_target(value: RacingCap) -> void:
+	target = value
+	if not is_instance_valid(target): return
+	target.boosted.connect(func() -> void: boost_pulse = 1.0)
+	target.race_power.activated.connect(func(_id: String) -> void: boost_pulse = 0.75)
+
+func react_to_overtake() -> void:
+	overtake_pulse = 1.0
+
+func start_final_sprint() -> void:
+	overtake_pulse = 1.25
+
+func celebrate_finish() -> void:
+	finish_pulse = 2.2
 
 func _generate() -> void:
 	instances.clear()
+	events.clear()
 	var rng := RandomNumberGenerator.new()
 	rng.seed = run_seed
 	var last_variant := ""
@@ -78,6 +103,30 @@ func _generate() -> void:
 					"group": rng.randi_range(1, 3) if kind == "person" else 1,
 				})
 			distance += spacing * rng.randf_range(0.82, 1.22)
+	var event_count := 1 if quality == AmbientProfile.AmbientQuality.LOW else rng.randi_range(2, 3)
+	var event_types := PackedStringArray(["birds", "leaves", "festival"])
+	for index in range(event_count):
+		var fraction := (index + 1.0) / (event_count + 1.0) + rng.randf_range(-0.055, 0.055)
+		var y := -track.definition.length * clampf(fraction, 0.18, 0.82)
+		events.append({
+			"type": event_types[(index + rng.randi_range(0, event_types.size() - 1)) % event_types.size()],
+			"position": Vector2(track.center_at(y), y),
+			"side": -1.0 if rng.randi_range(0, 1) == 0 else 1.0,
+			"triggered": false,
+			"elapsed": 0.0,
+			"phase": rng.randf_range(0.0, TAU),
+		})
+
+func _update_events(delta: float) -> void:
+	if not is_instance_valid(target): return
+	for index in range(events.size()):
+		var event := events[index]
+		if not event.triggered and target.active and absf(target.global_position.y - event.position.y) < 310.0:
+			event.triggered = true
+			event.elapsed = 0.001
+		if event.triggered:
+			event.elapsed = float(event.elapsed) + delta
+		events[index] = event
 
 func _resolve_kind(zone_kind: AmbientSpawnZone.Kind, rng: RandomNumberGenerator) -> String:
 	match zone_kind:
@@ -119,10 +168,44 @@ func _draw() -> void:
 				continue
 			visible_count += 1
 			var reaction := 1.0 - clampf(absf(item.position.y - camera_y) / 390.0, 0.0, 1.0)
+			reaction = clampf(reaction + boost_pulse * 0.45 + overtake_pulse * 0.55 + finish_pulse * 0.65, 0.0, 1.8)
 			match layer_kind:
 				"commerce": _draw_commerce(item, reaction)
 				"animal": _draw_animal(item, reaction)
 				_: _draw_people(item, reaction)
+	_draw_events(bounds)
+
+func _draw_events(bounds: Rect2) -> void:
+	for event in events:
+		if not event.triggered or float(event.elapsed) > 2.4 or not bounds.grow(420.0).has_point(event.position): continue
+		var progress := clampf(float(event.elapsed) / 2.4, 0.0, 1.0)
+		var fade := smoothstep(0.0, 0.12, progress) * (1.0 - smoothstep(0.72, 1.0, progress))
+		var origin: Vector2 = event.position
+		var side: float = event.side
+		match event.type:
+			"birds":
+				for bird in range(7 if quality == AmbientProfile.AmbientQuality.HIGH else 4):
+					var point := origin + Vector2((bird - 3) * 35.0 + side * progress * 260.0, -80.0 - progress * 190.0 - absf(bird - 3) * 10.0)
+					var flap := sin(clock * 11.0 + bird) * 8.0
+					var color := Color(0.94, 0.98, 1.0, fade)
+					draw_arc(point, 13.0, PI + 0.15, TAU - 0.25 + flap * 0.012, 7, color, 3.0, true)
+					draw_arc(point + Vector2(21, 0), 13.0, PI + 0.25 - flap * 0.012, TAU - 0.15, 7, color, 3.0, true)
+			"leaves":
+				for leaf in range(14 if quality == AmbientProfile.AmbientQuality.HIGH else 7):
+					var sweep := Vector2(side * (progress * 520.0 - 250.0), sin(clock * 4.0 + leaf) * 85.0 + (leaf - 7) * 13.0)
+					var color: Color = [Color("77a84f"), Color("ffd166"), Color("3eb489")][leaf % 3]
+					color.a = fade * 0.85
+					draw_set_transform(origin + sweep, clock * 4.0 + leaf, Vector2.ONE)
+					draw_rect(Rect2(-5, -2, 10, 4), color)
+				draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+			_:
+				var edge := track.width_at(origin.y) * 0.5 + 95.0
+				for piece in range(12 if quality == AmbientProfile.AmbientQuality.HIGH else 6):
+					var direction := -1.0 if piece % 2 == 0 else 1.0
+					var point := origin + Vector2(direction * edge + sin(piece) * 48.0, -progress * 160.0 + fposmod(piece * 43.0, 110.0))
+					var color: Color = [profile.accent_color, Color("55d6e8"), Color("ff6b6b")][piece % 3]
+					color.a = fade
+					draw_circle(point, 4.0, color)
 
 func _draw_commerce(item: Dictionary, reaction: float) -> void:
 	var spot: Vector2 = item.position

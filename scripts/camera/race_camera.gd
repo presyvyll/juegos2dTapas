@@ -10,10 +10,26 @@ var shake_amount := 0.0
 var finish_focus := false
 var look_ahead := Vector2.ZERO
 var power_focus := 0.0
+var final_sprint := false
+var overtake_focus := 0.0
 
 func celebrate_finish() -> void:
 	finish_focus = true
 	shake_time = 0
+
+func enter_final_sprint() -> void:
+	final_sprint = true
+	overtake_focus = maxf(overtake_focus, 0.45)
+
+func celebrate_overtake() -> void:
+	overtake_focus = 0.32
+	shake_time = 0.08
+	shake_amount = 0.12
+
+func photo_finish() -> void:
+	overtake_focus = 0.55
+	shake_time = 0.12
+	shake_amount = 0.18
 
 func _ready() -> void:
 	if is_instance_valid(target):
@@ -36,6 +52,7 @@ func _process(delta: float) -> void:
 		return
 	clock += delta
 	power_focus = maxf(0, power_focus - delta)
+	overtake_focus = maxf(0, overtake_focus - delta)
 	entrance = maxf(0, entrance - delta / 2.5)
 	shake_time = maxf(0, shake_time - delta)
 	offset = Vector2(sin(clock * 72), cos(clock * 87)) * shake_strength * shake_amount * (shake_time / 0.15)
@@ -47,5 +64,5 @@ func _process(delta: float) -> void:
 		global_position = global_position.lerp(destination, 1.0 - exp(-5.0 * delta))
 		var speed_zoom := lerpf(1.0, 0.96, clampf((target.velocity.length() - 280) / 200, 0, 1))
 		var powered := target.race_power.remaining > 0 and target.race_power.current in ["turbo", "super", "dash", "recovery"]
-		var desired_zoom := Vector2.ONE * (1.06 if finish_focus else (0.94 if powered or power_focus > 0 else (0.90 if target.boost_time > 0 else speed_zoom + entrance * 0.12)))
+		var desired_zoom := Vector2.ONE * (1.06 if finish_focus else (0.885 if final_sprint and target.active else (0.92 if overtake_focus > 0 else (0.94 if powered or power_focus > 0 else (0.90 if target.boost_time > 0 else speed_zoom + entrance * 0.12)))))
 		zoom = zoom.lerp(desired_zoom, 1.0 - exp(-2.5 * delta))

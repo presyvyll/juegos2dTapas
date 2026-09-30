@@ -55,6 +55,9 @@ var coins_label: Label
 var ranking_labels: Array[Label] = []
 var power_hud: RacePowerHUD
 var show_beginner_help := false
+var compact_status: PanelContainer
+var steering_aids: Array[Control] = []
+var help_tween: Tween
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -241,7 +244,7 @@ func _ready() -> void:
 	power_hud = RacePowerHUD.new()
 	power_hud.power = player.race_power
 	root.add_child(power_hud)
-	player.controls.blocked_touch = func(point: Vector2) -> bool: return boost_button.get_global_rect().has_point(point) or pause_button.get_global_rect().has_point(point) or power_hud.hit(point)
+	player.controls.blocked_touch = func(point: Vector2) -> bool: return boost_button.get_global_rect().has_point(point) or pause_button.get_global_rect().has_point(point) or compact_status.get_global_rect().has_point(point) or power_hud.hit(point)
 	if OS.get_name() == "Android":
 		pause_button.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	get_viewport().size_changed.connect(update_touch_rects)
@@ -252,8 +255,26 @@ func _ready() -> void:
 	bottom.hide()
 	pause_button.reparent(root)
 	boost_button.reparent(root)
-	pause_button.text = "Ⅱ"
-	boost_button.text = "»"
+	compact_status = PanelContainer.new()
+	compact_status.name = "CompactStatus"
+	compact_status.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var status_style := RacingUI.box(Color(0.04, 0.16, 0.20, 0.78), 18)
+	status_style.set_content_margin_all(8)
+	compact_status.add_theme_stylebox_override("panel", status_style)
+	compact_status.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
+	root.add_child(compact_status)
+	var compact_row := HBoxContainer.new()
+	compact_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	compact_row.add_theme_constant_override("separation", 10)
+	compact_status.add_child(compact_row)
+	position_label.reparent(compact_row)
+	position_label.custom_minimum_size = Vector2(92, 54)
+	position_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	info.reparent(compact_row)
+	info.custom_minimum_size = Vector2(205, 54)
+	info.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	pause_button.text = "PAUSA"
+	boost_button.text = "TURBO"
 	pause_button.tooltip_text = "Pausa"
 	boost_button.tooltip_text = "Turbo"
 	for button in [pause_button, boost_button]:
@@ -262,10 +283,13 @@ func _ready() -> void:
 		for state in ["normal", "hover", "pressed", "disabled"]: button.add_theme_stylebox_override(state, style)
 		button.add_theme_color_override("font_color", Color("b9fff3"))
 		button.add_theme_color_override("font_disabled_color", Color(0.7, 0.9, 0.9, 0.3))
-	pause_button.custom_minimum_size = Vector2(56, 56)
-	boost_button.custom_minimum_size = Vector2(64, 64)
+	pause_button.custom_minimum_size = Vector2(78, 60)
+	boost_button.custom_minimum_size = Vector2(86, 68)
+	pause_button.add_theme_font_size_override("font_size", 13)
+	boost_button.add_theme_font_size_override("font_size", 13)
 	pause_button.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
 	boost_button.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
+	create_steering_aids()
 	get_viewport().size_changed.connect(place_compact_controls)
 	place_compact_controls()
 	player.race_power.activated.connect(func(id: String) -> void: announce(str(RacePower.POWERS[id][0]), 1))
@@ -273,15 +297,42 @@ func _ready() -> void:
 
 func place_compact_controls() -> void:
 	var safe := RacingUI.safe_insets(get_viewport())
-	pause_button.offset_left = -safe.z - 56
+	compact_status.offset_left = safe.x
+	compact_status.offset_right = safe.x + 325
+	compact_status.offset_top = safe.y
+	compact_status.offset_bottom = safe.y + 70
+	pause_button.offset_left = -safe.z - 78
 	pause_button.offset_right = -safe.z
 	pause_button.offset_top = safe.y
-	pause_button.offset_bottom = safe.y + 56
-	boost_button.offset_left = -safe.z - 64
+	pause_button.offset_bottom = safe.y + 60
+	boost_button.offset_left = -safe.z - 86
 	boost_button.offset_right = -safe.z
-	boost_button.offset_top = -safe.w - 64
+	boost_button.offset_top = -safe.w - 68
 	boost_button.offset_bottom = -safe.w
+	if steering_aids.size() == 2:
+		steering_aids[0].offset_left = safe.x + 18
+		steering_aids[0].offset_right = safe.x + 188
+		steering_aids[0].offset_top = -safe.w - 150
+		steering_aids[0].offset_bottom = -safe.w - 82
+		steering_aids[1].offset_left = -safe.z - 286
+		steering_aids[1].offset_right = -safe.z - 116
+		steering_aids[1].offset_top = -safe.w - 150
+		steering_aids[1].offset_bottom = -safe.w - 82
 	call_deferred("apply_touch_rects")
+
+func create_steering_aids() -> void:
+	for caption in ["◀  TOCA PARA GIRAR", "TOCA PARA GIRAR  ▶"]:
+		var aid := RacingUI.label(caption, 14)
+		aid.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT if steering_aids.is_empty() else Control.PRESET_BOTTOM_RIGHT)
+		aid.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		aid.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		aid.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		aid.add_theme_color_override("font_color", Color("b9fff3"))
+		aid.add_theme_color_override("font_outline_color", Color("10283b"))
+		aid.add_theme_constant_override("outline_size", 3)
+		aid.visible = show_beginner_help
+		root.add_child(aid)
+		steering_aids.append(aid)
 
 func _input(event: InputEvent) -> void:
 	if OS.get_name() == "Android" and handle_pause_touch(event):
@@ -298,7 +349,7 @@ func update_touch_rects() -> void:
 	call_deferred("apply_touch_rects")
 
 func apply_touch_rects() -> void:
-	player.controls.excluded_rects = [boost_button.get_global_rect(), pause_button.get_global_rect()]
+	player.controls.excluded_rects = [boost_button.get_global_rect(), pause_button.get_global_rect(), compact_status.get_global_rect()]
 
 func animate_countdown(value: int) -> void:
 	if countdown_tween:
@@ -330,6 +381,16 @@ func animate_countdown(value: int) -> void:
 			start_signal.hide()
 			start_hint.hide()
 		)
+		if show_beginner_help and not steering_aids.is_empty():
+			if help_tween: help_tween.kill()
+			help_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_STOP)
+			help_tween.tween_interval(4.0)
+			help_tween.tween_property(steering_aids[0], "modulate:a", 0.0, 0.5)
+			for index in range(1, steering_aids.size()):
+				help_tween.parallel().tween_property(steering_aids[index], "modulate:a", 0.0, 0.5)
+			help_tween.tween_callback(func() -> void:
+				for aid in steering_aids: aid.hide()
+			)
 
 func set_mouse_passthrough(node: Node) -> void:
 	if node is Control and not node is BaseButton:
@@ -352,7 +413,7 @@ func _process(delta: float) -> void:
 		if combo_label.visible:
 			combo_label.text = combo.caption() + " · %.1f s" % combo.remaining
 			combo_label.modulate.a = clampf(combo.remaining / 0.3, 0.0, 1.0)
-	player.controls.excluded_rects = [boost_button.get_global_rect(), pause_button.get_global_rect()]
+	player.controls.excluded_rects = [boost_button.get_global_rect(), pause_button.get_global_rect(), compact_status.get_global_rect()]
 	var standings := session.standings()
 	var place := standings.find(player) + 1
 	coins_label.text = "MONEDAS %d" % SaveManager.coins
@@ -374,6 +435,7 @@ func _process(delta: float) -> void:
 	if player.ability.definition:
 		ability_label.tooltip_text = player.ability.definition.description
 	boost_button.disabled = not player.can_boost()
+	boost_button.text = "CARGA" if boost_button.disabled else "TURBO"
 	turbo_label.text = "¡A TODA AGUA!" if player.boost_time > 0 else ("CARGANDO…" if player.boost_energy < player.turbo.energy_cost else "TURBO LISTO")
 	if pickup_notice_time > 0:
 		turbo_label.text = pickup_notice
@@ -390,8 +452,16 @@ func show_combo(_animate: bool = true) -> void:
 	combo_label.hide()
 
 func animate_pickup(effect: PowerUpDefinition) -> void:
-	if not boost_bar.is_visible_in_tree(): return
 	if pickup_tween: pickup_tween.kill()
+	if not boost_bar.is_visible_in_tree():
+		boost_button.pivot_offset = boost_button.size / 2
+		boost_button.scale = Vector2.ONE * 0.84
+		boost_button.modulate = effect.color.lightened(0.18)
+		pickup_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_STOP).set_parallel(true)
+		pickup_tween.tween_property(boost_button, "scale", Vector2.ONE, 0.30).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		pickup_tween.tween_property(boost_button, "modulate", Color.WHITE, 0.42)
+		announce("+ " + effect.display_name.to_upper(), 1)
+		return
 	turbo_label.text = pickup_notice
 	turbo_label.pivot_offset = turbo_label.size / 2
 	turbo_label.scale = Vector2.ONE * 0.82
@@ -540,8 +610,8 @@ func result_stat(title: String, value: String, color: Color) -> PanelContainer:
 	var style := RacingUI.tropical_box(Color("4a2413"), 9)
 	style.content_margin_left = 10
 	style.content_margin_right = 10
-	style.content_margin_top = 7
-	style.content_margin_bottom = 7
+	style.content_margin_top = 4
+	style.content_margin_bottom = 4
 	style.shadow_size = 0
 	card.add_theme_stylebox_override("panel", style)
 	var column := VBoxContainer.new()
@@ -551,19 +621,21 @@ func result_stat(title: String, value: String, color: Color) -> PanelContainer:
 	caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	caption.modulate = Color("b9d5d2")
 	column.add_child(caption)
-	var amount := RacingUI.label(value, 20)
+	var amount := RacingUI.label(value, 18)
 	amount.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	amount.add_theme_color_override("font_color", color)
 	column.add_child(amount)
 	return card
 
-func show_results(place: int, time: float, reward: int, retry_save: Callable = Callable()) -> void:
+func show_results(place: int, time: float, reward: int, retry_save: Callable = Callable(), photo_finish := false) -> void:
 	countdown_label.hide()
 	start_hint.hide()
+	compact_status.hide()
+	for aid in steering_aids: aid.hide()
 	pause_button.disabled = true
-	var content := modal("¡VICTORIA!" if place == 1 else "CARRERA COMPLETADA", "results")
-	content.add_theme_constant_override("separation", 8)
-	var result_height := minf(540.0, get_viewport().get_visible_rect().size.y - 48.0)
+	var content := modal("¡FOTO FINISH!" if photo_finish else ("¡VICTORIA!" if place == 1 else "CARRERA COMPLETADA"), "results")
+	content.add_theme_constant_override("separation", 4)
+	var result_height := minf(540.0, get_viewport().get_visible_rect().size.y - 24.0)
 	overlay.offset_top = -result_height * 0.5
 	overlay.offset_bottom = result_height * 0.5
 	var heading := content.get_child(0) as Label
@@ -583,7 +655,7 @@ func show_results(place: int, time: float, reward: int, retry_save: Callable = C
 	portrait.tint = player.get_node("Visual").tint
 	portrait.animated = true
 	portrait.hero_effects = true
-	portrait.custom_minimum_size = Vector2(112, 78)
+	portrait.custom_minimum_size = Vector2(96, 66)
 	portrait.art_scale = 1.12
 	hero.add_child(portrait)
 	var summary := VBoxContainer.new()
@@ -620,7 +692,7 @@ func show_results(place: int, time: float, reward: int, retry_save: Callable = C
 	standings_title.add_theme_color_override("font_color", Color("78f4e5"))
 	content.add_child(standings_title)
 	result_rows = RacingUI.label("")
-	result_rows.add_theme_font_size_override("font_size", 16)
+	result_rows.add_theme_font_size_override("font_size", 14)
 	content.add_child(result_rows)
 	update_results()
 	if reward < 0:
@@ -631,7 +703,7 @@ func show_results(place: int, time: float, reward: int, retry_save: Callable = C
 		if has_next_track: next_track_requested.emit()
 		else: restart_requested.emit()
 	)
-	primary.custom_minimum_size.y = 60
+	primary.custom_minimum_size.y = 50
 	RacingUI.set_primary(primary)
 	content.add_child(primary)
 	var actions := HBoxContainer.new()
@@ -640,9 +712,11 @@ func show_results(place: int, time: float, reward: int, retry_save: Callable = C
 	if has_next_track:
 		var retry := RacingUI.button("JUGAR DE NUEVO", func() -> void: restart_requested.emit())
 		retry.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		retry.custom_minimum_size.y = 46
 		actions.add_child(retry)
 	var exit := RacingUI.button("MENÚ", func() -> void: menu_requested.emit())
 	exit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	exit.custom_minimum_size.y = 46
 	actions.add_child(exit)
 
 func update_results() -> void:

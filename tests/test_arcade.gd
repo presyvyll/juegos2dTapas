@@ -28,6 +28,8 @@ func run() -> void:
 			pool.emit_slot(Vector2.ZERO, Vector2.ONE, Color.WHITE, 0.4, 0)
 		check(pool.positions.size() == budget and pool.get_child_count() == 0, "effect storage stays bounded at %d" % budget)
 		check(pool.is_processing(), "emission wakes the pool")
+		pool.energy_transfer(Vector2(-120, 0), Vector2.ZERO, Color("55d6e8"))
+		check(pool.kinds.has(6) and pool.positions.size() == budget, "power energy transfer reuses bounded VFX storage")
 		pool._process(1.0)
 		var expired := true
 		for remaining in pool.remaining:

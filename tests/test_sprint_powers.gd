@@ -33,6 +33,10 @@ func run() -> void:
 			if argument.begins_with("--circuit=") and argument.trim_prefix("--circuit=") != circuit_id: skip = true
 		if skip: continue
 		for seed_value in [37, 109]:
+			var requested_seed := -1
+			for argument in OS.get_cmdline_user_args():
+				if argument.begins_with("--seed="): requested_seed = int(argument.trim_prefix("--seed="))
+			if requested_seed >= 0 and requested_seed != seed_value: continue
 			save.selected_circuit = circuit_id
 			save.settings.race_laps = 1 if seed_value == 37 else 3
 			var race: Node2D = load("res://levels/race.tscn").instantiate()
@@ -52,9 +56,13 @@ func run() -> void:
 				if race.session.finish_order.size() == 4: break
 			var times: Array[float] = []
 			var counts: Array[int] = []
+			var recoveries: Array[int] = []
+			var impacts: Array[int] = []
 			for cap in race.session.caps:
 				times.append(snappedf(cap.finish_time + 3, 0.01))
 				counts.append(cap.race_power.uses)
+				recoveries.append(cap.ai.recovery_count if is_instance_valid(cap.ai) else -1)
+				impacts.append(cap.ai.impact_count if is_instance_valid(cap.ai) else -1)
 				if not cap.finished or cap.race_power.opportunities > 3 or cap.race_power.uses > cap.race_power.opportunities:
 					failures += 1
 					push_error("Sprint DNF/power failure: %s %s %s" % [circuit_id, cap.racer_name, counts])
@@ -65,7 +73,7 @@ func run() -> void:
 			min_time = minf(min_time, time)
 			max_time = maxf(max_time, time)
 			count += 1
-			print("SPRINT %s laps=%d total_seconds=%s powers=%s" % [circuit_id, save.settings.race_laps, times, counts])
+			print("SPRINT %s laps=%d total_seconds=%s powers=%s recoveries=%s impacts=%s" % [circuit_id, save.settings.race_laps, times, counts, recoveries, impacts])
 			race.queue_free()
 			await process_frame
 	var average := sum / maxi(1, count)

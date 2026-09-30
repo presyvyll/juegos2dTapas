@@ -28,7 +28,7 @@ func run() -> void:
 		for i in range(4): race.session._physics_process(0.01 if i == 0 else 1.0)
 		check(numbers == [3, 2, 1, 0] and race.player.active, "ordered countdown enables at zero")
 		check(race.hud.countdown_label.text == "¡YA!", "start caption")
-		check(race.hud.start_signal.value == 0 and race.hud.start_hint.text == "¡SALIDA LIMPIA!", "start lights and route hint reach launch state")
+		check(race.hud.start_signal.value == 0 and race.hud.start_hint.text in ["¡SALIDA LIMPIA!", "¡LLEGA PRIMERO!"], "start lights and contextual route hint reach launch state")
 		for cap in race.session.caps: cap.set_physics_process(false)
 		var velocity: Vector2 = race.player.velocity
 		race.player.impacted.emit(race.player.position, Vector2.LEFT, 300.0)
@@ -81,6 +81,11 @@ func run() -> void:
 		race.session.finish_order.append(race.player)
 		race.on_finish(1, 70)
 		check(is_instance_valid(race.hud.finish_celebration), "finish starts procedural celebration")
+		var close_rival: RacingCap = race.session.caps[1]
+		close_rival.finished = true
+		close_rival.finish_time = 70.12
+		race.detect_photo_finish(70.0)
+		check(race.photo_finish_detected and race.hud.notice.text == "¡FOTO FINISH!", "close real times trigger photo finish feedback")
 		check(save.coins == balance + 80 and not is_instance_valid(race.hud.overlay), "save before result transition")
 		race.on_finish(1, 70)
 		check(save.coins == balance + 80, "finish remains idempotent")

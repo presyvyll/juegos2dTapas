@@ -21,7 +21,7 @@ func run() -> void:
 		if definition.id in ["fuente", "cascada"]:
 			check(not save.best_times.has(definition.record_key("normal", 1)), "redesigned course does not display the previous layout's record")
 		if definition.id == "tropical":
-			check(save.best_times.get(definition.record_key("normal", 1)) == 65.0, "unchanged circuit keeps its record")
+			check(not save.best_times.has(definition.record_key("normal", 1)), "sprint layout keeps legacy tropical record separate")
 	check(save.best_times.has("fuente_normal_1") and save.best_times.has("cascada_normal_1"), "legacy records remain stored")
 	for quality in ["low", "high"]:
 		save.settings.quality = quality
@@ -38,6 +38,14 @@ func run() -> void:
 			check(track.get_node("Banks").is_in_group("channel_banks"), "channel banks expose visual contact group: " + definition.id)
 			check(track.obstacles.size() <= 12 and track.definition.features.size() <= 32, "mobile content budget: " + definition.id)
 			check(race.vfx.capacity == (48 if quality == "low" else 96), "VFX budget")
+			if definition.id in ["cascada", "plaza", "templo"]:
+				check(track.landmark_routes.size() == 2, "landmark offers two readable routes: " + definition.id)
+				var fast_route: WaterCurrentArea = track.landmark_routes[0]
+				var safe_route: WaterCurrentArea = track.landmark_routes[1]
+				check(fast_route.get_meta("route_role") == "fast" and safe_route.get_meta("route_role") == "safe", "landmark route roles: " + definition.id)
+				check(fast_route.max_speed_modifier > safe_route.max_speed_modifier and fast_route.turbulence > safe_route.turbulence, "landmark risk and reward: " + definition.id)
+			else:
+				check(track.landmark_routes.is_empty(), "landmark routes remain limited to signature courses: " + definition.id)
 			for index in range(race.session.caps.size()):
 				var cap: RacingCap = race.session.caps[index]
 				check(cap.position == track.starting_slot(index), "spawn matches starting grid: " + definition.id)
@@ -63,10 +71,10 @@ func run() -> void:
 					ordered.append(child)
 					finishes += int(child.finish_line)
 			check(ordered.size() == 12 and finishes == 1, "checkpoint count: " + definition.id)
-			check(pickups == 8, "eight accessible pickups: " + definition.id)
+			check(pickups == 12, "twelve accessible pickups: " + definition.id)
 			for index in range(ordered.size()):
 				var cp := ordered[index]
-				check(cp.index == index and is_equal_approx(cp.position.y, -definition.length * (index + 1) / 12), "checkpoint order and position")
+				check(cp.index == index and is_equal_approx(cp.position.y, -track.definition.length * (index + 1) / 12), "checkpoint order and sprint position")
 				check(cp.width >= track.width_at(cp.position.y), "checkpoint spans both routes")
 			# Invalid meta crossings cannot finish a race or grant a reward.
 			race.session.running = true
@@ -76,6 +84,8 @@ func run() -> void:
 				root.size = Vector2i(1280, 720)
 				race.hud.countdown_label.hide()
 				var view_y: float = {"fuente": -1950.0, "tropical": -3650.0, "remolino": -1650.0, "cascada": -2300.0, "tormenta": -3000.0, "ojo": -2000.0, "eclipse": -800.0, "templo": -1350.0}.get(definition.id, -track.definition.features[0].distance + 350)
+				if not track.landmark_routes.is_empty():
+					view_y = track.landmark_routes[0].position.y + 350.0
 				for index in range(4):
 					var cap: RacingCap = race.session.caps[index]
 					cap.active = true

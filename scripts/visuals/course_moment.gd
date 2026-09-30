@@ -58,8 +58,12 @@ func _process(delta: float) -> void:
 func _draw() -> void:
 	var pulse := 0.78 + 0.22 * sin(clock * 2.6)
 	var half := track.width_at(position.y) * 0.5
+	if track.definition.id in ["cascada", "plaza", "templo"]:
+		draw_route_choice(half, pulse)
 	match track.definition.theme_id:
 		"cascada":
+			# A bright waterfall gateway makes this section recognizable at a glance.
+			draw_arc(Vector2.ZERO, half * 0.78, PI, TAU, 36, Color(Color("d9fbff"), 0.72 * pulse), 18, true)
 			for side in [-1.0, 1.0]:
 				var x: float = side * (half + 60.0)
 				draw_arc(Vector2(x, 0), 100, 0.2, 2.8, 20, Color(color, 0.7 * pulse), 12, true)
@@ -91,15 +95,36 @@ func _draw() -> void:
 				draw_rect(Rect2(Vector2(x - 30, -170), Vector2(60, 340)), Color("1a494b"))
 				draw_line(Vector2(x - 20, -145), Vector2(x + 20, -145), Color(color, pulse), 6)
 				draw_line(Vector2(x - 20, 145), Vector2(x + 20, 145), Color(color, pulse), 6)
+			if track.definition.id == "templo":
+				draw_line(Vector2(-half - 145, -170), Vector2(half + 145, -170), Color("263f3e"), 34, true)
+				for rune_x in [-half * 0.55, 0.0, half * 0.55]:
+					draw_circle(Vector2(rune_x, -170), 10.0 + pulse * 3.0, Color(color, 0.8))
 		"plaza", "fuente":
 			for side in [-1.0, 1.0]:
 				var x: float = side * (half + 65.0)
 				for jet in range(3):
 					var h := 85.0 + 35.0 * sin(clock * 3.0 + jet)
 					draw_line(Vector2(x + jet * 18.0, 40), Vector2(x + jet * 18.0, 40 - h), Color(color, 0.65), 6, true)
+			if track.definition.id == "plaza":
+				for side in [-1.0, 1.0]:
+					var stall_x: float = side * (half + 138.0)
+					draw_rect(Rect2(stall_x - 58.0, -62.0, 116.0, 122.0), Color("7a3f22"))
+					for stripe in range(4):
+						var awning_color := Color("ffd15b") if stripe % 2 == 0 else Color("e65b42")
+						draw_rect(Rect2(stall_x - 60.0 + stripe * 30.0, -88.0, 30.0, 34.0), awning_color)
 		_:
 			for side in [-1.0, 1.0]:
 				var x: float = side * (half + 60.0)
 				draw_arc(Vector2(x, 0), 84, 0, TAU, 24, Color(color, 0.65 * pulse), 8, true)
 	# Course name is placed well above the hazard line, never over the play lane.
 	draw_string(ThemeDB.fallback_font, Vector2(-100, -205), title, HORIZONTAL_ALIGNMENT_CENTER, 200, 15, Color(color, 0.84 * pulse))
+
+func draw_route_choice(half: float, pulse: float) -> void:
+	var fast_side := -1.0 if track.definition.id != "plaza" else 1.0
+	var lane_offset := half * 0.48
+	for spec in [[fast_side, "ATAJO RAPIDO", Color("69e7d4")], [-fast_side, "RUTA ESTABLE", Color("fff0ae")]]:
+		var x: float = float(spec[0]) * lane_offset
+		var cue: Color = spec[2]
+		draw_rect(Rect2(x - 78.0, 181.0, 156.0, 31.0), Color(Color("092f36"), 0.68))
+		draw_polyline(PackedVector2Array([Vector2(x - 19.0, 158.0), Vector2(x, 140.0), Vector2(x + 19.0, 158.0)]), Color(cue, 0.58 + pulse * 0.2), 5.0, true)
+		draw_string(ThemeDB.fallback_font, Vector2(x - 74.0, 205.0), str(spec[1]), HORIZONTAL_ALIGNMENT_CENTER, 148.0, 14, Color(cue, 0.92))
