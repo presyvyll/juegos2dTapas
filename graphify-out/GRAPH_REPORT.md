@@ -1,17 +1,17 @@
-# Graph Report - Juego2D  (2026-09-20)
+# Graph Report - Juego2D  (2026-09-29)
 
 ## Corpus Check
-- 36 files · ~26,661 words
+- 38 files · ~184,904 words
 - Verdict: corpus is large enough that graph structure adds value.
-- Unclassified: 520 file(s) not represented in the graph (top: .gd 223, .tres 147, .uid 112)
+- Unclassified: 580 file(s) not represented in the graph (top: .gd 241, .tres 162, .uid 112)
 
 ## Summary
-- 188 nodes · 182 edges · 27 communities (19 shown, 8 thin omitted)
+- 208 nodes · 200 edges · 29 communities (21 shown, 8 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `e4885a75`
+- Built from commit: `073a655a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -29,26 +29,28 @@
 - Godot AI
 - ART_ASSET_REQUIREMENTS
 - Etapa E — cinco copas con progreso y guardado
-- Preparación móvil
+- Auditoría UX de Tapa Racing — 29 septiembre 2026
 - Validación
 - Etapa D — quince circuitos jugables
+- AMBIENT_ASSETS_REQUIRED
 - Contexto del proyecto
 - Codex Context Rules
 - audio/README.md
 - Fuente Central: entorno, iteración 1 (20 septiembre 2026)
 - Desarrollo arcade Android — primer bloque
+- Fases de mejora visual
 
 ## God Nodes (most connected - your core abstractions)
 1. `Auditoría de evolución — 13 septiembre 2026` - 19 edges
 2. `CONTENT_DESIGN — Liga de la Fuente` - 12 edges
-3. `Fuente Central: entorno, iteración 1 (20 septiembre 2026)` - 10 edges
-4. `Reporte de contenido — etapa F` - 9 edges
-5. `Tapa Racing · prototipo jugable 0.1` - 9 edges
-6. `Diagnóstico técnico y visual · Android arcade` - 9 edges
-7. `Entrega arcade Android` - 8 edges
-8. `RemoteZip` - 7 edges
-9. `BALANCE_NOTES` - 6 edges
-10. `Etapa E — cinco copas con progreso y guardado` - 6 edges
+3. `Auditoría UX de Tapa Racing — 29 septiembre 2026` - 11 edges
+4. `Fuente Central: entorno, iteración 1 (20 septiembre 2026)` - 10 edges
+5. `Reporte de contenido — etapa F` - 9 edges
+6. `Tapa Racing · prototipo jugable 0.1` - 9 edges
+7. `Diagnóstico técnico y visual · Android arcade` - 9 edges
+8. `Entrega arcade Android` - 8 edges
+9. `RemoteZip` - 7 edges
+10. `AMBIENT_ASSETS_REQUIRED` - 7 edges
 
 ## Surprising Connections (you probably didn't know these)
 - None detected - all connections are within the same source files.
@@ -56,7 +58,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (27 total, 8 thin omitted)
+## Communities (29 total, 8 thin omitted)
 
 ### Community 0 - "Auditoría de evolución — 13 septiembre 2026"
 Cohesion: 0.10
@@ -67,8 +69,8 @@ Cohesion: 0.13
 Nodes (11): io, os, pathlib, subprocess, sys, Fetch only required entries from the official Godot release ZIP using HTTP…, RemoteZip, Install the official, pinned Godot 4.3 Gradle template without replacing a… (+3 more)
 
 ### Community 2 - "README.md"
-Cohesion: 0.16
-Nodes (9): Comportamiento, Configuración y archivos, Etapa F — presentación de los cinco campeones, Verificación, Artefactos, Comprobaciones de esta actualización, Fases de mejora visual, Implementación (+1 more)
+Cohesion: 0.15
+Nodes (10): Comportamiento, Configuración y archivos, Etapa F — presentación de los cinco campeones, Verificación, Android, iOS, Preparación móvil, Rendimiento (+2 more)
 
 ### Community 3 - "CONTENT_DESIGN — Liga de la Fuente"
 Cohesion: 0.12
@@ -110,9 +112,9 @@ Nodes (5): ART_ASSET_REQUIREMENTS, Audio seguro, Campeones, copas y UI, Circuito
 Cohesion: 0.33
 Nodes (6): Archivos, Carrera y clasificación, Etapa E — cinco copas con progreso y guardado, Pendiente según las siguientes etapas, Persistencia y recuperación, Validación
 
-### Community 13 - "Preparación móvil"
-Cohesion: 0.33
-Nodes (5): Android, iOS, Preparación móvil, Rendimiento, Validación pendiente
+### Community 13 - "Auditoría UX de Tapa Racing — 29 septiembre 2026"
+Cohesion: 0.17
+Nodes (11): Alcance y método, Auditoría UX de Tapa Racing — 29 septiembre 2026, Estado de implementación, Flujo propuesto, Hallazgos por pantalla, Mapa actual de navegación, Pasos que pueden eliminarse, Primera implementación (+3 more)
 
 ### Community 14 - "Validación"
 Cohesion: 0.33
@@ -121,6 +123,10 @@ Nodes (5): Ampliación de pruebas y exportaciones, Automatizado, Gráficos, Pend
 ### Community 15 - "Etapa D — quince circuitos jugables"
 Cohesion: 0.40
 Nodes (5): Contenido y acceso, Estructura reutilizable, Etapa D — quince circuitos jugables, Presupuesto móvil y límites, Validación reproducible
+
+### Community 16 - "AMBIENT_ASSETS_REQUIRED"
+Cohesion: 0.25
+Nodes (7): AMBIENT_ASSETS_REQUIRED, Animaciones, Animales, Comercios, Personas, Props, VFX
 
 ### Community 17 - "Contexto del proyecto"
 Cohesion: 0.50
@@ -134,20 +140,24 @@ Nodes (10): Agua, iteración 2, Anticipación de agua, iteración 9, Anticipaci�
 Cohesion: 0.40
 Nodes (4): Desarrollo arcade Android — primer bloque, Etapas siguientes, Implementado, Verificación
 
+### Community 28 - "Fases de mejora visual"
+Cohesion: 0.40
+Nodes (4): Artefactos, Comprobaciones de esta actualización, Fases de mejora visual, Implementación
+
 ## Knowledge Gaps
-- **119 isolated node(s):** `graphify`, `Tapas`, `Circuitos`, `Campeones, copas y UI`, `Audio seguro` (+114 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 146 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **135 isolated node(s):** `graphify`, `Personas`, `Animales`, `Comercios`, `Props` (+130 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 164 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `Reporte de contenido — etapa F` connect `Reporte de contenido — etapa F` to `README.md`?**
-  _High betweenness centrality (0.041) - this node is a cross-community bridge._
+  _High betweenness centrality (0.033) - this node is a cross-community bridge._
 - **Why does `Tapa Racing · prototipo jugable 0.1` connect `Tapa Racing · prototipo jugable 0.1` to `README.md`?**
-  _High betweenness centrality (0.041) - this node is a cross-community bridge._
-- **What connects `graphify`, `Tapas`, `Circuitos` to the rest of the system?**
-  _119 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _High betweenness centrality (0.033) - this node is a cross-community bridge._
+- **What connects `graphify`, `Personas`, `Animales` to the rest of the system?**
+  _135 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Auditoría de evolución — 13 septiembre 2026` be split into smaller, more focused modules?**
   _Cohesion score 0.1 - nodes in this community are weakly interconnected._
 - **Should `fetch_templates.py` be split into smaller, more focused modules?**

@@ -107,6 +107,17 @@ static func button(text: String, action: Callable) -> Button:
 	)
 	return node
 
+static func set_primary(button: Button, enabled: bool = true) -> void:
+	if not enabled:
+		for state in ["normal", "hover", "pressed"]:
+			button.remove_theme_stylebox_override(state)
+		button.remove_theme_font_size_override("font_size")
+		return
+	button.add_theme_stylebox_override("normal", tropical_box(Color("ffd35a"), 10, Color("6c310f")))
+	button.add_theme_stylebox_override("hover", tropical_box(Color("ffe58a"), 10, Color("7b3a12")))
+	button.add_theme_stylebox_override("pressed", tropical_box(Color("df8d18"), 10, Color("4a1d08")))
+	button.add_theme_font_size_override("font_size", 21)
+
 static func expand(control: Control) -> void:
 	control.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	control.size_flags_vertical = Control.SIZE_EXPAND_FILL

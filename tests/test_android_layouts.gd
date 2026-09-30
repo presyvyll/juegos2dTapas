@@ -51,6 +51,7 @@ func run() -> void:
 		await settle()
 		check_controls(race.hud.root, root.get_visible_rect(), str(resolution) + " pause")
 		race.hud.hide_pause()
+		root.get_node("SaveManager").unlocked_circuits = ["fuente", "cascada"]
 		race.hud.show_results(1, 70, 80)
 		await create_timer(0.5).timeout
 		check_controls(race.hud.root, root.get_visible_rect(), str(resolution) + " results")

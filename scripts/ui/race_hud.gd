@@ -7,6 +7,7 @@ const RACE_START_SIGNAL := preload("res://scripts/ui/race_start_signal.gd")
 signal pause_requested
 signal restart_requested
 signal menu_requested
+signal next_track_requested
 var session: RaceSession
 var player: RacingCap
 var root: Control
@@ -17,6 +18,7 @@ var countdown_label: Label
 var start_signal: Control
 var start_hint: Label
 var overlay: PanelContainer
+var modal_state := ""
 var boost_button: Button
 var pause_button: Button
 var result_rows: Label
@@ -52,6 +54,7 @@ var ghost: RaceGhost
 var coins_label: Label
 var ranking_labels: Array[Label] = []
 var power_hud: RacePowerHUD
+var show_beginner_help := false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -304,7 +307,11 @@ func animate_countdown(value: int) -> void:
 	start_signal.set_value(value)
 	start_signal.show()
 	start_signal.modulate.a = 1.0
-	start_hint.text = "SIGUE LA TRAZADA · PREPARA EL IMPULSO" if value > 0 else "¡SALIDA LIMPIA!"
+	if show_beginner_help:
+		var steps := {3: "TOCA LOS LADOS PARA GIRAR", 2: "DESLIZA RÁPIDO PARA IMPULSAR", 1: "USA TURBO CUANDO ESTÉ LISTO"}
+		start_hint.text = str(steps.get(value, "¡LLEGA PRIMERO!"))
+	else:
+		start_hint.text = "SIGUE LA TRAZADA · PREPARA EL IMPULSO" if value > 0 else "¡SALIDA LIMPIA!"
 	start_hint.show()
 	start_hint.modulate.a = 1.0
 	countdown_label.show()
@@ -456,10 +463,14 @@ func update_race_feedback(place: int) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode == KEY_ESCAPE:
-		pause_requested.emit()
+		if modal_state == "confirm":
+			show_pause()
+		else:
+			pause_requested.emit()
 		get_viewport().set_input_as_handled()
 
-func modal(title: String) -> VBoxContainer:
+func modal(title: String, state := "") -> VBoxContainer:
+	modal_state = state
 	if combo_tween: combo_tween.kill()
 	combo_label.hide()
 	if notice_tween: notice_tween.kill()
@@ -485,15 +496,34 @@ func modal(title: String) -> VBoxContainer:
 	return content
 
 func show_pause() -> void:
-	var content := modal("Un respiro en la orilla")
+	var content := modal("PAUSA", "pause")
 	content.add_child(RacingUI.button("Continuar", func() -> void:
 		overlay.queue_free()
 		pause_requested.emit()
 	))
-	content.add_child(RacingUI.button("Reiniciar carrera", func() -> void: restart_requested.emit()))
-	content.add_child(RacingUI.button("Volver al menú", func() -> void: menu_requested.emit()))
+	content.add_child(RacingUI.button("Reiniciar carrera", func() -> void:
+		show_pause_confirmation("¿REINICIAR CARRERA?", "Perderás el progreso de esta carrera.", "REINICIAR", func() -> void: restart_requested.emit())
+	))
+	content.add_child(RacingUI.button("Volver al menú", func() -> void:
+		show_pause_confirmation("¿SALIR DE LA CARRERA?", "Perderás el progreso de esta carrera.", "SALIR", func() -> void: menu_requested.emit())
+	))
+
+func show_pause_confirmation(title: String, message: String, confirm_text: String, action: Callable) -> void:
+	var content := modal(title, "confirm")
+	var explanation := RacingUI.label(message, 17)
+	explanation.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	explanation.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	content.add_child(explanation)
+	content.add_child(RacingUI.button(confirm_text, action))
+	content.add_child(RacingUI.button("CANCELAR", show_pause))
+
+func handle_back() -> bool:
+	if modal_state != "confirm": return false
+	show_pause()
+	return true
 
 func hide_pause() -> void:
+	modal_state = ""
 	if is_instance_valid(overlay):
 		overlay.queue_free()
 
@@ -529,8 +559,9 @@ func result_stat(title: String, value: String, color: Color) -> PanelContainer:
 
 func show_results(place: int, time: float, reward: int, retry_save: Callable = Callable()) -> void:
 	countdown_label.hide()
+	start_hint.hide()
 	pause_button.disabled = true
-	var content := modal("¡VICTORIA!" if place == 1 else "CARRERA COMPLETADA")
+	var content := modal("¡VICTORIA!" if place == 1 else "CARRERA COMPLETADA", "results")
 	content.add_theme_constant_override("separation", 8)
 	var result_height := minf(540.0, get_viewport().get_visible_rect().size.y - 48.0)
 	overlay.offset_top = -result_height * 0.5
@@ -595,13 +626,22 @@ func show_results(place: int, time: float, reward: int, retry_save: Callable = C
 	if reward < 0:
 		content.add_child(RacingUI.label("Resultado sin guardar. Reintenta antes de salir.", 16))
 		if retry_save.is_valid(): content.add_child(RacingUI.button("Reintentar guardado", retry_save))
+	var has_next_track := SaveManager.unlocked_circuits.size() > 1
+	var primary := RacingUI.button("SIGUIENTE PISTA" if has_next_track else "JUGAR DE NUEVO", func() -> void:
+		if has_next_track: next_track_requested.emit()
+		else: restart_requested.emit()
+	)
+	primary.custom_minimum_size.y = 60
+	RacingUI.set_primary(primary)
+	content.add_child(primary)
 	var actions := HBoxContainer.new()
 	actions.add_theme_constant_override("separation", 8)
 	content.add_child(actions)
-	var retry := RacingUI.button("Volver a correr", func() -> void: restart_requested.emit())
-	retry.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	actions.add_child(retry)
-	var exit := RacingUI.button("Volver al menú", func() -> void: menu_requested.emit())
+	if has_next_track:
+		var retry := RacingUI.button("JUGAR DE NUEVO", func() -> void: restart_requested.emit())
+		retry.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		actions.add_child(retry)
+	var exit := RacingUI.button("MENÚ", func() -> void: menu_requested.emit())
 	exit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	actions.add_child(exit)
 

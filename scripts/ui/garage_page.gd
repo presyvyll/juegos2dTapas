@@ -39,7 +39,7 @@ func build() -> void:
 
 func construct() -> void:
 	custom_minimum_size.x = 900
-	add_theme_constant_override("separation", 8)
+	add_theme_constant_override("separation", 6)
 	var columns := HBoxContainer.new()
 	add_child(columns)
 	var hero := VBoxContainer.new()
@@ -195,7 +195,9 @@ func apply_cap() -> void:
 	state_label.add_theme_color_override("font_color", Color("69e7d4") if owned else Color("ffce58"))
 	equip.text = "EQUIPADA" if SaveManager.selected_cap == cap.id else ("EQUIPAR" if owned else "BLOQUEADA")
 	equip.disabled = not owned or SaveManager.selected_cap == cap.id
-	requirement.text = "Lista para correr" if owned else "Requisito: desbloquea esta tapa por %d monedas" % cap.price
+	equip.visible = owned and SaveManager.selected_cap != cap.id
+	upgrade.visible = owned
+	requirement.text = "Lista para correr" if owned else "Para desbloquearla: reúne %d monedas." % cap.price
 	var progression: ProgressionConfig = SaveManager.PROGRESSION
 	var current_threshold := progression.threshold(level - 1)
 	var next_threshold := progression.threshold(level)
@@ -221,11 +223,14 @@ func apply_cap() -> void:
 		var required_xp := progression.xp_thresholds[level]
 		upgrade.text = "MEJORAR · %d" % cost
 		upgrade.disabled = xp < required_xp or SaveManager.coins < cost
-		requirement.text = "Nivel %d: %d/%d XP · %d monedas · +%.0f%% base en aceleración/control" % [level + 1, xp, required_xp, cost, progression.gain_per_level * 100]
+		requirement.text = "Nivel %d · XP %d/%d · %d monedas · Mejora aceleración y control" % [level + 1, xp, required_xp, cost]
 	upgrade.tooltip_text = "La XP no se consume. La mejora cuesta monedas y aumenta aceleración y control, hasta cinco niveles."
 	unlock.text = "DESBLOQUEAR · %d monedas" % cap.price
 	unlock.visible = not owned
 	unlock.disabled = SaveManager.coins < cap.price
+	RacingUI.set_primary(equip, equip.visible)
+	RacingUI.set_primary(upgrade, owned and SaveManager.selected_cap == cap.id)
+	RacingUI.set_primary(unlock, not owned)
 	update_detail(cap)
 	detail.modulate.a = 1
 	if not SaveManager.last_save_ok: requirement.text = "No se pudo guardar. Reintenta para conservar el cambio."
@@ -256,13 +261,13 @@ func apply_cap() -> void:
 	skin.disabled = not has_skin and SaveManager.coins < 75
 
 func update_detail(cap: CapDefinition) -> void:
-	detail_button.text = "ESTADÍSTICAS" if showing_ability else "HABILIDAD"
+	detail_button.text = "VER ESTADÍSTICAS" if showing_ability else "VER HABILIDAD"
 	if showing_ability:
 		detail.text = cap.ability.description if cap.ability else "Turbo de corriente · Usa el control de turbo durante la carrera."
 		detail.tooltip_text = "La habilidad se activa automáticamente al cumplir su condición. El turbo conserva su botón."
 	else:
-		detail.text = "Índices: 100 = estándar.\n" + cap.movement_summary(BASE_PHYSICS)
-		detail.tooltip_text = "Estabilidad: amortiguación lateral del agua. Mayor peso reduce la respuesta a fuerzas. Rebote y fricción implican ventajas y desventajas."
+		detail.text = "Velocidad: rapidez en rectas · Control: precisión al girar\nPeso: resistencia a empujones · Turbo: potencia del impulso"
+		detail.tooltip_text = "Cada barra compara la tapa actual con la tapa equipada. Un valor mayor no siempre conviene en todas las pistas."
 
 func change_cap(step: int) -> void:
 	if step == 0: return

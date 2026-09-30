@@ -25,7 +25,8 @@ var viewed_cup_id := ""
 var ghost_enabled := true
 var ghost_replay_requested := false
 var seen_champion_intros: Array = []
-const DEFAULT_SETTINGS := {"music": 0.35, "effects": 0.65, "vibration": true, "quality": "high", "fps": 60, "difficulty": "normal", "race_laps": 1}
+var race_help_seen := false
+const DEFAULT_SETTINGS := {"music": 0.35, "effects": 0.65, "vibration": true, "race_help": false, "quality": "high", "fps": 60, "difficulty": "normal", "race_laps": 1}
 
 func _ready() -> void:
 	get_tree().quit_on_go_back = false
@@ -33,7 +34,7 @@ func _ready() -> void:
 	apply_settings()
 
 func snapshot() -> Dictionary:
-	return {"version": 2, "challenges": challenges, "ghost_enabled": ghost_enabled, "cap_progress": cap_progress, "coins": coins, "caps": unlocked_caps, "circuits": unlocked_circuits, "skins": unlocked_skins, "best_times": best_times, "settings": settings, "selected_cap": selected_cap, "selected_circuit": selected_circuit, "selected_skin": selected_skin, "championships": championships, "seen_champion_intros": seen_champion_intros}
+	return {"version": 2, "challenges": challenges, "ghost_enabled": ghost_enabled, "cap_progress": cap_progress, "coins": coins, "caps": unlocked_caps, "circuits": unlocked_circuits, "skins": unlocked_skins, "best_times": best_times, "settings": settings, "selected_cap": selected_cap, "selected_circuit": selected_circuit, "selected_skin": selected_skin, "championships": championships, "seen_champion_intros": seen_champion_intros, "race_help_seen": race_help_seen}
 
 func load_save() -> void:
 	if not read_save(save_path):
@@ -112,6 +113,7 @@ func read_save(path: String) -> bool:
 	var champion_ids: Array = []
 	for cup in RacingCatalog.championships(): champion_ids.append(cup.champion_id)
 	seen_champion_intros = valid_ids(parsed.get("seen_champion_intros", []), champion_ids, [])
+	race_help_seen = parsed.get("race_help_seen", false) == true
 	if not championships.active.is_empty() and championships.active.cap_id not in unlocked_caps:
 		championships.active = {}
 	return true
@@ -142,6 +144,13 @@ func mark_champion_intro_seen(id: String) -> bool:
 	seen_champion_intros.append(id)
 	if save(): return true
 	seen_champion_intros.erase(id)
+	return false
+
+func mark_race_help_seen() -> bool:
+	if race_help_seen: return true
+	race_help_seen = true
+	if save(): return true
+	race_help_seen = false
 	return false
 
 func start_cup(id: String) -> bool:

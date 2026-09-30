@@ -35,6 +35,14 @@ func run() -> void:
 	for frame in range(10):
 		await process_frame
 	check(race.player.position == position, "paused physics does not advance")
+	var restart_button: Button
+	for button in race.hud.overlay.find_children("*", "Button", true, false):
+		if button.text == "Reiniciar carrera": restart_button = button
+	check(restart_button != null, "pause exposes restart action")
+	restart_button.pressed.emit()
+	check(paused and race.hud.modal_state == "confirm", "restart asks for confirmation")
+	race.notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)
+	check(paused and race.hud.modal_state == "pause", "Android Back closes confirmation first")
 	race.notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)
 	check(not paused, "Android Back resumes the pause menu")
 	save.coins = 123

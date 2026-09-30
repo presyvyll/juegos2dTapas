@@ -30,6 +30,8 @@ func run() -> void:
 	current_scene = menu
 	check(press(menu, "COPAS"), "open cup menu")
 	check(press(menu, "INICIAR COPA"), "start through UI")
+	check(press(menu, "Abandonar copa"), "abandon action opens confirmation")
+	check(press(menu, "SEGUIR EN LA COPA"), "safe action returns to cup")
 	check(press(menu, "PREPARAR CARRERA"), "open race preparation")
 	check(press(menu, "CORRER"), "launch through UI")
 	await settle()
@@ -83,7 +85,7 @@ func run() -> void:
 	race.menu()
 	await settle()
 	menu = current_scene
-	check(press(menu, "JUGAR") and press(menu, "¡A CORRER!"), "free play remains available")
+	check(press(menu, "JUGAR") and press(menu, "CORRER AHORA"), "free play remains available")
 	await settle()
 	race = current_scene
 	check(race.cup == null and save.championships.active.rounds.size() == 1, "free play leaves saved cup intact")

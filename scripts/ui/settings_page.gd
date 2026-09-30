@@ -28,6 +28,12 @@ func _ready() -> void:
 	vibration.button_pressed = SaveManager.settings.vibration
 	vibration.toggled.connect(func(value: bool) -> void: SaveManager.settings.vibration = value)
 	add_child(vibration)
+	var race_help := CheckButton.new()
+	race_help.text = "Mostrar ayuda al iniciar una carrera"
+	race_help.custom_minimum_size.y = 48
+	race_help.button_pressed = SaveManager.settings.race_help
+	race_help.toggled.connect(func(value: bool) -> void: SaveManager.settings.race_help = value)
+	add_child(race_help)
 	add_options("Calidad gráfica", "quality", ["low", "high"], ["Baja", "Alta"])
 	add_options("Límite de FPS", "fps", [30, 60], ["30 FPS", "60 FPS"])
 	add_options("Dificultad", "difficulty", ["easy", "normal", "hard", "expert"], ["Fácil", "Normal", "Difícil", "Experto"])

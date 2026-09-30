@@ -189,7 +189,9 @@ func show_home() -> void:
 	content.add_child(play)
 	var shortcuts := HBoxContainer.new()
 	content.add_child(shortcuts)
-	for entry in [["COPAS", show_championships, ICON_CUP], ["PISTAS", func() -> void: show_selection("circuits"), ICON_FLAG], ["PREMIOS", show_rewards, ICON_GIFT]]:
+	var ready_rewards := ChallengeProgress.ready_count(SaveManager.challenges)
+	var rewards_caption := "PREMIOS · %d" % ready_rewards if ready_rewards > 0 else "PREMIOS"
+	for entry in [["COPAS", show_championships, ICON_CUP], ["PISTAS", func() -> void: show_selection("circuits"), ICON_FLAG], [rewards_caption, show_rewards, ICON_GIFT]]:
 		var button := RacingUI.button(entry[0], entry[1])
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		style_home_button(button)
@@ -324,7 +326,11 @@ func section_panel_style() -> StyleBoxFlat:
 func show_rewards() -> void:
 	clear()
 	heading.text = "PREMIOS"
-	content.add_child(RacingUI.button("DESAFÍOS · progreso y recompensas", show_challenges))
+	var ready := ChallengeProgress.ready_count(SaveManager.challenges)
+	var challenges := RacingUI.button("RECLAMAR %d RECOMPENSA(S)" % ready if ready > 0 else "VER DESAFÍOS", show_challenges)
+	RacingUI.set_primary(challenges, ready > 0)
+	content.add_child(challenges)
+	content.add_child(RacingUI.label("Tienes %d recompensa(s) lista(s)." % ready if ready > 0 else "Completa objetivos en carrera para ganar monedas.", 17))
 	content.add_child(RacingUI.label("Premios de las cinco copas", 28))
 	for cup in RacingCatalog.championships():
 		var best := int(SaveManager.championships.completed.get(cup.id, 0))
@@ -344,7 +350,10 @@ func show_race_setup() -> void:
 	SaveManager.cup_race_requested = false
 	clear()
 	heading.text = "CARRERA"
-	content.add_child(RaceSetup.new())
+	var setup := RaceSetup.new()
+	setup.change_track_requested.connect(func() -> void: show_selection("circuits", true))
+	setup.change_cap_requested.connect(func() -> void: show_selection("caps", true))
+	content.add_child(setup)
 	content.add_child(RacingUI.button("Volver al menú", show_home))
 
 func show_championships() -> void:
@@ -353,18 +362,18 @@ func show_championships() -> void:
 	content.add_child(ChampionshipPage.new())
 	content.add_child(RacingUI.button("Volver al menú", show_home))
 
-func show_selection(kind: String) -> void:
+func show_selection(kind: String, return_to_race_setup := false) -> void:
 	clear()
-	heading.text = "GARAGE DE TAPAS" if kind == "caps" else "CIRCUITOS"
+	heading.text = "GARAGE DE TAPAS" if kind == "caps" else "PISTAS"
 	var page := preload("res://scripts/ui/garage_page.gd").new() if kind == "caps" else SelectionPage.new()
 	page.kind = kind
 	page.rebuild_callback = update_wallet
 	content.add_child(page)
-	content.add_child(RacingUI.button("Volver al menú", show_home))
+	content.add_child(RacingUI.button("Volver a preparar carrera" if return_to_race_setup else "Volver al menú", show_race_setup if return_to_race_setup else show_home))
 
 func show_settings() -> void:
 	clear()
-	heading.text = "CONFIGURACIÓN"
+	heading.text = "AJUSTES"
 	content.add_child(SettingsPage.new())
 	content.add_child(RacingUI.button("Guardar y volver", func() -> void:
 		SaveManager.apply_settings()

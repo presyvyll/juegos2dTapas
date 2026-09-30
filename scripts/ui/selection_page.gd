@@ -55,7 +55,7 @@ func build() -> void:
 		var personality := RacingUI.label(item.rarity.replace("_", " ").capitalize() + " · " + preview.appearance.personality + " · Turbo de corriente", 17)
 		personality.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		add_child(personality)
-		var stats := RacingUI.label("Velocidad %d · Aceleración %d · Manejo %d\nPeso %d · Boost %d" % [item.speed * 100, item.acceleration * 100, item.handling * 100, item.weight * 100, item.boost * 100])
+		var stats := RacingUI.label("Velocidad %d · Aceleración %d · Control %d\nPeso %d · Turbo %d" % [item.speed * 100, item.acceleration * 100, item.handling * 100, item.weight * 100, item.boost * 100])
 		stats.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		add_child(stats)
 	else:

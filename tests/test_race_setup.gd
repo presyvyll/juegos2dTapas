@@ -14,11 +14,13 @@ func run() -> void:
 	var save := root.get_node("SaveManager")
 	save.save_path = "user://race_setup_test.json"
 	save.settings.race_laps = 1
+	save.settings.race_help = false
+	save.race_help_seen = false
 	var menu: Control = load("res://ui/main_menu.tscn").instantiate()
 	root.add_child(menu)
 	menu.show_race_setup()
 	var page: Control = menu.content.get_child(0)
-	var settings: Control = page.get_child(2)
+	var settings: Control = page.find_child("RaceOptions", false, false)
 	var difficulty: OptionButton = settings.get_child(0).get_child(1)
 	var laps: OptionButton = settings.get_child(1).get_child(1)
 	difficulty.select(2)
@@ -26,6 +28,20 @@ func run() -> void:
 	laps.select(2)
 	laps.item_selected.emit(2)
 	check(save.settings.race_laps == 3 and save.settings.difficulty == "hard", "setup controls update race options")
+	var change_track: Button
+	for button in page.find_children("*", "Button", true, false):
+		if button.text == "CAMBIAR PISTA": change_track = button
+	check(change_track != null, "setup exposes change track action")
+	change_track.pressed.emit()
+	await process_frame
+	check(menu.heading.text == "PISTAS", "change track keeps the player in the race flow")
+	var contextual_back: Button
+	for button in menu.content.find_children("*", "Button", true, false):
+		if button.text == "Volver a preparar carrera": contextual_back = button
+	check(contextual_back != null, "track selection explains where back returns")
+	contextual_back.pressed.emit()
+	await process_frame
+	check(menu.content.get_child(0).find_child("RaceOptions", false, false) != null, "track selection returns to race setup")
 	check(save.save() and save.read_save(save.save_path) and save.settings.race_laps == 3, "three laps persist through JSON round trip")
 	var original: CircuitDefinition = RacingCatalog.circuits()[0]
 	var old_laps := original.laps
@@ -33,6 +49,10 @@ func run() -> void:
 	root.add_child(race)
 	check(race.session.circuit.laps == 3 and race.track.definition.laps == 3, "session and reward circuit use chosen laps")
 	check(original.laps == old_laps, "shared circuit resource stays unchanged")
+	check(race.hud.show_beginner_help, "first race enables contextual help")
+	race.hud.animate_countdown(3)
+	check(race.hud.start_hint.text == "TOCA LOS LADOS PARA GIRAR", "contextual help starts with steering")
+	check(save.mark_race_help_seen() and save.read_save(save.save_path) and save.race_help_seen, "completed race help persists")
 	race.queue_free()
 	if DisplayServer.get_name() != "headless":
 		for frame in range(12):
@@ -50,10 +70,12 @@ func run() -> void:
 		check(save.read_save(save.save_path) and save.settings.race_laps == 1, "invalid laps default safely: " + str(invalid))
 	var legacy: Dictionary = save.snapshot().duplicate(true)
 	legacy.settings.erase("race_laps")
+	legacy.settings.erase("race_help")
+	legacy.erase("race_help_seen")
 	var file := FileAccess.open(save.save_path, FileAccess.WRITE)
 	file.store_string(JSON.stringify(legacy))
 	file.close()
-	check(save.read_save(save.save_path) and save.settings.race_laps == 1, "old saves load with one lap")
+	check(save.read_save(save.save_path) and save.settings.race_laps == 1 and not save.settings.race_help and not save.race_help_seen, "old saves load with safe race defaults")
 	print("RACE SETUP: %d failures" % failures)
 	for player in root.get_node("AudioManager").players.values():
 		player.stop()

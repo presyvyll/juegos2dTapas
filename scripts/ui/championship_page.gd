@@ -5,6 +5,7 @@ var index := 0
 var race_results := false
 var selected_track := 0
 var preparing := false
+var confirming_abandon := false
 var swipe_index := -1
 var swipe_start := Vector2.ZERO
 var cup_header: Control
@@ -173,10 +174,13 @@ func build_map() -> void:
 	var state := "DISPONIBLE" if available else "BLOQUEADA"
 	if SaveManager.championships.completed.has(cup.id): state = "COMPLETADA · mejor puesto %d/4" % SaveManager.championships.completed[cup.id]
 	if current: state = "EN CURSO · ronda %d/%d" % [completed + 1, cup.track_ids.size()]
-	line("%s · %d/%d ★ · Pistas terminadas: %d/%d" % [state, stars, cup.track_ids.size() * 3, finished_tracks, cup.track_ids.size()], 17)
+	line("%s · Progreso %d/%d pistas · %d/%d ★" % [state, finished_tracks, cup.track_ids.size(), stars, cup.track_ids.size() * 3], 17)
 	if not available:
 		line("Desbloqueo: consigue podio en " + RacingCatalog.championship(cup.prerequisite_cup_id).display_name, 17)
 	if not SaveManager.last_save_ok: line("No se pudo guardar. Reintenta para conservar el cambio.", 16)
+	if confirming_abandon:
+		build_abandon_confirmation(cup)
+		return
 	if preparing:
 		build_preparation(cup)
 		return
@@ -203,9 +207,9 @@ func build_map() -> void:
 	details.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	card.add_child(details)
 	details.add_child(RacingUI.label(track.display_name, 23))
-	details.add_child(RacingUI.label("Vista ilustrativa · Dificultad %d/10 · %d vuelta(s)" % [track.difficulty_rating, cup.laps], 16))
+	details.add_child(RacingUI.label("Dificultad %d/10 · %d %s" % [track.difficulty_rating, cup.laps, "vuelta" if cup.laps == 1 else "vueltas"], 16))
 	var record := CupProgress.track_record(SaveManager.championships, cup.id, selected_track)
-	details.add_child(RacingUI.label("Récord en esta copa: %.2f s" % record.best_time if not record.is_empty() else "Récord en esta copa: sin marca", 16))
+	details.add_child(RacingUI.label("Récord en esta copa: %.2f s" % record.best_time if not record.is_empty() else "Sin récord · completa esta pista", 16))
 	var description := RacingUI.label(track.description, 16)
 	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	details.add_child(description)
@@ -220,11 +224,9 @@ func build_map() -> void:
 		var can_run: bool = selected_track == completed and active.phase in ["ready", "racing"]
 		var run := RacingUI.button("PREPARAR CARRERA" if can_run else ("RONDA YA DISPUTADA" if selected_track < completed else "COMPLETA LA RONDA ANTERIOR"), func() -> void: preparing = true; build())
 		run.disabled = not can_run
+		RacingUI.set_primary(run, can_run)
 		add_child(run)
-		var abandon := RacingUI.button("Abandonar esta participación", func() -> void:
-			if SaveManager.abandon_cup(): selected_track = 0
-			build()
-		)
+		var abandon := RacingUI.button("Abandonar copa", func() -> void: confirming_abandon = true; build())
 		add_child(abandon)
 	elif active.is_empty():
 		line("Premio único por podio: %d monedas · Estrellas: 3/2/1 para los tres primeros" % cup.coin_reward, 16)
@@ -233,6 +235,7 @@ func build_map() -> void:
 			build()
 		)
 		start.disabled = not available
+		RacingUI.set_primary(start, available)
 		add_child(start)
 	else:
 		add_child(RacingUI.button("Volver a la copa en curso", func() -> void:
@@ -275,6 +278,18 @@ func build_champion(cup: ChampionshipDefinition, parent: Container) -> void:
 		text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		row.add_child(text)
 
+func build_abandon_confirmation(cup: ChampionshipDefinition) -> void:
+	line("¿ABANDONAR %s?" % cup.display_name.to_upper(), 25)
+	line("Perderás las rondas y los puntos de esta participación.", 17)
+	var keep := RacingUI.button("SEGUIR EN LA COPA", func() -> void: confirming_abandon = false; build())
+	RacingUI.set_primary(keep)
+	add_child(keep)
+	add_child(RacingUI.button("ABANDONAR COPA", func() -> void:
+		if SaveManager.abandon_cup(): selected_track = 0
+		confirming_abandon = false
+		build()
+	))
+
 func build_preparation(cup: ChampionshipDefinition) -> void:
 	var active: Dictionary = SaveManager.championships.active
 	if active.is_empty() or active.cup_id != cup.id or active.phase not in ["ready", "racing"]:
@@ -295,20 +310,24 @@ func build_preparation(cup: ChampionshipDefinition) -> void:
 	add_child(RacingUI.button("Volver al mapa", go_back))
 
 func change_cup(step: int) -> void:
-	if preparing or race_results: return
+	if preparing or race_results or confirming_abandon: return
 	index = posmod(index + step, RacingCatalog.championships().size())
 	selected_track = 0
 	SaveManager.haptic(10)
 	build()
 
 func go_back() -> bool:
+	if confirming_abandon:
+		confirming_abandon = false
+		build()
+		return true
 	if not preparing: return false
 	preparing = false
 	build()
 	return true
 
 func _input(event: InputEvent) -> void:
-	if race_results or preparing or not is_visible_in_tree() or not is_instance_valid(cup_header): return
+	if race_results or preparing or confirming_abandon or not is_visible_in_tree() or not is_instance_valid(cup_header): return
 	if event is InputEventScreenTouch:
 		if event.pressed and swipe_index == -1 and cup_header.get_global_rect().has_point(event.position):
 			swipe_index = event.index

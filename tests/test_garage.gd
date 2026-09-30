@@ -38,10 +38,10 @@ func run() -> void:
 			check(absf(page.bars[0].value - RacingCatalog.caps()[i].speed * 100) < 0.1, "speed matches definition")
 			var cap := RacingCatalog.caps()[i]
 			check(absf(page.bars[1].value - cap.acceleration * 100) < 0.1 and absf(page.bars[2].value - cap.handling * 100) < 0.1 and absf(page.bars[3].value - cap.weight * 100) < 0.1, "other bars match definition")
-			check(page.values[4].text == "N/D", "no invented resistance")
+			check(absf(page.bars[4].value - cap.boost * 100) < 0.1, "turbo matches definition")
 			check(page.equip.disabled == (RacingCatalog.caps()[i].id not in save.unlocked_caps or RacingCatalog.caps()[i].id == save.selected_cap), "equip guard")
 			for button in page.find_children("*", "Button", true, false):
-				if button.text == "HABILIDAD": button.pressed.emit()
+				if button.text == "VER HABILIDAD": button.pressed.emit()
 			await settle()
 			check_controls(menu, root.get_visible_rect(), str(resolution) + " ability detail")
 		if DisplayServer.get_name() != "headless":

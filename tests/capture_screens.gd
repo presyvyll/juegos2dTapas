@@ -14,6 +14,8 @@ func run() -> void:
 	var menu: Control = load("res://ui/main_menu.tscn").instantiate()
 	root.add_child(menu)
 	await capture("user://menu.png")
+	menu.show_race_setup()
+	await capture("user://race_setup.png")
 	menu.show_selection("caps")
 	await capture("user://caps.png")
 	menu.show_settings()

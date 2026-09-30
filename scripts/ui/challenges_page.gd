@@ -14,7 +14,7 @@ func build() -> void:
 		child.queue_free()
 	add_theme_constant_override("separation", 10)
 	add_child(RacingUI.label("DESAFÍOS PERMANENTES", 26))
-	add_child(RacingUI.label("Se registran al guardar resultados. Cada premio se reclama una vez.", 16))
+	add_child(RacingUI.label("Completa objetivos en carrera y reclama sus monedas.", 16))
 	var definitions := ChallengeProgress.definitions()
 	var pages := ceili(definitions.size() / 3.0)
 	page = posmod(page, pages)
@@ -45,6 +45,7 @@ func build() -> void:
 		)
 		claim.disabled = claimed or progress < definition.target
 		claim.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		RacingUI.set_primary(claim, not claim.disabled)
 		row.add_child(claim)
 	if not SaveManager.last_save_ok:
 		add_child(RacingUI.label("No se pudo guardar el cambio. Reintenta la operación.", 16))

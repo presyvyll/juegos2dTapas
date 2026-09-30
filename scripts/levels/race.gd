@@ -74,14 +74,18 @@ func _ready() -> void:
 	hud.session = session
 	hud.player = player
 	hud.combo = combo
+	hud.show_beginner_help = not replay_mode and (not SaveManager.race_help_seen or bool(SaveManager.settings.get("race_help", false)))
 	add_child(hud)
 	hud.pause_requested.connect(toggle_pause)
 	hud.restart_requested.connect(restart)
 	hud.menu_requested.connect(menu)
+	hud.next_track_requested.connect(next_track)
 	session.player_finished.connect(on_finish)
 	session.countdown_changed.connect(func(value: int) -> void:
 		AudioManager.play("boost" if value == 0 else "ui")
 		if value == 0:
+			if hud.show_beginner_help and not SaveManager.race_help_seen:
+				SaveManager.mark_race_help_seen()
 			vfx.burst(player.global_position, Vector2.UP, Color("ffdc6c"), 1.3)
 			for rival in session.caps:
 				if rival != player: vfx.burst(rival.global_position, Vector2.DOWN, rival.get_node("Visual").appearance.trail_color, 0.55)
@@ -415,6 +419,7 @@ func _notification(what: int) -> void:
 		if rewarded:
 			menu()
 		else:
+			if hud.handle_back(): return
 			toggle_pause()
 
 func on_finish(place: int, time: float) -> void:
@@ -466,6 +471,23 @@ func restart() -> void:
 	if cup_closed: return
 	get_tree().paused = false
 	get_tree().reload_current_scene()
+
+func next_track() -> void:
+	if cup_closed or cup: return
+	var circuits := RacingCatalog.circuits()
+	var current := 0
+	for index in range(circuits.size()):
+		if circuits[index].id == SaveManager.selected_circuit:
+			current = index
+			break
+	for step in range(1, circuits.size() + 1):
+		var candidate: CircuitDefinition = circuits[(current + step) % circuits.size()]
+		if candidate.id in SaveManager.unlocked_circuits:
+			var previous := SaveManager.selected_circuit
+			SaveManager.selected_circuit = candidate.id
+			if SaveManager.save(): restart()
+			else: SaveManager.selected_circuit = previous
+			return
 
 func menu() -> void:
 	SaveManager.cup_race_requested = false

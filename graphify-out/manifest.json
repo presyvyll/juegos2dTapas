@@ -256,5 +256,173 @@
     "seen": 1790022268.1555893,
     "ast_hash": "883cf8ade7e0d6a3763d096cd446eb5a",
     "semantic_hash": ""
+  },
+  "assets/ui/main_menu_tropical.png": {
+    "mtime": 1790622481.1978388,
+    "seen": 1790623094.9927306,
+    "ast_hash": "04fd5bbeab04d2e494d51b9af8cbffeb",
+    "semantic_hash": ""
+  },
+  "assets/ui/icon_cap.svg": {
+    "mtime": 1790622481.1290076,
+    "seen": 1790623094.9927003,
+    "ast_hash": "9bf283ed32832732cd891a03db3d429f",
+    "semantic_hash": ""
+  },
+  "assets/ui/icon_cup.svg": {
+    "mtime": 1790622481.1319423,
+    "seen": 1790623094.992705,
+    "ast_hash": "8c749d5e24ffd4b00cef8e5555c0f208",
+    "semantic_hash": ""
+  },
+  "assets/ui/icon_exit.svg": {
+    "mtime": 1790622481.1349208,
+    "seen": 1790623094.9927087,
+    "ast_hash": "e72742533a64c5f632594d187a547db3",
+    "semantic_hash": ""
+  },
+  "assets/ui/icon_flag.svg": {
+    "mtime": 1790622481.1388266,
+    "seen": 1790623094.9927123,
+    "ast_hash": "87ce5d2ad4e2f908ec177199f582f17a",
+    "semantic_hash": ""
+  },
+  "assets/ui/icon_gift.svg": {
+    "mtime": 1790622481.141749,
+    "seen": 1790623094.9927163,
+    "ast_hash": "16941e118d5519e50d964da0220971be",
+    "semantic_hash": ""
+  },
+  "assets/ui/icon_home.svg": {
+    "mtime": 1790622481.1452286,
+    "seen": 1790623094.9927197,
+    "ast_hash": "fd414d212df492b270d150d725c15bdb",
+    "semantic_hash": ""
+  },
+  "assets/ui/icon_play.svg": {
+    "mtime": 1790622481.1560338,
+    "seen": 1790623094.9927232,
+    "ast_hash": "e701355015dad17c7fbb01e98f1aba69",
+    "semantic_hash": ""
+  },
+  "assets/ui/icon_settings.svg": {
+    "mtime": 1790622481.1658618,
+    "seen": 1790623094.992727,
+    "ast_hash": "38d035b4b05df4d76bce2cd6f1d2a418",
+    "semantic_hash": ""
+  },
+  "assets/ui/tapa_racing_logo.png": {
+    "mtime": 1790622481.2189713,
+    "seen": 1790623094.9927342,
+    "ast_hash": "48ca7df6f755dc05f92e1b6c1bc53556",
+    "semantic_hash": ""
+  },
+  "AMBIENT_ASSETS_REQUIRED.md": {
+    "mtime": 1790687342.9192178,
+    "seen": 1790687999.8310783,
+    "ast_hash": "7caccce17b131e8bd9c68508bdc9d4ec",
+    "semantic_hash": ""
+  },
+  "audio/menu_tropical_racing.wav": {
+    "mtime": 1790719977.334813,
+    "seen": 1790720989.5938666,
+    "ast_hash": "2fadb218d675af240ba60f8c9ac3ba75",
+    "semantic_hash": ""
+  },
+  "audio/races/canal_turbo.wav": {
+    "mtime": 1790719977.3390985,
+    "seen": 1790720989.59387,
+    "ast_hash": "0cf57ba42afb493a37c6260e79df2dc2",
+    "semantic_hash": ""
+  },
+  "audio/races/cascada.wav": {
+    "mtime": 1790719977.3427196,
+    "seen": 1790720989.5938716,
+    "ast_hash": "eb941863ec35e52781dcc3855dd8d56b",
+    "semantic_hash": ""
+  },
+  "audio/races/eclipse.wav": {
+    "mtime": 1790719977.3469732,
+    "seen": 1790720989.5938733,
+    "ast_hash": "315c805694646ce5a556df03c586c16a",
+    "semantic_hash": ""
+  },
+  "audio/races/express.wav": {
+    "mtime": 1790719977.3493912,
+    "seen": 1790720989.5938747,
+    "ast_hash": "0a6cfb08822f99bb4f08cd97a38335d5",
+    "semantic_hash": ""
+  },
+  "audio/races/fuente.wav": {
+    "mtime": 1790719977.3528657,
+    "seen": 1790720989.5938768,
+    "ast_hash": "a596da79f799dd63459014313cc5721c",
+    "semantic_hash": ""
+  },
+  "audio/races/jardin.wav": {
+    "mtime": 1790719977.3566854,
+    "seen": 1790720989.5938785,
+    "ast_hash": "866e5b633313f7b35714eeb82a5fa096",
+    "semantic_hash": ""
+  },
+  "audio/races/laberinto.wav": {
+    "mtime": 1790719977.3596642,
+    "seen": 1790720989.5938802,
+    "ast_hash": "6270765dbe417e54d5305614a393f30b",
+    "semantic_hash": ""
+  },
+  "audio/races/neon.wav": {
+    "mtime": 1790719977.3626757,
+    "seen": 1790720989.5938816,
+    "ast_hash": "783dd56cb53b8b8ca164fb46d04c6c73",
+    "semantic_hash": ""
+  },
+  "audio/races/ojo.wav": {
+    "mtime": 1790719977.3666914,
+    "seen": 1790720989.5938828,
+    "ast_hash": "8f1831db448700f23eab4aec3eb49e28",
+    "semantic_hash": ""
+  },
+  "audio/races/plaza.wav": {
+    "mtime": 1790719977.3698032,
+    "seen": 1790720989.5938847,
+    "ast_hash": "116b38ed9d7253b1a9941f578d641c26",
+    "semantic_hash": ""
+  },
+  "audio/races/remolino.wav": {
+    "mtime": 1790719977.3728104,
+    "seen": 1790720989.5938861,
+    "ast_hash": "41cfab9fa1b9086faae90151d6935da5",
+    "semantic_hash": ""
+  },
+  "audio/races/templo.wav": {
+    "mtime": 1790719977.3761804,
+    "seen": 1790720989.5938878,
+    "ast_hash": "371097194404dbe7c2b5805aceb1ce4b",
+    "semantic_hash": ""
+  },
+  "audio/races/titan.wav": {
+    "mtime": 1790719977.379454,
+    "seen": 1790720989.5938895,
+    "ast_hash": "b7cd8f292e532c983bd17b5edadc1885",
+    "semantic_hash": ""
+  },
+  "audio/races/tormenta.wav": {
+    "mtime": 1790719977.3829238,
+    "seen": 1790720989.5938911,
+    "ast_hash": "f5a11cd7ee5353ac58c4bdda142a1bbb",
+    "semantic_hash": ""
+  },
+  "audio/races/tropical.wav": {
+    "mtime": 1790719977.386321,
+    "seen": 1790720989.5938926,
+    "ast_hash": "fabd76222808f2c09f1fd1897f0b95f6",
+    "semantic_hash": ""
+  },
+  "docs/UX_AUDIT_2026-09-29.md": {
+    "mtime": 1790727708.6326568,
+    "seen": 1790727720.4436,
+    "ast_hash": "0031e781bb675e8e407e19f7ab05d7a2",
+    "semantic_hash": ""
   }
 }

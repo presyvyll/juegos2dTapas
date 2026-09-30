@@ -12,9 +12,10 @@
   "10": "Godot AI",
   "11": "ART_ASSET_REQUIREMENTS",
   "12": "Etapa E — cinco copas con progreso y guardado",
-  "13": "Preparación móvil",
+  "13": "Auditoría UX de Tapa Racing — 29 septiembre 2026",
   "14": "Validación",
   "15": "Etapa D — quince circuitos jugables",
+  "16": "AMBIENT_ASSETS_REQUIRED",
   "17": "Contexto del proyecto",
   "18": "Codex Context Rules",
   "19": "audio/README.md",
@@ -25,5 +26,6 @@
   "24": "smoke_export.ps1",
   "25": "test_android.ps1",
   "26": "Fuente Central: entorno, iteración 1 (20 septiembre 2026)",
-  "27": "Desarrollo arcade Android — primer bloque"
+  "27": "Desarrollo arcade Android — primer bloque",
+  "28": "Fases de mejora visual"
 }
